@@ -1,0 +1,68 @@
+.company_name {
+    border-bottom: 1px solid #E5E5E5;
+    padding-bottom: 20px;
+}
+
+.company_info_table {
+    table-layout: fixed;
+}
+
+.fa-map-marker-alt, .fa-phone-alt, .fa-envelope, .fa-at {
+    color: $green;
+}
+
+.company_contant_item {
+    line-height: 29px;
+}
+
+.contant_item {
+    line-height: 35px;
+}
+
+.company_info_item {
+    color: #AAAAAA;
+}
+
+.card_company {
+    border: 1px solid #E5E5E5;
+    padding: 15px;
+    border-radius: 0.25rem;
+}
+
+.company_show {
+    border-top: 1px solid #E5E5E5;
+    padding-top: 13px;
+}
+
+.company_show > span {
+    font-size: 16px;
+    text-transform: uppercase; 
+    color: #AAAAAA;
+    transition: 0.2s linear;
+}
+
+.company_show > span:hover {
+    color: $orange;
+}
+
+@media (max-width: 576px) {
+    .card-img-overlay {
+        position: inherit;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        padding: 1.25rem 1.25rem 0 1.25rem;
+        border-radius: calc(0.25rem - 1px);
+    }
+    .card-img {
+        display: none !important;
+    }
+    .company_collapse {
+        margin-left: 20px !important;
+        margin-right: 20px !important;
+    }
+    .company_show {
+        padding-top: 0;
+    }
+}

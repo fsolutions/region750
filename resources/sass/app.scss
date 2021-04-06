@@ -1,0 +1,208 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+//BootstrapVue
+@import '~bootstrap-vue/src/index.scss';
+
+//FontAwesome
+@import '~@fortawesome/fontawesome-free/css/all.css';
+
+//Import default style project
+// Header, Button, Form, SideMenu, Footer, Table
+@import './default/header';
+@import './default/button';
+@import './default/form';
+@import './default/sidemenu';
+@import './default/filtermenu';
+@import './default/footer';
+@import './default/table';
+
+//Profile client style
+@import './default/profile.scss';
+
+//Sidebar style
+@import './default/sidebar.scss';
+
+//Vue-multiselect
+@import '~vue-multiselect/dist/vue-multiselect.min.css';
+
+//Card document style
+@import './default/document.scss';
+
+//Cards styles
+@import './default/cards';
+
+.v-sidebar-menu {
+    background-color: #FFFFFF;
+    box-shadow: 0px 67px 5px -3px rgb(50 50 50 / 75%);
+}
+
+.v-sidebar-menu .vsm--item {
+    position: relative;
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    text-transform: uppercase !important;
+}
+
+.v-sidebar-menu.vsm_expanded .vsm--item_open .vsm--link_level-1 {
+    color: $orange;
+    background-color: #dadada;
+}
+
+.v-sidebar-menu .vsm--dropdown>.vsm--list>.vsm--item>a {
+    font-size: 14px;
+    color: $brown !important;
+}
+
+.v-sidebar-menu .vsm--link_level-1.vsm--link_exact-active,
+.v-sidebar-menu .vsm--link_level-1.vsm--link_active {
+    -webkit-box-shadow: 3px 0px 0px 0px #003897 inset !important;
+    box-shadow: 3px 0px 0px 0px #003897 inset !important;
+}
+
+.v-sidebar-menu.vsm_expanded .vsm--item_open .vsm--link_level-1 .vsm--icon {
+    background-color: $green !important;
+}
+
+.v-sidebar-menu .vsm--link_level-1 .vsm--icon {
+    background-color: $green;
+}
+
+.vsm--icon {
+    color: white;
+}
+
+.vsm--link_level-1 {
+    color: $brown !important;
+    // font-weight: bold !important;
+}
+
+.icon-verb-max {
+    padding: 12px 119px;
+}
+
+.icon-verb-min {
+    padding: 18px 11px;
+}
+
+.verb-mini-icon {
+    width: 30px;
+}
+
+.v-sidebar-menu .vsm--link_hover,
+.v-sidebar-menu .vsm--link:hover {
+    background-color: #dadada;
+}
+
+.v-sidebar-menu .vsm--link_exact-active,
+.v-sidebar-menu .vsm--link_active {
+    font-weight: 600;
+    color: #003897 !important;
+}
+
+.v-sidebar-menu .vsm--dropdown>.vsm--list {
+    padding: 0.1px !important;
+}
+
+.v-sidebar-menu .vsm--dropdown .vsm--list {
+    background-color: #ececec !important;
+}
+
+.vsm--mobile-background {
+    background-color: #dadada !important;
+}
+
+//Default Styles
+html {
+    overflow-x: hidden;
+}
+
+header,
+.content>.container-fluid {
+    max-width: 1300px;
+}
+
+h1 {
+    text-transform: uppercase;
+    color: $brown;
+    font-weight: bold;
+}
+
+h4 {
+    font-size: 24px;
+    color: $brown;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+h5 {
+    font-size: 21px;
+    color: $brown;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.image-register {
+    position: sticky;
+    top: 150px;
+}
+
+.nav-link {
+    display: block;
+    padding: 0 !important;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 5px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #003897;
+    border-radius: 10px;
+    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+}
+
+:focus {
+    outline-style: none;
+    outline-width: 0px !important;
+    outline-color: none !important;
+}
+
+.popover {
+    max-width: 310px !important;
+    white-space: nowrap !important;
+}
+
+.badge-pill {
+    padding-right: 0.45em !important;
+    padding-left: 0.45em !important;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+.text-bold-size-14 {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 14px;
+    color: $brown;
+}
+
+.text-primary {
+    color: $orange !important;
+}

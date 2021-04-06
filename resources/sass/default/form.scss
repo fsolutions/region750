@@ -1,0 +1,130 @@
+.forms button,
+.forms input,
+.forms select,
+.forms textarea,
+.input-group > .form-control,
+.form-control{
+  padding: 12px 20px;
+  background: #f8f8f8;
+  border: 1px solid #dadada;
+  box-sizing: border-box;
+  font-size: 13px;
+  line-height: 24px;
+  border-radius: 0;
+  height: auto;
+}
+
+.custom-select {
+    font-size: 13px;
+    line-height: 24px;
+    border-radius: 0;
+    border: 1px solid #dadada;
+    height: 50px;
+}
+
+.forms input.form-control-sm,
+.forms select.form-control-sm,
+.forms textarea.form-control-sm,
+.input-group > .form-control.form-control-sm,
+.form-control.form-control-sm {
+    padding: 0.25rem 0.5rem;
+}
+
+.multiselect__tags {
+    border: 1px solid #dadada;
+    box-sizing: border-box;
+    font-size: 13px;
+    line-height: 27px;
+    border-radius: 0;
+    height: auto;
+    min-height: 50px;
+}
+
+.multiselect,
+.multiselect__input,
+.multiselect__single {
+    font-size: 13px;
+}
+
+.multiselect__input,
+.multiselect__single {
+    min-height: 27px;
+}
+
+.multiselect__single {
+    margin-top: 5px;
+}
+
+.multiselect__select {
+    top: 3px;
+}
+
+.multiselect__option--highlight,
+.multiselect__tag {
+    background: #E7E7E7;
+    color: #777777;
+}
+
+.multiselect__tag {
+    padding: 12px 26px 12px 30px;
+}
+
+.multiselect__tag-icon {
+    right: auto;
+    left: 5px;
+    margin-left: 0;
+    font-weight: 500;
+    line-height: 34px;
+}
+    .multiselect__tag-icon:hover {
+        background: none;
+    }
+.multiselect__tag-icon:after {
+    font-size: 27px;
+    color: #AAAAAA;
+}
+    .multiselect__tag-icon:hover:after {
+        color: #e3342f;
+    }
+
+.form-row-add-file {
+    padding: 10px 10px 0px 10px;
+    border: 1px solid #51a79159;
+    margin-bottom: 25px;
+}
+
+.custom-file-label {
+    white-space: nowrap;
+    overflow-x: inherit !important
+}
+
+.custom-file-input:lang(ru) ~ .custom-file-label::after {
+    content: 'Добавить';
+}
+
+.custom-file-label, .custom-file-input, .custom-file{
+    height: calc(2.47em + 0.75rem + 2px) !important;
+    border-radius: 0 !important;
+    overflow: hidden;
+    // width: 323px;
+}
+
+.custom-file-label {
+    font-weight: 400;
+    line-height: 2.5;
+    color: #495057;
+    background: #f8f8f8;
+}
+
+.custom-file-label::after {
+    line-height: 2.5;
+}
+
+.was-validated .custom-file-input:invalid ~ .custom-file-label, .custom-file-input.is-invalid ~ .custom-file-label {
+    border-color: #dadada !important;
+}
+
+.custom-file-label::after {
+    height: calc(2.47em + 0.75rem);
+    border-radius: 0 !important;
+}

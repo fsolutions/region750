@@ -1,0 +1,208 @@
+//Table actions button
+.button-group-fill {
+    width: 100%;
+}
+
+.btn-group-fill {
+    font-size: 14px;
+    height: 28px !important;
+}
+
+.btn-group-fill,
+.button-group-fill-info,
+.button-group-fill-delete,
+.button-group-fill-edit {
+    color: $brown !important;
+    background-color: #dee2e6 !important;
+    border-color: #cdd0d3 !important;
+}
+
+.btn-group-fill:hover,
+.button-group-fill-info:hover,
+.button-group-fill-delete:hover,
+.button-group-fill-edit:hover {
+    background-color: #AAAAAA !important;
+    border-color: #AAAAAA !important;
+}
+
+.btn-group-fill:hover,
+.button-group-fill-info:hover,
+.button-group-fill-edit:hover {
+    color: $orange !important;
+}
+
+.dropleft .dropdown-toggle::before {
+    display: none !important;
+}
+
+//
+
+//Default styles
+.button-outline-red {
+    border-radius: 30px;
+    padding: 3px 11px;
+    border: 1px solid red;
+    text-transform: uppercase;
+    color: red;
+    cursor: pointer;
+}
+
+.button-outline-red:hover {
+    color: white;
+    background-color: red;
+}
+
+.button-outline-green {
+    border-radius: 30px;
+    padding: 3px 11px;
+    border: 1px solid $green;
+    text-transform: uppercase;
+    color: $green;
+    cursor: pointer;
+}
+
+.button-outline-green:hover {
+    color: white;
+    background-color: $green;
+}
+
+.button-outline-orange {
+    border-radius: 30px;
+    padding: 3px 11px;
+    border: 1px solid $orange;
+    text-transform: uppercase;
+    color: $orange;
+    cursor: pointer;
+}
+
+.button-outline-orange:hover {
+    color: white;
+    background-color: $orange;
+}
+
+.button-outline-gray {
+    border-radius: 30px;
+    padding: 3px 11px;
+    border: 1px solid #AAAAAA;
+    text-transform: uppercase;
+    color: #AAAAAA;
+    cursor: pointer;
+}
+
+.button-outline-gray:hover {
+    color: white;
+    background-color: #AAAAAA;
+}
+
+.btn {
+    border-radius: 0 !important;
+}
+
+.btn-primary {
+    background: $orange !important;
+    color: $white !important;
+    border: 1px solid $orange !important;
+    text-transform: uppercase;
+    border-radius: 0 !important;
+}
+
+.btn-action {
+    height: 50px !important;
+}
+
+.btn-outline-secondary {
+    color: $orange;
+    border-color: $orange;
+    height: 28px !important;
+    padding: 0 15px !important;
+    text-transform: uppercase;
+}
+
+.btn-outline-secondary:hover {
+    color: #FFFFFF;
+    background-color: $orange;
+    border-color: $orange;
+}
+
+.btn-secondary {
+    color: #FFFFFF;
+    background-color: #AAAAAA;
+    border-color: #AAAAAA;
+    text-transform: uppercase;
+}
+
+.custom-control-input:checked~.custom-control-label::before {
+    color: #FFFFFF;
+    border-color: #0f6247;
+    background-color: #0f6247;
+}
+
+.custom-control {
+    padding-top: 8px;
+}
+
+.add_download_file {
+    font-size: 11px;
+    background-color: #aaaaaa;
+    color: white;
+    padding: 3px 10px;
+    font-weight: 100;
+    border-radius: 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.add_download_file:hover {
+    background-color: #5a6268;
+}
+
+.add_download_file_block {
+    padding-top: 1px;
+}
+
+.trash_document {
+    margin-top: 31px;
+    padding: 12px 17px;
+}
+
+.stop-text-transform {
+    text-transform: none !important;
+}
+
+.btn-outline-pill {
+    border-radius: 50px !important;
+}
+
+.button-come-back {
+    background-color: $orange;
+    border-radius: 30px;
+    color: white;
+    padding: 7px 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.green-dropdown {
+    border: 1px solid #003897 !important;
+    border-radius: 20px !important;
+    padding: 2px 10px !important;
+    color: #003897 !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    border-right: none !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+
+.green-arrow-dropdown {
+    border: 1px solid #003897 !important;
+    border-radius: 20px !important;
+    padding: 2px 5px !important;
+    color: #003897 !important;
+    cursor: pointer !important;
+    margin-right: 20px !important;
+    white-space: nowrap !important;
+    border-left: 1px solid #003897 !important;
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+}

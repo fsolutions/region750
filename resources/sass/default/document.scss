@@ -1,0 +1,61 @@
+.document_view {
+    background-color: #F6F6F6 !important;
+    border: none !important;
+    position: relative;
+}
+
+.document_view:hover {
+    box-shadow: 0 0 15px 1px #d6d6d6;
+}
+
+.document_view:hover~.doc-edit {
+    color: red;
+}
+
+.document_view_name {
+    text-transform: uppercase !important;
+    color: #362518 !important;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.document_view_date {
+    color: #AAAAAA;
+    font-size: 12px;
+    text-transform: uppercase !important;
+}
+
+.document_view_type {
+    color: #AAAAAA;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase !important;
+}
+
+.document_block {
+    border-bottom: 1px solid #dfe0e1;
+}
+
+.doc-edit,
+.doc-trash {
+    color: #dadada;
+}
+
+.doc-trash:hover {
+    color: red;
+}
+
+.doc-edit:hover {
+    color: #003897;
+}
+
+.card-action-top>span {
+    position: absolute;
+    right: 20px;
+}
+
+.card-action-end>span {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
