@@ -40,6 +40,7 @@ class ElasticSearchFresh extends Command
     {
         $models = [
             'Contract',
+            'ContractTO',
             'Order',
             'User',
             'Ticket'

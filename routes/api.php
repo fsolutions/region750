@@ -13,6 +13,7 @@ use App\Http\Controllers\API\Ticket\TicketController;
 use App\Http\Controllers\API\User\UserCommentController;
 use App\Http\Controllers\API\Contract\ContractController;
 use App\Http\Controllers\API\Document\DocumentController;
+use App\Http\Controllers\API\Contract\ContractTOController;
 use App\Http\Controllers\API\Reference\ReferenceController;
 use App\Http\Controllers\API\Notification\NotificationController;
 use App\Http\Controllers\API\Reference\ReferencePropertyController;
@@ -98,6 +99,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::apiResource('tickets', TicketController::class);
     Route::apiResource('contracts', ContractController::class);
+    Route::apiResource('contracts-to', ContractTOController::class);
 
     /**
      * Other routes

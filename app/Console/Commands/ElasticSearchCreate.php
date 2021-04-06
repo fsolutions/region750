@@ -40,6 +40,7 @@ class ElasticSearchCreate extends Command
     {
         $models = [
             'Contract',
+            'ContractTO',
             'Order',
             'User',
             'Ticket'

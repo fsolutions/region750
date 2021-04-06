@@ -9,13 +9,13 @@
 }
 
 .green-filter span.active {
-    border: 1px solid $green !important;
-    color: $green !important;
+    border: 1px solid #003897 !important;
+    color: #003897 !important;
 }
 
 .green-filter>span:hover {
-    border: 1px solid $green !important;
-    color: $green !important;
+    border: 1px solid #003897 !important;
+    color: #003897 !important;
     transition: 0.2s;
     background-color: transparent;
 }

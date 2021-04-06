@@ -2,13 +2,13 @@
     <div>
         <div :class="$mq == 'sm' ? 'row justify-content-between mb-3' : 'row justify-content-between text-nowrap'">
             <template v-if="$mq != 'sm'">
-                <!-- <div class="col-md-6 col-6">
-                    <order-table-filter
-                        v-if="typeOfTableFilter == 'orders'"
+                <div class="col-md-6 col-6">
+                    <contract-table-filter
+                        v-if="typeOfTableFilter == 'contracts'"
                         :api="api"
                         @setFilteringApiParameter="setFilteringApiParameter"
-                    ></order-table-filter>
-                </div> -->
+                    ></contract-table-filter>
+                </div>
             </template>
             <template v-if="$mq == 'sm'">
                 <div class="col">
@@ -56,11 +56,11 @@
                     <input class="form-control input_table_search mb-3" type="search" placeholder="Поиск" v-model="filter">
                 </template>
                 <div class="filter-mobile-block">
-                    <order-table-filter
-                        v-if="typeOfTableFilter == 'orders'"
+                    <contract-table-filter
+                        v-if="typeOfTableFilter == 'contracts'"
                         :api="api"
                         @setFilteringApiParameter="setFilteringApiParameter"
-                    ></order-table-filter>
+                    ></contract-table-filter>
                 </div>
             </div>
         </div>
@@ -109,6 +109,14 @@
             </template>
             <template #cell(contract_start_datetime)="data">
                 {{ data.value | formattedDate }}
+            </template>
+            <template #cell(contract_to_last)="data">
+                <template v-if="data.value[0]">
+                    {{ data.value[0].to_start_datetime | formattedDateTime }}
+                </template>
+                <template v-else>
+                    {{ "—" }}
+                </template>
             </template>
             <template #cell(phone)="data">
                 {{ data.value | VMask('+#(###)###-##-##') }}
@@ -195,7 +203,8 @@
         checkActionAllow
     } from '../../mixins'
 
-    import OrderTableFilter from '../orders/OrderTableFilter'
+    import ContractTableFilter from '../contracts/ContractTableFilter'
+    import ActionContract from "./actions/actionContract";
     import ActionOrder from "./actions/actionOrder";
     import ActionCustom from "./actions/actionCustom";
 
@@ -217,7 +226,8 @@
             headerContextMenuName: { type: String, required: false, default: '' },   // If table header needs context menu column filter - type filter name
         },
         components: {
-            "order-table-filter": OrderTableFilter,
+            "contract-table-filter": ContractTableFilter,
+            "action-contract": ActionContract,
             "action-order": ActionOrder,
             "action-custom": ActionCustom,
         },

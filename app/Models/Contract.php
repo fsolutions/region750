@@ -48,6 +48,14 @@ class Contract extends Model
                     ]
                 ]
             ],
+            'contract_to_last' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
             'contract_address' => [
                 "type" =>  "text",
                 "fields" => [
@@ -144,13 +152,17 @@ class Contract extends Model
         'index' => [
             'all_roles' => [
                 'creator',
-                'contract_on_user'
+                'contract_on_user',
+                'contract_to',
+                'contract_to_last'
             ]
         ],
         'other_actions' => [
             'all_roles' => [
                 'creator',
-                'contract_on_user'
+                'contract_on_user',
+                'contract_to',
+                'contract_to_last'
             ]
         ]
     ];
@@ -165,12 +177,18 @@ class Contract extends Model
             'create',
             'show',
             'edit',
-            'delete'
+            'delete',
+            'add-contract-to'
+        ],
+        'client' => [
+            'create',
+            'show',
         ],
         'all_roles' => [
             'create',
             'show',
-            'edit'
+            'edit',
+            'add-contract-to'
         ],
     ];
 
@@ -192,7 +210,7 @@ class Contract extends Model
     protected $tableHeaders = [
         [
             'key' => 'id',
-            'label' => 'Номер',
+            'label' => 'ID',
             'sortBy' => 'id',
             'stickyColumn' => true,
             'sortable' => true,
@@ -201,7 +219,7 @@ class Contract extends Model
         ],
         [
             'key' => 'contract_number',
-            'sortBy' => 'contract_number',
+            'sortBy' => 'contract_number.keyword',
             'label' => 'Номер договора',
             'stickyColumn' => true,
             'sortable' => true,
@@ -210,8 +228,16 @@ class Contract extends Model
         ],
         [
             'key' => 'contract_address',
-            'sortBy' => 'contract_address',
+            'sortBy' => 'contract_address.keyword',
             'label' => 'Адрес объекта',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'contract_to_last',
+            'sortBy' => 'contract_to_last.keyword',
+            'label' => 'Назначенное ТО',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -234,7 +260,7 @@ class Contract extends Model
         ],
         [
             'key' => 'status',
-            'sortBy' => 'status',
+            'sortBy' => 'status.keyword',
             'label' => 'Статус',
             'sortable' => true,
             'sortDirection' => 'desc',
@@ -242,7 +268,7 @@ class Contract extends Model
         ],
         [
             'key' => 'contract_comment',
-            'sortBy' => 'contract_comment',
+            'sortBy' => 'contract_comment.keyword',
             'label' => 'Комментарий',
             'stickyColumn' => false,
             'sortable' => false,
@@ -296,6 +322,25 @@ class Contract extends Model
             ->select(['id', 'name', 'email', 'phone']);
     }
 
+    /**
+     * ContractTO table relationships One To Many.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function contract_to()
+    {
+        return $this->hasMany(ContractTO::class, 'to_contract_id', 'id')->with(['master']);
+    }
+
+    /**
+     * ContractTO table relationships One To Many.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function contract_to_last()
+    {
+        return $this->hasMany(ContractTO::class, 'to_contract_id', 'id')->take(1);
+    }
 
     /**
      * Get the indexable data array for the model.
@@ -308,9 +353,15 @@ class Contract extends Model
 
         $this->load($relationships['all_roles']);
 
+        $contract_to_dates = '';
+        foreach ($this->contract_to_last as $contract) {
+            $contract_to_dates .= date('d.m.Y H:i', strtotime($contract->to_start_datetime)) . ' ';
+        }
+
         $tableFields = [
             'id' => $this->id,
             'creator' => isset($this->creator->name) ? $this->creator->name : '',
+            'contract_to_last' => $contract_to_dates,
             'contract_on_user' => isset($this->contract_on_user->name) ? $this->contract_on_user->name : '',
             'contract_address' => isset($this->contract_address) ? $this->contract_address : '',
             'contract_number' => isset($this->contract_number) ? $this->contract_number : '',

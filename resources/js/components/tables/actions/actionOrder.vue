@@ -122,10 +122,10 @@
                         && row.item.reference_order_type_id == 2
                         && checkIfDistributed(row.item)
                         && row.item.reference_status_id != 361"
-                class="table_distribute-services"
+                class="table_create_to"
                 @click="openServiceDistributionModal(row.index)"
             >
-                <span class="table_distribute-services-title">Распределить</span>
+                <span class="table_create_to-title">Распределить</span>
             </span>
         </div>
         <template v-if="$route.params.service_id">

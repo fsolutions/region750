@@ -2,6 +2,8 @@
     <div>
         <app-table
             v-if="onlyForBackOffice()"
+            :name="'contract'"
+            :typeOfTableFilter="'contracts'"
             :api="tableApiUrl"
             :items.sync="items"
             :isNeedSearch="true"
@@ -9,6 +11,7 @@
             @show="showItem"
             @edit="createOrEditItemModal"
             @delete="deleteItem"
+            @openContractTOCreateModal="openContractTOCreateModal"
         ></app-table>
 
         <contract-cards
@@ -26,7 +29,7 @@
             right
             backdrop
             shadow
-            width="35em"
+            width="45em"
             backdrop-variant="dark"
             ref="editItem"
             :title="modalTitle()"
@@ -61,6 +64,20 @@
                                     :selectedUser="editedItem.contract_on_user"
                                     @set="setUserOfContract"
                                 ></select-user>
+                            </div>       
+                            <div class="form-group col-md-12">
+                                <label for="role">Статус</label>
+                                <b-form-select v-model="editedItem.status" required :options="statusList" id="status"></b-form-select>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label>Комментарий (виден только сотрудникам компании)</label>
+                                <b-form-textarea
+                                    id="contract_comment"
+                                    v-model="editedItem.contract_comment"
+                                    placeholder="Если есть что отметить по контракту, отметьте."
+                                    rows="3"
+                                    max-rows="16"
+                                ></b-form-textarea>
                             </div>                            
                         </template>
                     </div>
@@ -85,6 +102,13 @@
                 <pre>{{detailedItem}}</pre>
             </div>
         </b-sidebar>
+        <contract-to-create-edit
+            v-if="operationForTO"
+            :contractForTO="contractForTO"
+            :contractForTOIndex="contractForTOIndex"
+            :operationForTO="operationForTO"
+            @clear="clearTOData"
+        ></contract-to-create-edit>
   </div>
 </template>
 
@@ -92,6 +116,7 @@
     import {API_CONTRACTS} from "../constants"
 
     import ContractCards from "../components/contracts/Cards"
+    import ContractTOCreateOrEdit from "../components/contracts/ContractTOCreateOrEdit"
 
     import {
         defaultDataItems,
@@ -114,6 +139,7 @@
     export default {
     components: {
         "contract-cards": ContractCards,
+        "contract-to-create-edit": ContractTOCreateOrEdit
     },
     mixins: [
         defaultDataItems,
@@ -125,12 +151,26 @@
         return {
             tableApiUrl: API_CONTRACTS,
             user: auth.user,
+            statusList: [
+                'В обработке',
+                'Есть бумажный договор',
+                'Нет бумажного договора',
+                'Договор расторгнут'
+            ],
+            contractForTO: {},
+            contractForTOIndex: -1,
+            operationForTO: ""
         }
+    },
+    watch: {
+        "editedItem.contract_start_datetime": function(value) {
+            this.editedItem.contract_start_datetime = value ?
+                this.$moment(value).format('YYYY-MM-DD') :
+                ''
+        },
     },
     mounted() {
         this.editedItem = initialEditedItem()
-    },
-    watch: {
     },
     methods: {
         makeToast(variant = null) {
@@ -171,6 +211,24 @@
             }
             return false
         },
+        openContractTOCreateModal(index) {
+            let id = this.items.data[index].id
+            api.call("get", `${this.tableApiUrl}/${id}`).then(({data}) => {
+                this.contractForTO = data
+                this.contractForTOIndex = index
+                // If this element exist in table lets update
+                if (typeof this.items !== 'undefined' && this.items.data[index]) {
+                    this.items.data[index] = Object.assign(this.items.data[index], data)
+                }
+            }).finally(() => {
+                this.operationForTO = "create"
+            })
+        },
+        clearTOData() {
+            this.contractForTO = initialEditedItem()
+            this.contractForTOIndex = -1
+            this.operationForTO = ''
+        }
     }
   }
 

@@ -2,7 +2,11 @@
     <div>
         <b-row>
             <b-col>
-                <h5>Карточка обращение #{{detailedItem.id}} </h5>
+                <h5>
+                    <span class="mr-2">Карточка обращение #{{detailedItem.id}}</span>
+                    <b-badge variant="success" class="always-small-badge" v-if="debtInRubles() <= 0 && detailedItem.sum != 0"><i class="fas fa-check"></i> Оплачено</b-badge>
+                    <b-badge variant="secondary" class="always-small-badge" v-else>Ожидает оплаты</b-badge>
+                </h5>
             </b-col>
             <template v-if="detailedItemIndex != -1">
                 <b-col class="text-right">

@@ -1,20 +1,9 @@
 const state = {
     filterSettings: {
-        companyTable: localStorage.getItem('filterSettings.companyTable') || 1,
-        orderTable: localStorage.getItem('filterSettings.orderTable') || '3,0',
-        orderServiceTable: localStorage.getItem('filterSettings.orderServiceTable') || 1,
-        financeTable: localStorage.getItem('filterSettings.financeTable') || 2,
-        financeRequestsTable: localStorage.getItem('filterSettings.financeRequestsTable') || 4
+        contractTable: localStorage.getItem('filterSettings.contractTable') || 1,
     },
     tableHeaderSettings: {
-        companyTable: JSON.parse(localStorage.getItem('tableHeaderSettings.companyTable')) || {},
-        orderTable: JSON.parse(localStorage.getItem('tableHeaderSettings.orderTable')) || {},
-        financeTable: JSON.parse(localStorage.getItem('tableHeaderSettings.financeTable')) || {},
-        financeRequestsTable: JSON.parse(localStorage.getItem('tableHeaderSettings.financeRequestsTable')) || {},
-        orderServiceTable_22: JSON.parse(localStorage.getItem('tableHeaderSettings.orderServiceTable_22')) || {},
-        orderServiceTable_23: JSON.parse(localStorage.getItem('tableHeaderSettings.orderServiceTable_23')) || {},
-        orderServiceTable_24: JSON.parse(localStorage.getItem('tableHeaderSettings.orderServiceTable_24')) || {},
-        orderServiceTable_25: JSON.parse(localStorage.getItem('tableHeaderSettings.orderServiceTable_25')) || {},
+        contractTable: JSON.parse(localStorage.getItem('tableHeaderSettings.contractTable')) || {},
     }
 }
 const mutations = {

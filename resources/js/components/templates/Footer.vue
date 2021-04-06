@@ -5,7 +5,7 @@
 
 <style scoped>
 #app-footer {
-	background-color: #0D6247;
+	background-color: #52ae34;
 }
 .footer-info {
 	letter-spacing: 0.03em;

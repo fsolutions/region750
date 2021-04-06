@@ -40,6 +40,7 @@ class DropIndex extends Command
     {
         $models = [
             'Contract',
+            'ContractTO',
             'Order',
             'User',
             'Ticket'

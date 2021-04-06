@@ -249,17 +249,17 @@
     background-color: #e06100;
 }
 
-.table_distribute-services {
-    background-color: #0D6247;
+.table_create_to {
+    background-color: #52ae34;
 }
 
-.table_distribute-services:hover {
+.table_create_to:hover {
     background-color: #09402f;
 }
 
 .table_actions_supply,
 .table_actions_create_order,
-.table_distribute-services {
+.table_create_to {
     text-transform: uppercase !important;
     font-size: 12px;
     position: relative;
@@ -291,7 +291,7 @@
     top: 3px;
 }
 
-.table_distribute-services-title {
+.table_create_to-title {
     position: absolute;
     left: 5px;
     top: 3px;

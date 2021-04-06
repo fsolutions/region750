@@ -19,7 +19,7 @@ class CreateContractsTable extends Migration
             $table->foreignId('creator_user_id')->nullable()->comment('Кто завел?')->constrained('users');
             $table->string('contract_number')->nullable()->comment('Номер договора');
             $table->string('contract_address')->nullable()->comment('Адрес');
-            $table->enum('status', ['В обработке', 'Есть бумажный договор', 'Нет бумажного договора', 'Договор расторгнут'])->nullable()->comment('Статус договора');
+            $table->enum('status', ['В обработке', 'Есть бумажный договор', 'Нет бумажного договора', 'Договор расторгнут'])->default('В обработке')->nullable()->comment('Статус договора');
             $table->timestamp('contract_start_datetime', 0)->nullable()->comment('Дата заключения договора');
             $table->text('contract_comment')->nullable()->comment('Комментарий');
             $table->timestamps();

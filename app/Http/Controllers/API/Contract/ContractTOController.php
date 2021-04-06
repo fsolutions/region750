@@ -4,21 +4,21 @@ namespace App\Http\Controllers\API\Contract;
 
 use App\Models\User;
 use App\Models\Contract;
+use App\Models\ContractTO;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\CrudController;
 use App\Notifications\NotificationsUsers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
 
-class ContractController extends CrudController
+class ContractTOController extends CrudController
 {
     /**
-     * ContractController constructor.
+     * ContractTOController constructor.
      *
      * @param $model
      */
-    public function __construct(Contract $model)
+    public function __construct(ContractTO $model)
     {
         parent::__construct($model);
     }
@@ -30,50 +30,7 @@ class ContractController extends CrudController
      */
     public function index()
     {
-        $status = empty(request('status')) ? '' : (string) trim(request('status'));
-
-        foreach ($this->user->roles as $role) {
-            switch ($role->slug) {
-                case 'client':
-                    $this->model = $this->model->whereIn('contract_on_user_id', [$this->user->id]);
-                    break;
-            }
-        }
-
-        $this->filteringByContractStatus($status);
-
         return parent::index();
-    }
-
-    /**
-     * Filtering contracts by status
-     * @TODO: REFACTOR
-     *
-     * @param string $status
-     */
-    public function filteringByContractStatus($status = '')
-    {
-        if ($status != '') {
-            $contracts = DB::select(
-                'SELECT DISTINCT
-                        id
-                    FROM
-                        contracts
-                    WHERE 
-                        status = :status
-                    AND
-                        deleted_at IS NULL',
-                ['status' => $status]
-            );
-
-            $finishedContractList = [];
-
-            foreach ($contracts as $contract) {
-                $finishedContractList[] = $contract->id;
-            }
-
-            $this->model = $this->model->whereIn('id', $finishedContractList);
-        }
     }
 
     /**
@@ -96,7 +53,7 @@ class ContractController extends CrudController
 
         $this->model = parent::store($request);
 
-        // $this->sendNotificationAdmin($this->model->id);
+        $this->sendNotificationClient($this->model->to_contract_id);
 
         return $this->model;
     }
@@ -109,8 +66,6 @@ class ContractController extends CrudController
      */
     public function show($id)
     {
-        $this->checkAllowUser($id);
-
         return parent::show($id);
     }
 
@@ -123,8 +78,6 @@ class ContractController extends CrudController
      */
     public function update(Request $request, $id)
     {
-        $this->checkAllowUser($id);
-
         $this->model = $this->model::findOrFail($id);
 
         $this->formData = $request->all();
@@ -135,7 +88,11 @@ class ContractController extends CrudController
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        return parent::update($request, $id);
+        $this->model = parent::update($request, $id);
+
+        $this->sendNotificationClient($this->model->to_contract_id, true);
+
+        return $this->model;
     }
 
     /**
@@ -160,12 +117,6 @@ class ContractController extends CrudController
      */
     private function prepareFormData()
     {
-        if (!isset($this->formData['creator_user_id'])) {
-            $this->formData['creator_user_id'] = $this->user->id;
-        }
-        if (!isset($this->formData['contract_on_user_id'])) {
-            $this->formData['contract_on_user_id'] = $this->user->id;
-        }
     }
 
     /**
@@ -204,12 +155,6 @@ class ContractController extends CrudController
             return true;
         }
 
-        $result = $this->model::where('creator_user_id', $this->user->id)->where('id', $contract_id);
-
-        if ($result->count()) {
-            return true;
-        }
-
         return abort('404');
     }
 
@@ -218,17 +163,21 @@ class ContractController extends CrudController
      *
      * @param int $contract_id
      */
-    private function sendNotificationAdmin(int $contract_id)
+    private function sendNotificationClient(int $contract_id, $update = false)
     {
-        $users = User::whereHas('roles', function ($query) {
-            $query->where('slug', 'manager');
-        })->get();
+        $contract = Contract::find($contract_id);
+        $users = User::where('id', $contract->contract_on_user_id)->get();
 
         $parameters = [
-            'contract_id' => $contract_id,
-            'place' => ['bell']
+            'place' => ['bell'],
+            'link' => "/contracts",
+            'linkText' => 'Открыть договор'
         ];
 
-        Notification::locale('ru')->send($users, new NotificationsUsers("Новый контракт добавлен в систему №$contract_id.", $parameters));
+        if ($update) {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Изменения в назначенном ТО по договору №$contract_id.", $parameters));
+        } else {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Назначена дата проведения ТО по договору №$contract_id.", $parameters));
+        }
     }
 }

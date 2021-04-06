@@ -32,3 +32,4 @@ export const API_LOG_HISTORY = '/api/logs'
 export const API_DOCUMENTS = '/api/documents'
 
 export const API_CONTRACTS = '/api/contracts'
+export const API_CONTRACTS_TO = '/api/contracts-to'
