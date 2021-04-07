@@ -2,7 +2,7 @@
     <div>
         <div :class="$mq == 'sm' ? 'row justify-content-between mb-3' : 'row justify-content-between text-nowrap'">
             <template v-if="$mq != 'sm'">
-                <div class="col-md-6 col-6">
+                <div class="col-md-6 col-6" v-if="typeOfTableFilter">
                     <contract-table-filter
                         v-if="typeOfTableFilter == 'contracts'"
                         :api="api"
@@ -15,7 +15,7 @@
                     <span class="button-filter-table" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="fas fa-sort-down filter-table-icon"></i></span>
                 </div>
             </template>
-            <div :class="$mq == 'sm' ? 'col text-right' : 'col-md-5 text-right'">
+            <div :class="$mq == 'sm' ? 'col text-right' : (typeOfTableFilter!='' ? 'col-md-5 text-right':'col text-right')">
                 <template v-if="$mq != 'sm'">
                     <template v-if="isNeedSearch">
                         <i class="fas fa-search float-left"></i>
@@ -104,15 +104,15 @@
             <template #cell(invoice_datetime)="data">
                 {{ data.value | formattedDate }}
             </template>
-            <template #cell(realization_datetime)="data">
-                {{ data.value | formattedDate }}
+            <template #cell(to_start_datetime)="data">
+                {{ data.value | formattedDateTime }}
             </template>
             <template #cell(contract_start_datetime)="data">
                 {{ data.value | formattedDate }}
             </template>
             <template #cell(contract_to_last)="data">
                 <template v-if="data.value[0]">
-                    {{ data.value[0].to_start_datetime | formattedDateTime }}
+                    <span :class="checkDaysForNextTO(data.value) < 0 ? 'text-danger':'text-success'">{{ data.value[0].to_start_datetime | formattedDateTime }}</span>
                 </template>
                 <template v-else>
                     {{ "—" }}
@@ -370,6 +370,16 @@
             setNewHeaders(headers) {
                 this.itemsLocal.headers = headers
                 this.restoreHeader = false
+            },
+            checkDaysForNextTO(item) {
+                if (item.length > 0) {
+                    var now = this.$moment(new Date())
+                    var end = this.$moment(item[0].to_start_datetime)
+                    var duration = this.$moment.duration(end.diff(now))
+                    return Math.round(duration.asDays())
+                }
+
+                return -1 
             },
         }
     }

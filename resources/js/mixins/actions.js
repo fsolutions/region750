@@ -174,7 +174,7 @@ export const actionShowItem = {
             detailedItem: {
                 creator: {},
                 type: {},
-                sales_manager: {},
+                contract_on_user: {},
                 source: {},
                 company: {},
                 company_employee: {},
@@ -211,6 +211,26 @@ export const actionShowItem = {
                 if (tabSelector != '') {
                     // $(tabSelector).tab('show')
                     $(tabSelector)[0].click()
+                }
+            })
+        },
+    }
+}
+
+// Action обновления элемента по индексу
+// Необходимо наличие v-model="isSidebarOpenDetail" ; this.tableApiUrl
+export const actionRefreshItemByIndex = {
+    data() {
+        return {
+        }
+    },
+    methods: {
+        refreshItemByIndex(index) {
+            let id = this.items.data[index].id
+            api.call("get", `${this.tableApiUrl}/${id}`).then(({data}) => {
+                // If this element exist in table lets update
+                if (typeof this.items !== 'undefined' && this.items.data[index]) {
+                    this.items.data[index] = Object.assign(this.items.data[index], data)
                 }
             })
         },

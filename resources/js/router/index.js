@@ -11,6 +11,7 @@ import Profile from '../views/Profile.vue'
 import Contract from '../views/Contract.vue'
 import Prescriptions from '../views/Prescriptions.vue'
 import History from '../views/History.vue'
+import Calendar from '../views/Calendar.vue'
 
 let routes = [
         {
@@ -80,6 +81,12 @@ let routes = [
             name: 'history',
             component: History,
             meta: { title: 'История', middlewareAuth: true }
+        },
+        {
+            path: '/calendar',
+            name: 'calendar',
+            component: Calendar,
+            meta: { title: 'Календарь', middlewareAuth: true }
         },
         // {
         //     path: '/contracts/:order_id',

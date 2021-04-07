@@ -2,7 +2,7 @@
     <div class="row justify-content-between header-block mb-4">
         <div class="col header-logo">
             <template v-if="$mq != 'sm'">
-                <img :src="'/img/header-logo-mid.png'" class="ml-3">
+                <img :src="'/img/header-logo-mid.png'" class="ml-2">
                 <a href="tel:+79153788117" class="head-phone-link ml-3">+7 (915) 378-81-17</a>
             </template>
             <template v-else>

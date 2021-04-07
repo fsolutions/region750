@@ -20,6 +20,8 @@ class CreateContractsToTable extends Migration
             $table->timestamp('to_start_datetime', 0)->nullable()->comment('Дата запланированного ТО');
             $table->text('to_comment')->nullable()->comment('Комментарий');
             $table->enum('to_status', ['Запланировано', 'Проведено', 'Отменено', 'Перенесено'])->nullable()->comment('Статус ТО');
+            $table->timestamp('to_sms_sended', 0)->nullable()->comment('Дата отправки последнего информационного сообщения по SMS');
+            $table->timestamp('to_email_sended', 0)->nullable()->comment('Дата отправки последнего информационного сообщения по Email');
             $table->timestamps();
             $table->softDeletes();
         });

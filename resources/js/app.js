@@ -73,10 +73,6 @@ Vue.component('multiselect', Multiselect)
 Vue.component('select-of-properties', require('./components/references/SelectOfPropertiesByReference.vue').default)
 Vue.component('select-user', require('./components/references/SelectOfUsersByRole.vue').default)
 
-// Documents
-Vue.component('create-documents', require('./components/documents/CreateDocuments.vue').default)
-Vue.component('show-edit-documents', require('./components/documents/ShowOrEditDocuments.vue').default)
-
 // ContextMenus
 Vue.component('context-menu-headers', require('./components/contextmenu/ContextMenuHeaders.vue').default)
 

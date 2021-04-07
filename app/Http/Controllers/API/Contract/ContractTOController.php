@@ -30,7 +30,23 @@ class ContractTOController extends CrudController
      */
     public function index()
     {
+        $contract_id = empty(request('contract_id')) ? '' : (int) request('contract_id');
+
+        $this->filteringByContractId($contract_id);
+
         return parent::index();
+    }
+
+    /**
+     * Filtering by contract id
+     *
+     * @param string $contract_id
+     */
+    public function filteringByContractId($contract_id = '')
+    {
+        if ($contract_id != '') {
+            $this->model = $this->model->where('to_contract_id', $contract_id);
+        }
     }
 
     /**

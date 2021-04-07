@@ -229,6 +229,6 @@ class ContractController extends CrudController
             'place' => ['bell']
         ];
 
-        Notification::locale('ru')->send($users, new NotificationsUsers("Новый контракт добавлен в систему №$contract_id.", $parameters));
+        Notification::locale('ru')->send($users, new NotificationsUsers("Новый договор добавлен в систему №$contract_id.", $parameters));
     }
 }

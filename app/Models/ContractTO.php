@@ -104,6 +104,8 @@ class ContractTO extends Model
         'to_start_datetime',
         'to_comment',
         'to_status',
+        'to_sms_sended',
+        'to_email_sended'
     ];
 
     /**
@@ -144,16 +146,16 @@ class ContractTO extends Model
     protected $actionAllows = [
         'administrator' => [
             'create',
-            'show',
+            // 'show',
             'edit',
             'delete'
         ],
         'client' => [
-            'show'
+            // 'show'
         ],
         'all_roles' => [
             'create',
-            'show',
+            // 'show',
             'edit'
         ],
     ];

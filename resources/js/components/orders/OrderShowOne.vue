@@ -48,7 +48,7 @@
                         ></order-details>
                     </div>
                     <div class="tab-pane fade" id="order-documents">
-                        <h5>Документы по обращениеу #{{detailedItem.id}}</h5>
+                        <h5>Документы по обращению #{{detailedItem.id}}</h5>
                         <show-edit-documents
                             :orderId="detailedItem.id"
                             :companyId="detailedItem.company_id"
@@ -61,7 +61,7 @@
                         />
                     </div>
                     <div class="tab-pane fade" id="order-change-history">
-                        <h5>История изменений по обращениеу #{{detailedItem.id}}</h5>
+                        <h5>История изменений по обращению #{{detailedItem.id}}</h5>
                         <change-history
                             :changeHistoryId.sync="detailedItem.id"
                             :changeLoadOrder.sync="changeLoadOrder"

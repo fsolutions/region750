@@ -28,19 +28,29 @@ class UserController extends CrudController
      */
     public function index()
     {
-        if (!empty(request('roles'))) {
-            $roles = explode("||", request('roles'));
+        $roles = empty(request('roles')) ? '' : trim(request('roles'));
 
-            $this->model = User::whereHas('roles', function ($q) use ($roles) {
+        $this->filteringByRoles($roles);
+
+        return parent::index();
+    }
+
+    /**
+     * Filtering by roles
+     *
+     * @param string $roles
+     */
+    public function filteringByRoles($roles = '')
+    {
+        if ($roles != '') {
+            $userIds = [];
+            $roles = explode("||", $roles);
+            $userIds = User::whereHas('roles', function ($q) use ($roles) {
                 $q->whereIn('slug', $roles);
-            })->get(['id', 'name', 'phone']);
+            })->get(['id'])->pluck('id')->toArray();
 
-            return $this->model;
+            $this->model = $this->model->whereIn('id', $userIds);
         }
-
-        $result = parent::index();
-
-        return $result;
     }
 
     /**

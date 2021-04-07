@@ -61,12 +61,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('logs', [LogController::class, 'index']);
 
     /**
-     * Orders
-     */
-    Route::get('orders/copy/{order_id}', [OrderController::class, 'orderCopy']);
-    Route::apiResource('orders', OrderController::class);
-
-    /**
      * Notifications
      */
     Route::get('notifications', [NotificationController::class, 'index']);
@@ -93,13 +87,13 @@ Route::middleware('auth:api')->group(function () {
     /**
      * ApiResource
      */
-    Route::apiResource('documents', DocumentController::class);
     Route::apiResource('references/properties', ReferencePropertyController::class);
     Route::apiResource('references', ReferenceController::class);
     Route::apiResource('users', UserController::class);
-    Route::apiResource('tickets', TicketController::class);
     Route::apiResource('contracts', ContractController::class);
     Route::apiResource('contracts-to', ContractTOController::class);
+    Route::apiResource('orders', OrderController::class);
+    Route::apiResource('prescriptions', PrescriptionController::class);
 
     /**
      * Other routes

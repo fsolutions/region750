@@ -42,8 +42,7 @@ class ElasticSearchCreate extends Command
             'Contract',
             'ContractTO',
             'Order',
-            'User',
-            'Ticket'
+            'User'
         ];
 
         $bar = $this->output->createProgressBar(count($models));

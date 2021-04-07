@@ -21,6 +21,14 @@
                         <li class="list-group-item list-group-name pl-0"><span class="menu-item-name">Договоры</span></li>
                     </ul>
                 </router-link>
+                <router-link to="/calendar" class="menu-item-link" v-if="canSeeUsers()">
+                    <ul class="list-group list-group-horizontal menu-item">
+                        <li class="list-group-item pr-1">
+                            <div class="menu-icon-block"><span class="menu-icon-child-company"><i class="fas fa-calendar"></i></span></div>
+                        </li>
+                        <li class="list-group-item list-group-name pl-0"><span class="menu-item-name">Календарь</span></li>
+                    </ul>
+                </router-link>
                 <router-link to="/orders" class="menu-item-link">
                     <ul class="list-group list-group-horizontal menu-item">
                         <li class="list-group-item pr-1">

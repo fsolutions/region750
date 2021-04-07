@@ -6,10 +6,10 @@ use ScoutElastic\Searchable;
 use App\Traits\ModelGettersTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Bundles\Elasticsearch\TicketIndexConfigurator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Bundles\Elasticsearch\PrescriptionIndexConfigurator;
 
-class Ticket extends Model
+class Prescription extends Model
 {
     use HasFactory, SoftDeletes, ModelGettersTrait, Searchable;
 
@@ -18,7 +18,7 @@ class Ticket extends Model
      *
      * @var string
      */
-    protected $indexConfigurator = TicketIndexConfigurator::class;
+    protected $indexConfigurator = PrescriptionIndexConfigurator::class;
 
     /**
      * Mapping
@@ -32,7 +32,7 @@ class Ticket extends Model
             'id' => [
                 "type" => "long"
             ],
-            'creator' => [
+            'prescription_contract' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -40,7 +40,7 @@ class Ticket extends Model
                     ]
                 ]
             ],
-            'type' => [
+            'master' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -48,7 +48,19 @@ class Ticket extends Model
                     ]
                 ]
             ],
-            'description' => [
+            'prescription_start_datetime' => [
+                "type" => "date",
+                "format" => "dd.MM.yyyy HH:mm"
+            ],
+            'prescription_comment' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
+            'prescription_status' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -65,10 +77,10 @@ class Ticket extends Model
             'id_search' => [
                 "type" => "keyword"
             ],
-            'creator_user_id' => [
+            'prescription_master_user_id' => [
                 "type" => "long"
             ],
-            'reference_type_ticket_id' => [
+            'prescription_contract_id' => [
                 "type" => "long"
             ]
         ]
@@ -79,7 +91,7 @@ class Ticket extends Model
      *
      * @var string
      */
-    protected $table = 'tickets';
+    protected $table = 'prescriptions';
 
     /**
      *  Attributes models.
@@ -87,9 +99,11 @@ class Ticket extends Model
      * @var array
      */
     protected $fillable = [
-        'creator_user_id',
-        'reference_type_ticket_id',
-        'description'
+        'prescription_contract_id',
+        'prescription_master_user_id',
+        'prescription_start_datetime',
+        'prescription_comment',
+        'prescription_status'
     ];
 
     /**
@@ -111,16 +125,13 @@ class Ticket extends Model
     protected $loads = [
         'index' => [
             'all_roles' => [
-                'screenshots',
-                'creator',
-                'type'
+                'master',
+                'prescription_contract'
             ]
         ],
         'other_actions' => [
             'all_roles' => [
-                'screenshots',
-                'creator',
-                'type'
+                'master'
             ]
         ]
     ];
@@ -131,12 +142,20 @@ class Ticket extends Model
      * @var array
      */
     protected $actionAllows = [
-        'all_roles' => [
+        'administrator' => [
             'create',
             'show',
             'edit',
             'delete'
-        ]
+        ],
+        'client' => [
+            'show'
+        ],
+        'all_roles' => [
+            'create',
+            'show',
+            'edit'
+        ],
     ];
 
     /**
@@ -145,7 +164,7 @@ class Ticket extends Model
      * @var array
      */
     protected $sort = [
-        'sortBy' => 'id',
+        'sortBy' => 'prescription_start_datetime',
         'sortDirection' => 'desc'
     ];
 
@@ -157,7 +176,7 @@ class Ticket extends Model
     protected $tableHeaders = [
         [
             'key' => 'id',
-            'label' => 'Номер',
+            'label' => 'ID',
             'sortBy' => 'id',
             'stickyColumn' => true,
             'sortable' => true,
@@ -165,26 +184,42 @@ class Ticket extends Model
             'visible' => true
         ],
         [
-            'key' => 'creator.name',
-            'sortBy' => 'creator.keyword',
-            'label' => 'Пользователь',
+            'key' => 'prescription_contract.contract_number',
+            'sortBy' => 'prescription_contract.keyword',
+            'label' => 'Номер договора',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
         ],
         [
-            'key' => 'type_ticket.name',
-            'sortBy' => 'type.keyword',
-            'label' => 'Пользователь',
+            'key' => 'master.name',
+            'sortBy' => 'master.keyword',
+            'label' => 'Мастер на ТО',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
         ],
         [
-            'key' => 'description',
-            'sortBy' => 'description.keyword',
-            'label' => 'Описание',
-            'stickyColumn' => true,
+            'key' => 'prescription_comment',
+            'sortBy' => 'prescription_comment',
+            'label' => 'Комментарий',
+            'stickyColumn' => false,
+            'sortable' => false,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'prescription_start_datetime',
+            'sortBy' => 'prescription_start_datetime',
+            'label' => 'Дата ТО',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'prescription_status',
+            'sortBy' => 'prescription_status',
+            'label' => 'Статус',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -192,46 +227,42 @@ class Ticket extends Model
         [
             'key' => 'created_at',
             'sortBy' => 'created_at',
-            'label' => 'Дата',
+            'label' => 'Дата добавления',
             'stickyColumn' => true,
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
+        ],
+        [
+            'key' => 'actions',
+            'label' => 'Действия',
+            'stickyColumn' => true,
+            'visible' => true
         ]
     ];
-
-    /**
-     * Documents table relationships One To Many.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function screenshots()
-    {
-        return $this->hasMany(Document::class, 'ticket_id', 'id')
-            ->select(['id', 'name', 'ticket_id', 'path', 'folder']);
-    }
 
     /**
      * Users table relationships One To One.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function creator()
+    public function master()
     {
-        return $this->hasOne(User::class, 'id', 'creator_user_id')
-            ->select(['id', 'name', 'email']);
+        return $this->hasOne(User::class, 'id', 'prescription_master_user_id')
+            ->select(['id', 'name', 'email', 'phone']);
     }
 
     /**
-     * Reference_properties table relationships One To One.
+     * Contract table relationships One To One.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function type()
+    public function prescription_contract()
     {
-        return $this->hasOne(ReferenceProperty::class, 'id', 'reference_type_ticket_id')
-            ->select(['id', 'name']);
+        return $this->hasOne(Contract::class, 'id', 'prescription_contract_id')
+            ->select(['id', 'contract_number', 'contract_address']);
     }
+
 
     /**
      * Get the indexable data array for the model.
@@ -246,16 +277,18 @@ class Ticket extends Model
 
         $tableFields = [
             'id' => $this->id,
-            'creator' => isset($this->creator->name) ? $this->creator->name : '',
-            'type' => isset($this->type->name) ? $this->type->name : '',
-            'description' => isset($this->description) ? $this->description : '',
+            'master' => isset($this->master->name) ? $this->master->name : '',
+            'prescription_contract' => isset($this->prescription_contract->contract_number) ? $this->prescription_contract->contract_number : '',
+            'prescription_status' => isset($this->prescription_status) ? $this->prescription_status : '',
+            'prescription_comment' => isset($this->prescription_comment) ? $this->prescription_comment : '',
+            'prescription_start_datetime' => isset($this->prescription_start_datetime) ? date('d.m.Y H:i', strtotime($this->prescription_start_datetime)) : '01.01.1900 00:00',
             'created_at' => isset($this->created_at) ? date('d.m.Y H:i', strtotime($this->created_at)) : '01.01.1900 00:00'
         ];
 
         $otherFields = [
             'id_search' => '$id' . $this->id,
-            'creator_user_id' => isset($creator_user_id) ? $creator_user_id : null,
-            'reference_type_ticket_id' => isset($reference_type_ticket_id) ? $reference_type_ticket_id : null,
+            'prescription_master_user_id' => isset($this->prescription_master_user_id) ? $this->prescription_master_user_id : null,
+            'prescription_contract_id' => isset($this->prescription_contract_id) ? $this->prescription_contract_id : null,
         ];
 
         return $tableFields + $otherFields;

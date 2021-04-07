@@ -119,7 +119,7 @@
                     </div>
                 </div>
                 <div class="document_view_order" v-if="editIndex > -1">
-                    <h5 v-if="editedItem.documents.length > 0">Документы по обращениеу</h5>
+                    <h5 v-if="editedItem.documents.length > 0">Документы по обращению</h5>
                     <show-edit-documents
                         :orderId="editedItem.id"
                         :requestDocuments="requestDocuments"

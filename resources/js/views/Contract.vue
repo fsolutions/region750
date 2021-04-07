@@ -88,19 +88,22 @@
             </div>
         </b-sidebar>
         <b-sidebar
+            v-if="isSidebarOpenDetail"
             v-model="isSidebarOpenDetail"
             id="sidebar-right"
             title="Детальная информация"
             right
             backdrop
             shadow
-            width="35em"
+            width="79em"
             backdrop-variant="dark"
-            ref="showItem"
+            no-close-on-backdrop
         >
-            <div class="d-block">
-                <pre>{{detailedItem}}</pre>
-            </div>
+            <contract-show-one
+                :detailedItemIndex="detailedItemIndex"
+                :detailedItem="detailedItem"
+                @updateParentData="updateParentData"
+            ></contract-show-one>
         </b-sidebar>
         <contract-to-create-edit
             v-if="operationForTO"
@@ -117,12 +120,14 @@
 
     import ContractCards from "../components/contracts/Cards"
     import ContractTOCreateOrEdit from "../components/contracts/ContractTOCreateOrEdit"
+    import ContractShowOne from "../components/contracts/ContractShowOne"
 
     import {
         defaultDataItems,
         actionShowItem,
         actionCreateOrUpdateItem,
         actionDeleteItem,
+        actionRefreshItemByIndex
     } from '../mixins'
 
     const initialEditedItem = () => ({
@@ -139,13 +144,15 @@
     export default {
     components: {
         "contract-cards": ContractCards,
-        "contract-to-create-edit": ContractTOCreateOrEdit
+        "contract-to-create-edit": ContractTOCreateOrEdit,
+        "contract-show-one": ContractShowOne
     },
     mixins: [
         defaultDataItems,
         actionShowItem,
         actionCreateOrUpdateItem,
         actionDeleteItem,
+        actionRefreshItemByIndex
     ],
     data() {
         return {
@@ -225,9 +232,13 @@
             })
         },
         clearTOData() {
+            this.refreshItemByIndex(this.contractForTOIndex)
             this.contractForTO = initialEditedItem()
             this.contractForTOIndex = -1
             this.operationForTO = ''
+        },
+        updateParentData(index) {
+            this.refreshItemByIndex(index)
         }
     }
   }

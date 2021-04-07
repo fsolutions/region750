@@ -5,19 +5,16 @@ export const API_LOGIN = '/api/login'
 export const API_REGISTRATION = '/api/register'
 export const API_GET_USER = '/api/get-user'
 
-export const API_FINANCE = '/api/contracts'
-
 export const API_USERS = '/api/users'
 export const API_USERS_LISTS = '/api/users/lists'                                               // {list-type} - for-accountants, etc
 
 export const API_ORDERS = '/api/orders'
-export const API_GET_ORDER_COPY = '/api/orders/copy'                                            // {id}
+export const API_PRESCRIPTIONS = '/api/prescriptions'
 
 export const API_REFERENCE = '/api/references'                                                  // can take reference_id as reference_parent_id
 export const API_REFERENCE_PROPERTIES = '/api/references/properties'                            // can take reference_id
 
 export const API_DADATA_COMPANY = '/api/dadata/company'
-export const API_COMPANY = '/api/companies'
 
 export const API_GET_NOTIFICATIONS_ALL = '/api/notifications'
 export const API_GET_NOTIFICATIONS_UNREAD = '/api/notifications/unread'
@@ -28,8 +25,6 @@ export const API_DELETE_NOTIFICATION = '/api/notifications/delete'              
 export const API_POST_NOTIFICATION_ALL = '/api/notifications/delete-all'
 
 export const API_LOG_HISTORY = '/api/logs'
-
-export const API_DOCUMENTS = '/api/documents'
 
 export const API_CONTRACTS = '/api/contracts'
 export const API_CONTRACTS_TO = '/api/contracts-to'

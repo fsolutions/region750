@@ -329,7 +329,7 @@ class Contract extends Model
      */
     public function contract_to()
     {
-        return $this->hasMany(ContractTO::class, 'to_contract_id', 'id')->with(['master']);
+        return $this->hasMany(ContractTO::class, 'to_contract_id', 'id')->orderBy('to_start_datetime', 'desc')->with(['master']);
     }
 
     /**
@@ -339,7 +339,8 @@ class Contract extends Model
      */
     public function contract_to_last()
     {
-        return $this->hasMany(ContractTO::class, 'to_contract_id', 'id')->take(1);
+        return $this->hasMany(ContractTO::class, 'to_contract_id', 'id')->orderBy('to_start_datetime', 'desc');
+        //->take(1); ---> why it not works?????
     }
 
     /**

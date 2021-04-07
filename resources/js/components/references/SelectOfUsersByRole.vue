@@ -81,7 +81,7 @@
         methods: {
             getDataHandler: async function() {
                 const response = await api.call('get', API_USERS + `?s=${this.search}&roles=${this.roles}`)
-                this.options = response.data
+                this.options = response.data.data
                 this.prepareSelectedLocal()
                 this.loading = false
             },
