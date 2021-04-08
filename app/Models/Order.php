@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Contract;
+use App\Models\Prescription;
 use ScoutElastic\Searchable;
 use App\Traits\ModelGettersTrait;
 use Illuminate\Database\Eloquent\Model;
@@ -41,14 +42,14 @@ class Order extends Model
                     ]
                 ]
             ],
-            // 'order_prescription' => [
-            //     "type" =>  "text",
-            //     "fields" => [
-            //         "keyword" => [
-            //             "type" => "keyword"
-            //         ]
-            //     ]
-            // ],
+            'order_prescription' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
             'master' => [
                 "type" =>  "text",
                 "fields" => [
@@ -138,13 +139,16 @@ class Order extends Model
     protected $loads = [
         'index' => [
             'all_roles' => [
-                'master',
-                'order_contract'
+                'master:id,name',
+                'order_contract:id,contract_number,contract_address',
+                'order_prescription:id,prescription_number'
             ]
         ],
         'other_actions' => [
             'all_roles' => [
-                'master'
+                'master',
+                'order_contract',
+                'order_prescription'
             ]
         ]
     ];
@@ -177,7 +181,7 @@ class Order extends Model
      * @var array
      */
     protected $sort = [
-        'sortBy' => 'order_start_datetime',
+        'sortBy' => 'id',
         'sortDirection' => 'desc'
     ];
 
@@ -189,7 +193,7 @@ class Order extends Model
     protected $tableHeaders = [
         [
             'key' => 'id',
-            'label' => 'ID',
+            'label' => 'Номер обращения',
             'sortBy' => 'id',
             'stickyColumn' => true,
             'sortable' => true,
@@ -205,9 +209,17 @@ class Order extends Model
             'visible' => true
         ],
         [
+            'key' => 'order_prescription.prescription_number',
+            'sortBy' => 'order_prescription.keyword',
+            'label' => 'Номер предписания',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
             'key' => 'master.name',
             'sortBy' => 'master.keyword',
-            'label' => 'Мастер на ТО',
+            'label' => 'Обработал обращение',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -224,7 +236,7 @@ class Order extends Model
         [
             'key' => 'order_start_datetime',
             'sortBy' => 'order_start_datetime',
-            'label' => 'Дата ТО',
+            'label' => 'Дата отработки',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -240,7 +252,7 @@ class Order extends Model
         [
             'key' => 'created_at',
             'sortBy' => 'created_at',
-            'label' => 'Дата добавления',
+            'label' => 'Дата создания',
             'stickyColumn' => true,
             'sortable' => true,
             'sortDirection' => 'desc',
@@ -302,6 +314,7 @@ class Order extends Model
             'id' => $this->id,
             'master' => isset($this->master->name) ? $this->master->name : '',
             'order_contract' => isset($this->order_contract->contract_number) ? $this->order_contract->contract_number : '',
+            'order_prescription' => isset($this->order_prescription->prescription_number) ? $this->order_prescription->prescription_number : '',
             'order_status' => isset($this->order_status) ? $this->order_status : '',
             'order_comment' => isset($this->order_comment) ? $this->order_comment : '',
             'order_start_datetime' => isset($this->order_start_datetime) ? date('d.m.Y H:i', strtotime($this->order_start_datetime)) : '01.01.1900 00:00',

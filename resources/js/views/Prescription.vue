@@ -1,18 +1,18 @@
 <template>
     <div>
-        <orders-table
+        <prescriptions-table
             :key="componentRefreshKey"
             :isNeedCreate="false"
-        ></orders-table>
+        ></prescriptions-table>
     </div>
 </template>
 
 <script>
-    import OrderTable from "../components/orders/OrderTable"
+    import PrescriptionTable from "../components/prescriptions/PrescriptionTable"
 
     export default {
         components: {
-            'orders-table': OrderTable
+            'prescriptions-table': PrescriptionTable
         },
         mixins: [
         ],

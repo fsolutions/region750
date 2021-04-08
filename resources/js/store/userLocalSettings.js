@@ -1,9 +1,13 @@
 const state = {
     filterSettings: {
-        contractTable: localStorage.getItem('filterSettings.contractTable') || 1,
+        contractTable: localStorage.getItem('filterSettings.contractTable') || 0,
+        orderTable: localStorage.getItem('filterSettings.orderTable') || 0,
+        prescriptionTable: localStorage.getItem('filterSettings.prescriptionTable') || 0,
     },
     tableHeaderSettings: {
         contractTable: JSON.parse(localStorage.getItem('tableHeaderSettings.contractTable')) || {},
+        orderTable: JSON.parse(localStorage.getItem('tableHeaderSettings.orderTable')) || {},
+        prescriptionTable: JSON.parse(localStorage.getItem('tableHeaderSettings.prescriptionTable')) || {},
     }
 }
 const mutations = {

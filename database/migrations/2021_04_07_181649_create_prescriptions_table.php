@@ -15,6 +15,7 @@ class CreatePrescriptionsTable extends Migration
     {
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
+            $table->text('prescription_number')->nullable()->comment('Номер предписания');
             $table->foreignId('prescription_contract_id')->comment('Ссылка на договор')->constrained('contracts');
             $table->foreignId('prescription_master_user_id')->nullable()->comment('Мастер, составивший предписание')->constrained('users');
             $table->timestamp('prescription_start_datetime', 0)->nullable()->comment('Дата исполнения предписания');

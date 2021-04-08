@@ -43,7 +43,7 @@ class ScoutImport extends Command
             'ContractTO',
             'Order',
             'User',
-            'Ticket'
+            'Prescription'
         ];
 
         $result = [];

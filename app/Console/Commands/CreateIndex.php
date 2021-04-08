@@ -43,7 +43,8 @@ class CreateIndex extends Command
             'Contract',
             'ContractTO',
             'Order',
-            'User'
+            'User',
+            'Prescription'
         ];
 
         foreach ($models as $model) {

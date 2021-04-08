@@ -190,7 +190,12 @@ export const actionShowItem = {
                 teo_manager: {},
                 to_manager: {},
                 optional_sales_manager: {},
-                finance_substatuses: []
+                finance_substatuses: [],
+                master: {},
+                order_contract: {},
+                order_prescription: {},
+                prescription_contract: {},
+                prescription_order: {}                                
             },
             isSidebarOpenDetail: false,
             detailedItemIndex: -1

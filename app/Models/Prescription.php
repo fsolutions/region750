@@ -32,6 +32,14 @@ class Prescription extends Model
             'id' => [
                 "type" => "long"
             ],
+            'prescription_number' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
             'prescription_contract' => [
                 "type" =>  "text",
                 "fields" => [
@@ -99,6 +107,7 @@ class Prescription extends Model
      * @var array
      */
     protected $fillable = [
+        'prescription_number',
         'prescription_contract_id',
         'prescription_master_user_id',
         'prescription_start_datetime',
@@ -126,12 +135,14 @@ class Prescription extends Model
         'index' => [
             'all_roles' => [
                 'master',
-                'prescription_contract'
+                'prescription_contract',
+                'prescription_order'
             ]
         ],
         'other_actions' => [
             'all_roles' => [
-                'master'
+                'master',
+                'prescription_order'
             ]
         ]
     ];
@@ -194,7 +205,7 @@ class Prescription extends Model
         [
             'key' => 'master.name',
             'sortBy' => 'master.keyword',
-            'label' => 'Мастер на ТО',
+            'label' => 'Мастер на предписание',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -211,7 +222,7 @@ class Prescription extends Model
         [
             'key' => 'prescription_start_datetime',
             'sortBy' => 'prescription_start_datetime',
-            'label' => 'Дата ТО',
+            'label' => 'Дата исполнения',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -263,6 +274,15 @@ class Prescription extends Model
             ->select(['id', 'contract_number', 'contract_address']);
     }
 
+    /**
+     * Order table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function prescription_order()
+    {
+        return $this->hasOne(Order::class, 'order_prescription_id', 'id');
+    }
 
     /**
      * Get the indexable data array for the model.
@@ -277,6 +297,7 @@ class Prescription extends Model
 
         $tableFields = [
             'id' => $this->id,
+            'prescription_number' => $this->prescription_number,
             'master' => isset($this->master->name) ? $this->master->name : '',
             'prescription_contract' => isset($this->prescription_contract->contract_number) ? $this->prescription_contract->contract_number : '',
             'prescription_status' => isset($this->prescription_status) ? $this->prescription_status : '',

@@ -184,7 +184,7 @@
                 </b-form-group>
             </div>
         </div>
-        <context-menu-headers
+        <!-- <context-menu-headers
             v-if="headerContextMenuName != '' && itemsLocal.headers.length > 0"
             :headerContextMenuName="headerContextMenuName"
             :menuName="'table-context-menu'"
@@ -192,7 +192,7 @@
             :event="openedTableHeaderMenuEvent"
             :restoreHeader="restoreHeader"
             @check="setNewHeaders"
-        ></context-menu-headers>
+        ></context-menu-headers> -->
     </div>
 </template>
 

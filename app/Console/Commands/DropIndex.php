@@ -43,7 +43,7 @@ class DropIndex extends Command
             'ContractTO',
             'Order',
             'User',
-            'Ticket'
+            'Prescription'
         ];
 
         foreach ($models as $model) {

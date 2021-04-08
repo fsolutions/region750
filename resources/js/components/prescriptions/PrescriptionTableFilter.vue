@@ -33,11 +33,11 @@
         data() {
             return {
                 greenFilterMenu: [
-                    {title: "Все обращения", active: true},
-                    {title: "В обработке", active: false, status: "В обработке"},
-                    {title: "Запланировано исполнение", active: false, status: "Запланировано исполнение"},
-                    {title: "Исполнено", active: false, status: "Исполнено"},
+                    {title: "Все предписания", active: true},
+                    {title: "Запланировано", active: false, status: "Запланировано"},
+                    {title: "Проведено", active: false, status: "Проведено"},
                     {title: "Отменено", active: false, status: "Отменено"},
+                    {title: "Перенесено", active: false, status: "Перенесено"},
                 ]
             }
         },
@@ -56,7 +56,7 @@
                     if (activeIndex == index) {
                         item.active = true
                         if (item.status) {
-                            additionalParameter = '&order_status=' + item.status
+                            additionalParameter = '&prescription_status=' + item.status
                         }
                         this.$emit('setFilteringApiParameter', additionalParameter)
                     }

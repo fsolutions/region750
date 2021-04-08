@@ -6,10 +6,9 @@ import Registration from '../views/Registration.vue'
 import Dashboard from '../views/Dashboard.vue'
 import User from '../views/User.vue'
 import Order from '../views/Order.vue'
-import OrderPage from '../views/OrderPage.vue'
 import Profile from '../views/Profile.vue'
 import Contract from '../views/Contract.vue'
-import Prescriptions from '../views/Prescriptions.vue'
+import Prescription from '../views/Prescription.vue'
 import History from '../views/History.vue'
 import Calendar from '../views/Calendar.vue'
 
@@ -58,12 +57,12 @@ let routes = [
             component: Order,
             meta: { title: 'Обращения', middlewareAuth: true }
         },
-        {
-            path: '/orders/:order_id',
-            name: 'orderPage',
-            component: OrderPage,
-            meta: { middlewareAuth: true }
-        },
+        // {
+        //     path: '/orders/:order_id',
+        //     name: 'orderPage',
+        //     component: OrderPage,
+        //     meta: { middlewareAuth: true }
+        // },
         {
             path: '/contracts',
             name: 'contracts',
@@ -73,7 +72,7 @@ let routes = [
         {
             path: '/prescriptions',
             name: 'prescriptions',
-            component: Prescriptions,
+            component: Prescription,
             meta: { title: 'Предписания', middlewareAuth: true }
         },
         {
