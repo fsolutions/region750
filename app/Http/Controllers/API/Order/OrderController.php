@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Order;
 
 use App\Models\User;
 use App\Models\Order;
+use App\Models\History;
 use App\Models\Contract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,20 +32,54 @@ class OrderController extends CrudController
      */
     public function index()
     {
+        $order_contract_id = empty(request('contract_id')) ? '' : (int) request('contract_id');
         $order_status = empty(request('order_status')) ? '' : (string) trim(request('order_status'));
+
+        $isClient = false;
 
         foreach ($this->user->roles as $role) {
             switch ($role->slug) {
                 case 'client':
+                    $isClient = true;
                     $userContracts = Contract::whereIn('contract_on_user_id', [$this->user->id])->get(['id'])->pluck('id')->toArray();
-                    $this->model = $this->model->whereIn('order_contract_id', [$userContracts]);
+                    $this->model = $this->model->whereIn('order_contract_id', $userContracts);
                     break;
             }
         }
 
+        $this->filteringByContractId($order_contract_id);
         $this->filteringByOrderStatus($order_status);
 
-        return parent::index();
+        $this->model = parent::index();
+
+        if ($isClient) {
+            $this->prepareHeadersForClient();
+        }
+
+        return $this->model;
+    }
+
+    public function prepareHeadersForClient()
+    {
+        array_pop($this->model['headers']);
+
+        foreach ($this->model['headers'] as $key => $header) {
+            if ($header['key'] === 'order_comment') {
+                array_splice($this->model['headers'], $key, 1);
+            }
+        }
+    }
+
+    /**
+     * Filtering by contract id
+     *
+     * @param string $order_contract_id
+     */
+    public function filteringByContractId($order_contract_id = '')
+    {
+        if ($order_contract_id != '') {
+            $this->model = $this->model->where('order_contract_id', $order_contract_id);
+        }
     }
 
     /**
@@ -98,7 +133,11 @@ class OrderController extends CrudController
 
         $this->model = parent::store($request);
 
-        // $this->sendNotificationAdmin($this->model->id);
+        if ($this->checkUserIsAdmin()) {
+            $this->sendNotificationClient($this->model->order_contract_id);
+        } else {
+            $this->sendNotificationManager($this->model->order_contract_id);
+        }
 
         return $this->model;
     }
@@ -133,7 +172,18 @@ class OrderController extends CrudController
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        return parent::update($request, $id);
+        $this->model->order_start_datetime = $this->formData['order_start_datetime'];
+        $this->model->order_comment_for_user = $this->formData['order_comment_for_user'];
+
+        if ($this->model->isDirty('order_comment_for_user')) {
+            if ($this->checkUserIsAdmin()) {
+                $this->sendNotificationClient($this->model->order_contract_id, 'update');
+            }
+        }
+
+        $this->model = parent::update($request, $id);
+
+        return $this->model;
     }
 
     /**
@@ -146,7 +196,11 @@ class OrderController extends CrudController
     {
         $this->checkAllowUser($id);
 
-        return $this->model::destroy($id);
+        $this->model = Order::find($id);
+
+        $this->sendNotificationClient($this->model->order_contract_id, "delete");
+
+        return Order::destroy($id);
     }
 
     /**
@@ -176,7 +230,12 @@ class OrderController extends CrudController
     private function checkUserIsAdmin()
     {
         foreach ($this->userRoles->toArray() as $role) {
-            if ($role['slug'] === 'administrator') {
+            if (
+                $role['slug'] === 'administrator'
+                || $role['slug'] === 'manager'
+                || $role['slug'] === 'master'
+                || $role['slug'] === 'intern'
+            ) {
                 return true;
             }
         }
@@ -200,21 +259,80 @@ class OrderController extends CrudController
     }
 
     /**
-     * Send notification for admin.
+     * Send notification for manager.
      *
-     * @param int $order_id
+     * @param int $contract_id
+     * @param bool $update
      */
-    private function sendNotificationAdmin(int $order_id)
+    private function sendNotificationManager(int $contract_id, $update = false)
     {
+        $contract = Contract::find($contract_id);
         $users = User::whereHas('roles', function ($query) {
-            $query->where('slug', 'manager');
+            $query->whereIn('slug', ['administrator', 'manager']);
         })->get();
 
         $parameters = [
-            'order_id' => $order_id,
-            'place' => ['bell']
+            'place' => ['bell'],
+            'link' => "/orders",
+            'linkText' => 'Открыть обращения',
+            'order_id' => $this->model->id
         ];
 
-        Notification::locale('ru')->send($users, new NotificationsUsers("Новый договор добавлен в систему №$order_id.", $parameters));
+        if ($update) {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Обновления в обращении по договору №$contract->contract_number.", $parameters));
+        } else {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Зарегистрировано новое обращение по договору №$contract->contract_number.", $parameters));
+        }
+    }
+
+    /**
+     * Send notification for client.
+     *
+     * @param int $contract_id
+     * @param bool $update
+     */
+    private function sendNotificationClient(int $contract_id, $operation = '')
+    {
+        $contract = Contract::find($contract_id);
+        $users = User::where('id', $contract->contract_on_user_id)->get();
+
+        $parameters = [
+            'place' => ['bell'],
+            'link' => "/orders",
+            'linkText' => 'Открыть обращения',
+            'order_id' => $this->model->id
+        ];
+
+        if ($operation == 'update') {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Оставлен комментарий в обращении (ID: " . $this->model->id . ") по договору №$contract->contract_number: <em>" . $this->model->order_comment_for_user . "</em>", $parameters));
+
+            History::addNew([
+                'operation_name' => "Оставлен комментарий в обращении (ID: " . $this->model->id . "): «" . $this->model->order_comment_for_user . "»",
+                'model_name' => get_class(new Order()),
+                'model_id' => $this->model->id,
+                'contract_id' => $contract_id,
+                'user_id' => $this->user->id
+            ]);
+        } else if ($operation == 'delete') {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Удалено обращение (ID: " . $this->model->id . ") по договору №$contract->contract_number", $parameters));
+
+            History::addNew([
+                'operation_name' => "Удалено обращение (ID: " . $this->model->id . ")",
+                'model_name' => get_class(new Order()),
+                'model_id' => $this->model->id,
+                'contract_id' => $contract_id,
+                'user_id' => $this->user->id
+            ]);
+        } else {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Зарегистрировано новое обращение по договору №$contract->contract_number.", $parameters));
+
+            History::addNew([
+                'operation_name' => "Зарегистрировано новое обращение (ID: " . $this->model->id . ")",
+                'model_name' => get_class(new Order()),
+                'model_id' => $this->model->id,
+                'contract_id' => $contract_id,
+                'user_id' => $this->user->id
+            ]);
+        }
     }
 }

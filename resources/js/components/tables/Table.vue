@@ -8,6 +8,28 @@
                         :api="api"
                         @setFilteringApiParameter="setFilteringApiParameter"
                     ></contract-table-filter>
+                    <contract-to-table-filter
+                        v-if="typeOfTableFilter == 'contractsTO'"
+                        :api="api"
+                        @setFilteringApiParameter="setFilteringApiParameter"
+                    ></contract-to-table-filter>
+                    <order-table-filter
+                        v-if="typeOfTableFilter == 'orders'"
+                        :api="api"
+                        @setFilteringApiParameter="setFilteringApiParameter"
+                    ></order-table-filter>
+                    <prescription-table-filter
+                        v-if="typeOfTableFilter == 'prescriptions'"
+                        :api="api"
+                        @setFilteringApiParameter="setFilteringApiParameter"
+                    ></prescription-table-filter>
+
+                    <template v-if="$mq != 'sm'">
+                        <template v-if="isNeedSearch">
+                            <i class="fas fa-search float-left"></i>
+                            <input class="form-control input_table_search" type="search" placeholder="Поиск" v-model="filter">
+                        </template>
+                    </template>
                 </div>
             </template>
             <template v-if="$mq == 'sm'">
@@ -16,12 +38,6 @@
                 </div>
             </template>
             <div :class="$mq == 'sm' ? 'col text-right' : (typeOfTableFilter!='' ? 'col-md-5 text-right':'col text-right')">
-                <template v-if="$mq != 'sm'">
-                    <template v-if="isNeedSearch">
-                        <i class="fas fa-search float-left"></i>
-                        <input class="form-control input_table_search" type="search" placeholder="Поиск" v-model="filter">
-                    </template>
-                </template>
                 <template>
                     <button
                         @click="refreshDataInTable()"
@@ -98,10 +114,10 @@
             <template #cell(receive_datetime)="data">
                 {{ data.value | formattedDateTime }}
             </template>
-            <template #cell(processing_end_datetime)="data">
-                {{ data.value | formattedDateTime }}
+            <template #cell(order_start_datetime)="data">
+                {{ data.value | formattedDate }}
             </template>
-            <template #cell(invoice_datetime)="data">
+            <template #cell(prescription_start_datetime)="data">
                 {{ data.value | formattedDate }}
             </template>
             <template #cell(to_start_datetime)="data">
@@ -204,6 +220,9 @@
     } from '../../mixins'
 
     import ContractTableFilter from '../contracts/ContractTableFilter'
+    import ContractTOTableFilter from '../contracts/ContractTOTableFilter'
+    import OrderTableFilter from '../orders/OrderTableFilter'
+    import PrescriptionTableFilter from '../prescriptions/PrescriptionTableFilter'
     import ActionContract from "./actions/actionContract";
     import ActionOrder from "./actions/actionOrder";
     import ActionCustom from "./actions/actionCustom";
@@ -227,6 +246,9 @@
         },
         components: {
             "contract-table-filter": ContractTableFilter,
+            "contract-to-table-filter": ContractTOTableFilter,
+            "order-table-filter": OrderTableFilter,
+            "prescription-table-filter": PrescriptionTableFilter,
             "action-contract": ActionContract,
             "action-order": ActionOrder,
             "action-custom": ActionCustom,

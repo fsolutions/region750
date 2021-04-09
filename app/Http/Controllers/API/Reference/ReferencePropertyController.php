@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\API\Reference;
 
-use App\Http\Controllers\CrudController;
 use App\Models\Reference;
-use App\Models\ReferenceProperty;
 use Illuminate\Http\Request;
+use App\Models\ReferenceProperty;
+use App\Http\Controllers\CrudController;
 use Illuminate\Support\Facades\Validator;
 
 class ReferencePropertyController extends CrudController
@@ -107,7 +107,6 @@ class ReferencePropertyController extends CrudController
         $result = parent::index();
 
         return $result;
-
     }
 
     /**
@@ -180,5 +179,4 @@ class ReferencePropertyController extends CrudController
 
         return $validator;
     }
-
 }

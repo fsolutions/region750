@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\API\Notification;
 
-use App\Http\Controllers\CrudController;
-use App\Models\Notification;
 use Carbon\Carbon;
+use App\Models\Notification;
 use Illuminate\Http\Request;
+use App\Http\Controllers\CrudController;
 
 class NotificationController extends CrudController
 {
@@ -69,15 +69,16 @@ class NotificationController extends CrudController
             ->update(['read_at' => Carbon::now()]);
     }
 
-    public function readForAllOrders() {
+    public function readForAllOrders()
+    {
         $user = auth()->user();
 
         $notifications = $user->unreadNotifications;
-
         $place = empty(request('place')) ? '' : request('place');
 
         foreach ($notifications as $notification) {
-            if (isset($notification->data['parameters']['order_id']) &&
+            if (
+                isset($notification->data['parameters']['order_id']) &&
                 $notification->data['parameters']['place'] &&
                 in_array($place, $notification->data['parameters']['place'])
             ) {

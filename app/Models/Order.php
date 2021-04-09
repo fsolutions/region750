@@ -34,6 +34,22 @@ class Order extends Model
             'id' => [
                 "type" => "long"
             ],
+            'order_description' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
+            'order_service' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
             'order_contract' => [
                 "type" =>  "text",
                 "fields" => [
@@ -70,6 +86,14 @@ class Order extends Model
                     ]
                 ]
             ],
+            'order_comment_for_user' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
             'order_status' => [
                 "type" =>  "text",
                 "fields" => [
@@ -86,6 +110,9 @@ class Order extends Model
             // other fields
             'id_search' => [
                 "type" => "keyword"
+            ],
+            'order_reference_service_id' => [
+                "type" => "long"
             ],
             'order_master_user_id' => [
                 "type" => "long"
@@ -112,11 +139,14 @@ class Order extends Model
      * @var array
      */
     protected $fillable = [
+        'order_description',
+        'order_reference_service_id',
         'order_contract_id',
         'order_prescription_id',
         'order_master_user_id',
         'order_start_datetime',
         'order_comment',
+        'order_comment_for_user',
         'order_status'
     ];
 
@@ -139,6 +169,7 @@ class Order extends Model
     protected $loads = [
         'index' => [
             'all_roles' => [
+                'order_service:id,name',
                 'master:id,name',
                 'order_contract:id,contract_number,contract_address',
                 'order_prescription:id,prescription_number'
@@ -146,6 +177,7 @@ class Order extends Model
         ],
         'other_actions' => [
             'all_roles' => [
+                'order_service:id,name',
                 'master',
                 'order_contract',
                 'order_prescription'
@@ -209,9 +241,35 @@ class Order extends Model
             'visible' => true
         ],
         [
+            'key' => 'order_service.name',
+            'sortBy' => 'order_service.keyword',
+            'label' => 'Услуга',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'order_description',
+            'sortBy' => 'order_description',
+            'label' => 'Описание обращения',
+            'stickyColumn' => true,
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
             'key' => 'order_prescription.prescription_number',
             'sortBy' => 'order_prescription.keyword',
             'label' => 'Номер предписания',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'order_description',
+            'sortBy' => 'order_description',
+            'label' => 'Описание обращения',
+            'stickyColumn' => true,
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -225,9 +283,18 @@ class Order extends Model
             'visible' => true
         ],
         [
+            'key' => 'order_comment_for_user',
+            'sortBy' => 'order_comment_for_user',
+            'label' => 'Комментарий для клиента',
+            'stickyColumn' => false,
+            'sortable' => false,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
             'key' => 'order_comment',
             'sortBy' => 'order_comment',
-            'label' => 'Комментарий',
+            'label' => 'Комментарий для коллег',
             'stickyColumn' => false,
             'sortable' => false,
             'sortDirection' => 'desc',
@@ -278,6 +345,16 @@ class Order extends Model
     }
 
     /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function order_service()
+    {
+        return $this->hasOne(ReferenceProperty::class, 'id', 'order_reference_service_id');
+    }
+
+    /**
      * Contract table relationships One To One.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -312,17 +389,21 @@ class Order extends Model
 
         $tableFields = [
             'id' => $this->id,
+            'order_service' => isset($this->order_service->name) ? $this->order_service->name : '',
+            'order_description' => $this->order_description,
             'master' => isset($this->master->name) ? $this->master->name : '',
             'order_contract' => isset($this->order_contract->contract_number) ? $this->order_contract->contract_number : '',
             'order_prescription' => isset($this->order_prescription->prescription_number) ? $this->order_prescription->prescription_number : '',
             'order_status' => isset($this->order_status) ? $this->order_status : '',
             'order_comment' => isset($this->order_comment) ? $this->order_comment : '',
+            'order_comment_for_user' => isset($this->order_comment_for_user) ? $this->order_comment_for_user : '',
             'order_start_datetime' => isset($this->order_start_datetime) ? date('d.m.Y H:i', strtotime($this->order_start_datetime)) : '01.01.1900 00:00',
             'created_at' => isset($this->created_at) ? date('d.m.Y H:i', strtotime($this->created_at)) : '01.01.1900 00:00'
         ];
 
         $otherFields = [
             'id_search' => '$id' . $this->id,
+            'order_reference_service_id' => isset($this->order_reference_service_id) ? $this->order_reference_service_id : null,
             'order_master_user_id' => isset($this->order_master_user_id) ? $this->order_master_user_id : null,
             'order_contract_id' => isset($this->order_contract_id) ? $this->order_contract_id : null,
             'order_prescription_id' => isset($this->order_prescription_id) ? $this->order_prescription_id : null,

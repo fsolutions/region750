@@ -29,7 +29,7 @@
             right
             backdrop
             shadow
-            width="45em"
+            width="85em"
             backdrop-variant="dark"
             ref="editItem"
             :title="modalTitle()"
@@ -70,7 +70,7 @@
                                 <b-form-select v-model="editedItem.status" required :options="statusList" id="status"></b-form-select>
                             </div>
                             <div class="form-group col-md-12">
-                                <label>Комментарий (виден только сотрудникам компании)</label>
+                                <label>Комментарий (виден только коллегам)</label>
                                 <b-form-textarea
                                     id="contract_comment"
                                     v-model="editedItem.contract_comment"
@@ -95,7 +95,7 @@
             right
             backdrop
             shadow
-            width="79em"
+            width="85em"
             backdrop-variant="dark"
             no-close-on-backdrop
         >

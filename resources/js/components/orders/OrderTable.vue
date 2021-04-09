@@ -16,13 +16,13 @@
         />
 
         <b-sidebar
-            v-if="isSidebarOpen && contractForTO"
+            v-if="isSidebarOpen && (contractForTO || editedItem.order_contract_id)"
             v-model="isSidebarOpen"
             id="sidebar-right"
             right
             backdrop
             shadow
-            width="109em"
+            width="85em"
             backdrop-variant="dark"
             ref="editItem"
             no-close-on-backdrop
@@ -42,13 +42,34 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-md-12" v-if="!contractForTO && editedItem.order_contract_id">
                             <label for="contract_number">Номер договора</label>
-                            <input v-model="contractForTO.contract_number" disabled type="text" class="form-control" id="contract_number">
+                            <input disabled type="text" class="form-control" id="contract_number" :value="outputContractNumber()">
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="order_start_datetime">Дата и время проведения исполнения обращения</label>
-                            <input v-model="editedItem.order_start_datetime" type="datetime-local" class="form-control" id="order_start_datetime">
+                            <label>Выберите услугу обращения</label>
+                            <select-of-properties
+                                :reference_id="1"
+                                :needNullElement="false"
+                                :needMultipleSelect="false"
+                                :defaultSelectName="`Выберите нужные услуги`"
+                                :selected="editedItem.order_reference_service_id"
+                                @set="setServiceOfOrder"
+                            ></select-of-properties>
+                        </div>                            
+                        <div class="form-group col-md-12">
+                            <label>Опишите подробности обращения</label>
+                            <b-form-textarea
+                                id="order_description"
+                                v-model="editedItem.order_description"
+                                placeholder=""
+                                rows="3"
+                                max-rows="16"
+                            ></b-form-textarea>
+                        </div>                            
+                        <div class="form-group col-md-12">
+                            <label for="order_start_datetime">Планируемая дата исполнения обращения</label>
+                            <input v-model="editedItem.order_start_datetime" type="date" class="form-control" id="order_start_datetime">
                         </div>
                         <div class="form-group col-md-12">
                             <label for="contract_address">Мастер на выполнение обращения</label>
@@ -66,7 +87,17 @@
                             <b-form-select v-model="editedItem.order_status" required :options="statusList" id="order_status"></b-form-select>
                         </div>
                         <div class="form-group col-md-12">
-                            <label>Комментарий (виден только сотрудникам компании)</label>
+                            <label>Резюме по работе (виден клиентам)</label>
+                            <b-form-textarea
+                                id="order_comment_for_user"
+                                v-model="editedItem.order_comment_for_user"
+                                placeholder="Напишите резюме для клиента и истории."
+                                rows="3"
+                                max-rows="16"
+                            ></b-form-textarea>
+                        </div>                            
+                        <div class="form-group col-md-12">
+                            <label>Комментарий по обращению (виден только коллегам)</label>
                             <b-form-textarea
                                 id="order_comment"
                                 v-model="editedItem.order_comment"
@@ -101,12 +132,16 @@
 
     const initialEditedItem = () => ({
         id: '',
+        order_reference_service_id: 8,
         order_contract_id: '',
+        order_description: '',
         order_prescription_id: '',
         order_master_user_id: '',
         order_start_datetime: '',
         order_comment: '',
+        order_comment_for_user: '',
         order_status: 'В обработке',
+        order_service: {},
         master: {},
         order_contract: {},
         order_prescription: {},
@@ -147,7 +182,7 @@
         watch: {
             "editedItem.order_start_datetime": function(value) {
                 this.editedItem.order_start_datetime = value ?
-                    this.$moment(value).format('YYYY-MM-DDTHH:mm') :
+                    this.$moment(value).format('YYYY-MM-DD') :
                     ''
             },
         },
@@ -163,6 +198,16 @@
                 if (this.prescription_id) {
                     this.editedItem.order_prescription_id = this.prescription_id
                 }
+            },
+            outputContractNumber() {
+                if (this.contractForTO) {
+                    return this.contractForTO.contract_number
+                }
+                if (this.editedItem.order_contract_id) {
+                    return this.editedItem.order_contract_id
+                }
+
+                return "-";
             },
             // calls from mixin before sidebaropened
             beforeSidebarOpenedCallback() {
@@ -206,6 +251,9 @@
                 }
 
                 return title
+            },
+            setServiceOfOrder(value) {
+                this.editedItem.order_reference_service_id = value
             },
             setUserOfOrder(value) {
                 this.editedItem.order_master_user_id = value

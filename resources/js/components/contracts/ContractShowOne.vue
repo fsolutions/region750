@@ -34,7 +34,7 @@
                         ></contract-details>
                     </div>
                     <div class="tab-pane fade" id="contract-to">
-                        <h5>ТО-ВКГО по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
+                        <h5 class="mb-4">ТО-ВКГО по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
                         <contract-to-table
                             :contract_id="detailedItem.id"
                             :additionalGetParameter="`&contract_id=${detailedItem.id}`"
@@ -42,16 +42,33 @@
                             :contractForTOIndex="detailedItemIndex"
                             :isNeedCreate="detailedItem.status != 'Договор расторгнут' ? true:false"
                             @updateParentData="updateParentData"
+                            :typeOfTableFilter="'contractsTO'"
                         ></contract-to-table>
                     </div>
                     <div class="tab-pane fade" id="contract-orders">
-                        <h5>Обращения по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
+                        <h5 class="mb-4">Обращения по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
+                        <orders-table
+                            :contract_id="detailedItem.id"
+                            :additionalGetParameter="`&contract_id=${detailedItem.id}`"
+                            :contractForTO="detailedItem"
+                            :contractForTOIndex="detailedItemIndex"
+                            :isNeedCreate="detailedItem.status != 'Договор расторгнут' ? true:false"
+                            :typeOfTableFilter="'orders'"
+                        ></orders-table>
                     </div>
                     <div class="tab-pane fade" id="contract-prescriptions">
-                        <h5>Предписания по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
+                        <h5 class="mb-4">Предписания по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
+                        <prescriptions-table
+                            :contract_id="detailedItem.id"
+                            :additionalGetParameter="`&contract_id=${detailedItem.id}`"
+                            :contractForTO="detailedItem"
+                            :contractForTOIndex="detailedItemIndex"
+                            :isNeedCreate="detailedItem.status != 'Договор расторгнут' ? true:false"
+                            :typeOfTableFilter="'prescriptions'"
+                        ></prescriptions-table>
                     </div>
                     <div class="tab-pane fade" id="contract-history">
-                        <h5>История по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
+                        <h5 class="mb-4">История по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
                     </div>
                 </div>
             </div>
@@ -62,12 +79,16 @@
 <script>
     import ContractDetails from './ContractDetails'
     import ContractTOTable from './ContractTOTable'
+    import OrderTable from '../orders/OrderTable'
+    import PrescriptionTable from '../prescriptions/PrescriptionTable'
     // import ChangeHistory from '../logs/ChangeHistory'
 
     export default {
         components: {
             "contract-details": ContractDetails,
             "contract-to-table": ContractTOTable,
+            "orders-table": OrderTable,
+            "prescriptions-table": PrescriptionTable,
             // 'change-history': ChangeHistory,
         },
         props: {

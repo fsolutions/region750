@@ -36,6 +36,6 @@ class EventServiceProvider extends ServiceProvider
         Order::observe(UniversalObserver::class);
 
         // cascade deleted
-        Order::observe(OrderCascadeDeletesObserver::class);
+        // Order::observe(OrderCascadeDeletesObserver::class);
     }
 }

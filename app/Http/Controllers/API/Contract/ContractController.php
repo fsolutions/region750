@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Contract;
 
 use App\Models\User;
+use App\Models\History;
 use App\Models\Contract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -96,7 +97,19 @@ class ContractController extends CrudController
 
         $this->model = parent::store($request);
 
-        // $this->sendNotificationAdmin($this->model->id);
+        if ($this->checkUserIsAdmin()) {
+            $this->sendNotificationClient($this->model->id);
+        } else {
+            $this->sendNotificationManager($this->model->id);
+        }
+
+        History::addNew([
+            'operation_name' => "Добавлен новый договор с номером " . $this->model->contract_number . " (ID: " . $this->model->id . "), по адресу: " . $this->model->contract_address,
+            'model_name' => get_class(new Contract()),
+            'model_id' => $this->model->id,
+            'contract_id' => $this->model->id,
+            'user_id' => $this->user->id
+        ]);
 
         return $this->model;
     }
@@ -135,7 +148,23 @@ class ContractController extends CrudController
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        return parent::update($request, $id);
+        $this->model = parent::update($request, $id);
+
+        if ($this->checkUserIsAdmin()) {
+            $this->sendNotificationClient($this->model->id, true);
+        } else {
+            $this->sendNotificationManager($this->model->id, true);
+        }
+
+        History::addNew([
+            'operation_name' => "Обновлен договор с номером " . $this->model->contract_number . " (ID: " . $this->model->id . ").",
+            'model_name' => get_class(new Contract()),
+            'model_id' => $this->model->id,
+            'contract_id' => $this->model->id,
+            'user_id' => $this->user->id
+        ]);
+
+        return $this->model;
     }
 
     /**
@@ -147,6 +176,16 @@ class ContractController extends CrudController
     public function destroy($id)
     {
         $this->checkAllowUser($id);
+
+        $contract = Contract::find($id);
+
+        History::addNew([
+            'operation_name' => "Удален договор с номером " . $contract->contract_number . " (ID: " . $contract->id . ").",
+            'model_name' => get_class(new Contract()),
+            'model_id' => $contract->id,
+            'contract_id' => $contract->id,
+            'user_id' => $this->user->id
+        ]);
 
         return $this->model::destroy($id);
     }
@@ -184,7 +223,12 @@ class ContractController extends CrudController
     private function checkUserIsAdmin()
     {
         foreach ($this->userRoles->toArray() as $role) {
-            if ($role['slug'] === 'administrator') {
+            if (
+                $role['slug'] === 'administrator'
+                || $role['slug'] === 'manager'
+                || $role['slug'] === 'master'
+                || $role['slug'] === 'intern'
+            ) {
                 return true;
             }
         }
@@ -214,21 +258,54 @@ class ContractController extends CrudController
     }
 
     /**
-     * Send notification for admin.
+     * Send notification for manager.
      *
      * @param int $contract_id
+     * @param bool $update
      */
-    private function sendNotificationAdmin(int $contract_id)
+    private function sendNotificationManager(int $contract_id, $update = false)
     {
+        $contract = Contract::find($contract_id);
         $users = User::whereHas('roles', function ($query) {
-            $query->where('slug', 'manager');
+            $query->whereIn('slug', ['administrator', 'manager']);
         })->get();
 
         $parameters = [
-            'contract_id' => $contract_id,
-            'place' => ['bell']
+            'place' => ['bell'],
+            'link' => "/contracts",
+            'linkText' => 'Открыть Договоры',
+            'order_id' => $this->model->id
         ];
 
-        Notification::locale('ru')->send($users, new NotificationsUsers("Новый договор добавлен в систему №$contract_id.", $parameters));
+        if ($update) {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Обновления в договоре №$contract->contract_number.", $parameters));
+        } else {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Зарегистрирован новый договор №$contract->contract_number.", $parameters));
+        }
+    }
+
+    /**
+     * Send notification for client.
+     *
+     * @param int $contract_id
+     * @param bool $update
+     */
+    private function sendNotificationClient(int $contract_id, $update = false)
+    {
+        $contract = Contract::find($contract_id);
+        $users = User::where('id', $contract->contract_on_user_id)->get();
+
+        $parameters = [
+            'place' => ['bell'],
+            'link' => "/contracts",
+            'linkText' => 'Открыть Договоры',
+            'order_id' => $this->model->id
+        ];
+
+        if ($update) {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Обновления в договоре №$contract->contract_number.", $parameters));
+        } else {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Зарегистрирован новый договор №$contract->contract_number.", $parameters));
+        }
     }
 }

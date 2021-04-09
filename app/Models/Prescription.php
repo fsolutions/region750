@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\User;
+use App\Models\Order;
+use App\Models\Contract;
 use ScoutElastic\Searchable;
 use App\Traits\ModelGettersTrait;
 use Illuminate\Database\Eloquent\Model;
@@ -155,16 +158,16 @@ class Prescription extends Model
     protected $actionAllows = [
         'administrator' => [
             'create',
-            'show',
+            // 'show',
             'edit',
             'delete'
         ],
         'client' => [
-            'show'
+            // 'show'
         ],
         'all_roles' => [
             'create',
-            'show',
+            // 'show',
             'edit'
         ],
     ];
@@ -203,26 +206,36 @@ class Prescription extends Model
             'visible' => true
         ],
         [
-            'key' => 'master.name',
-            'sortBy' => 'master.keyword',
-            'label' => 'Мастер на предписание',
-            'sortable' => true,
+            'key' => 'prescription_number',
+            'sortBy' => 'prescription_number.keyword',
+            'label' => 'Номер предисания',
+            'stickyColumn' => true,
+            'sortable' => false,
             'sortDirection' => 'desc',
             'visible' => true
         ],
         [
             'key' => 'prescription_comment',
             'sortBy' => 'prescription_comment',
-            'label' => 'Комментарий',
+            'label' => 'Содержимое предписания',
             'stickyColumn' => false,
             'sortable' => false,
             'sortDirection' => 'desc',
             'visible' => true
         ],
         [
+            'key' => 'master.name',
+            'sortBy' => 'master.keyword',
+            'label' => 'Составитель предписания',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
             'key' => 'prescription_start_datetime',
             'sortBy' => 'prescription_start_datetime',
-            'label' => 'Дата исполнения',
+            'label' => 'Дата к исполнению',
+            'sticky' => true,
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -239,7 +252,7 @@ class Prescription extends Model
             'key' => 'created_at',
             'sortBy' => 'created_at',
             'label' => 'Дата добавления',
-            'stickyColumn' => true,
+            'stickyColumn' => false,
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true

@@ -7,7 +7,7 @@
             right
             backdrop
             shadow
-            width="45em"
+            width="85em"
             backdrop-variant="dark"
             ref="editItem"
             :title="modalTitle()"
@@ -23,7 +23,7 @@
                             <input v-model="contractForTO.contract_number" disabled type="text" class="form-control" id="contract_number">
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="to_start_datetime">Дата и время проведения ТО</label>
+                            <label for="to_start_datetime">Дата и время проведения ТО (ориентировочно или точно)</label>
                             <input v-model="editedItem.to_start_datetime" required type="datetime-local" class="form-control" id="to_start_datetime">
                         </div>
                         <div class="form-group col-md-12">
@@ -42,7 +42,7 @@
                             <b-form-select v-model="editedItem.to_status" required :options="statusList" id="to_status"></b-form-select>
                         </div>
                         <div class="form-group col-md-12">
-                            <label>Комментарий (виден только сотрудникам компании)</label>
+                            <label>Комментарий (виден только коллегам)</label>
                             <b-form-textarea
                                 id="to_comment"
                                 v-model="editedItem.to_comment"

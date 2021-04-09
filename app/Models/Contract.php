@@ -162,7 +162,9 @@ class Contract extends Model
                 'creator',
                 'contract_on_user',
                 'contract_to',
-                'contract_to_last'
+                'contract_to_last',
+                'orders',
+                'prescriptions'
             ]
         ]
     ];
@@ -341,6 +343,26 @@ class Contract extends Model
     {
         return $this->hasMany(ContractTO::class, 'to_contract_id', 'id')->orderBy('to_start_datetime', 'desc');
         //->take(1); ---> why it not works?????
+    }
+
+    /**
+     * Orders table relationships One To Many.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'order_contract_id', 'id')->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Prescriptions table relationships One To Many.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'prescription_contract_id', 'id')->orderBy('prescription_start_datetime', 'desc');
     }
 
     /**

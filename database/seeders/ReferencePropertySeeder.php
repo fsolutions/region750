@@ -15,6 +15,7 @@ class ReferencePropertySeeder extends Seeder
         ['name' => 'Чистка форсунок', 'ordering_number' => 50, 'reference_id' => 1],
         ['name' => 'Замена термопары (плита, колонка)', 'ordering_number' => 60, 'reference_id' => 1],
         ['name' => 'Запись на повторное техническое обслуживание', 'ordering_number' => 70, 'reference_id' => 1],
+        ['name' => 'Другое', 'ordering_number' => 80, 'reference_id' => 1],
     ];
 
     /**

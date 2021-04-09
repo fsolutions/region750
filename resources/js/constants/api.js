@@ -25,6 +25,7 @@ export const API_DELETE_NOTIFICATION = '/api/notifications/delete'              
 export const API_POST_NOTIFICATION_ALL = '/api/notifications/delete-all'
 
 export const API_LOG_HISTORY = '/api/logs'
+export const API_HISTORY = '/api/history'
 
 export const API_CONTRACTS = '/api/contracts'
 export const API_CONTRACTS_TO = '/api/contracts-to'

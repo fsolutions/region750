@@ -3,8 +3,8 @@
 namespace App\Observers;
 
 use App\Models\Log;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class UniversalObserver
 {
@@ -79,6 +79,6 @@ class UniversalObserver
      */
     public function __destruct()
     {
-         Log::addNewLog($this->fields);
+        //  Log::addNewLog($this->fields);
     }
 }

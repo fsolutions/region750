@@ -2,7 +2,9 @@
     <div>
         <prescriptions-table
             :key="componentRefreshKey"
+            :contractForTO="{}"
             :isNeedCreate="false"
+            :typeOfTableFilter="'prescriptions'"
         ></prescriptions-table>
     </div>
 </template>

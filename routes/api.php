@@ -9,11 +9,13 @@ use App\Http\Controllers\API\Log\LogController;
 use App\Http\Controllers\API\User\UserController;
 use App\Http\Controllers\API\Order\OrderController;
 use App\Http\Controllers\API\PassportAuthController;
+use App\Http\Controllers\API\History\HistoryController;
 use App\Http\Controllers\API\User\UserCommentController;
 use App\Http\Controllers\API\Contract\ContractController;
 use App\Http\Controllers\API\Contract\ContractTOController;
 use App\Http\Controllers\API\Reference\ReferenceController;
 use App\Http\Controllers\API\Notification\NotificationController;
+use App\Http\Controllers\API\Prescription\PrescriptionController;
 use App\Http\Controllers\API\Reference\ReferencePropertyController;
 
 /*
@@ -55,8 +57,12 @@ Route::middleware('auth:api')->group(function () {
     /**
      * Log
      */
-    Route::get('logs/order', [LogController::class, 'order']);
     Route::get('logs', [LogController::class, 'index']);
+
+    /**
+     * History
+     */
+    Route::get('history', [HistoryController::class, 'index']);
 
     /**
      * Notifications

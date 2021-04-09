@@ -1,25 +1,21 @@
 <template>
     <div>
         <div class='text-left text-nowrap'>
-            <template>
+            <button
+                @click="refreshDataInCards()"
+                class="btn button-reload-table mr-3 mb-3"
+            >
+                <i class="fas fa-sync-alt reload-sync-icon" animation="spin" v-if="!isCardsRefreshing"></i>
+                <i class="fas fa-spinner fa-spin reload-sync-icon" v-if="isCardsRefreshing"></i>
+            </button>
+            <template v-if="(checkActionAllow('create') && isNeedCreate) || isNeedCreate">
                 <button
-                    @click="refreshDataInCards()"
-                    class="btn button-reload-table mr-3 mb-3"
+                    @click="createOrEditItemModal()"
+                    type="button"
+                    class="btn btn-outline-secondary btn-outline-pill mb-3 mr-3"
                 >
-                    <i class="fas fa-sync-alt reload-sync-icon" animation="spin" v-if="!isCardsRefreshing"></i>
-                    <i class="fas fa-spinner fa-spin reload-sync-icon" v-if="isCardsRefreshing"></i>
+                    Добавить договор
                 </button>
-            </template>
-            <template>
-                <template v-if="(checkActionAllow('create') && isNeedCreate) || isNeedCreate">
-                    <button
-                        @click="createOrEditItemModal()"
-                        type="button"
-                        class="btn btn-outline-secondary btn-outline-pill mb-3 mr-3"
-                    >
-                        Добавить договор
-                    </button>
-                </template>
             </template>
         </div>
         <div class="contract-cards">
@@ -38,35 +34,47 @@
                                 <b-badge variant="warning" class="always-small-badge" v-if="contract.status == 'Нет бумажного договора'">{{contract.status}}</b-badge>
                                 <b-badge variant="secondary" class="always-small-badge" v-if="contract.status == 'В обработке'">{{contract.status}}</b-badge>
                                 <p><em class="text-muted">Адрес: {{ contract.contract_address}}</em></p>
-                                <p><b>Дата последнего ТО-ВКГО:</b> {{ findLastTO(index) | formattedDate}}</p>
                                 <p>
-                                    <tamplate v-if="checkDaysForNextTO(index) != -1">
-                                        <b>До следующего ТО-ВКГО:</b> {{ checkDaysForNextTO(index) }} {{ getNumEnding(checkDaysForNextTO(index)) }}
-                                    </tamplate>
+                                    <template v-if="checkDaysForNextTO(index) > -1">
+                                        <!-- <b>До следующего ТО-ВКГО:</b> {{ checkDaysForNextTO(index) }} {{ getNumEnding(checkDaysForNextTO(index)) }} -->
+                                        <b>Следующее ТО назначено на <span class="bigDate" v-html="nextTO(index)"></span></b>
+                                    </template>
                                     <template v-else>
-                                        <b>Дата следующего ТО не назначена</b>
+                                        <b>Дата следующего ТО <span class="bigDate">не назначена</span></b>
                                     </template>
                                 </p>
-                                <p>
-                                    <tamplate v-if="findMasterOnNextTO(index) != -1">
+                                <p><b>Дата последнего ТО-ВКГО <span class="bigDate" style="font-size:16px;" v-html="findLastTO(index)"></span></b></p>
+                                <!-- <p>
+                                    <template v-if="findMasterOnNextTO(index) != -1">
                                         <b>Мастер на следующее ТО:</b> {{ findMasterOnNextTO(index) }}
-                                    </tamplate>
+                                    </template>
                                     <template v-else>
                                         <b>Мастер на следующее ТО не назначен</b>
                                     </template>
-                                </p>
+                                </p> -->
                             </div>
                             <div class="col-sm-6 text-center">
                                 <select-of-properties
+                                    :name="`select_${index}`"
                                     :reference_id="1"
                                     :needNullElement="false"
-                                    :needMultipleSelect="true"
-                                    :defaultSelectName="`Выберите нужные услуги`"
-                                    :selectedArray="set_categories_ids"
-                                    @set="setCategoriesOfOrder"
+                                    :needMultipleSelect="false"
+                                    :defaultSelectName="`Выберите нужную услугу`"
+                                    :selected="order_reference_service_id"
+                                    @set="setServiceOfOrder"
                                 ></select-of-properties>
 
-                                <b-button @click="orderMaster(index)" variant="primary" class="mt-3">Вызвать мастера</b-button>
+                                <div class="form-group mt-3" v-if="order_reference_service_id">
+                                    <label>Опишите подробности обращения</label>
+                                    <b-form-textarea
+                                        id="order_description"
+                                        v-model="order_description"
+                                        placeholder=""
+                                        rows="3"
+                                        max-rows="16"
+                                    ></b-form-textarea>
+                                </div>                            
+                                <b-button @click="orderMaster(index)" variant="primary" class="mt-3">Вызвать мастера<i class="fas fa-spinner fa-spin reload-sync-icon ml-2" v-if="contract.sendingOrder"></i></b-button>
                                 <p class="text-small mb-1 mt-2">или позвоните нам</p>
                                 <p><a href="tel:+79153788117" class="big-link">+7 (915) 378-81-17</a></p>
                             </div>
@@ -83,6 +91,8 @@
     </div>
 </template>
 <script>
+    import { API_ORDERS } from "../../constants"
+
     import {
         checkActionAllow
     } from '../../mixins'
@@ -100,7 +110,8 @@
             return {
                 dataOverlay: true,
                 isCardsRefreshing: true,
-                set_categories_ids: []
+                order_reference_service_id: '',
+                order_description: ''
             }
         },
         computed: {
@@ -124,6 +135,9 @@
                         this.dataOverlay = false
                         this.isCardsRefreshing = false
                         this.itemsLocal = response.data
+                        this.itemsLocal.data.forEach(contract => {
+                            contract.sendingOrder = false
+                        });
                     })
             },
             refreshDataInCards() {
@@ -136,15 +150,40 @@
             createOrEditItemModal(index) {
                 this.$emit('edit', index)
             },
-            setCategoriesOfOrder(value) {
-                this.set_categories_ids = value
+            setServiceOfOrder(value) {
+                this.order_reference_service_id = value
             },
             orderMaster(index) {
+                this.itemsLocal.data[index].sendingOrder = true
+
+                const order = {
+                    order_description: this.order_description,
+                    order_reference_service_id: this.order_reference_service_id,
+                    order_contract_id: this.itemsLocal.data[index].id,
+                    order_status: 'В обработке'
+                }
+
+                api.call("post", API_ORDERS, order).then(({data}) => {
+                    this.makeToast('success')
+                    this.order_reference_service_id = ''
+                    this.order_description = ''
+                }).catch((response) => {
+                    if (response.status == 422){
+                        this.validationErrors = response.data.error
+                        this.makeToast('danger')
+                    }
+                }).finally(() => {
+                    this.itemsLocal.data[index].sendingOrder = true
+                })
+
+            },
+            nextTO(index) {
+                return this.$moment(this.itemsLocal.data[index].contract_to[0].to_start_datetime).format('MMMM YYYY') + ' г.'
             },
             findLastTO(index) {
                 if (this.itemsLocal.data[index].contract_to.length > 0) {
                     if (this.itemsLocal.data[index].contract_to[1]) {
-                        return this.itemsLocal.data[index].contract_to[1].to_start_datetime
+                        return this.$moment(this.itemsLocal.data[index].contract_to[1].to_start_datetime).format('DD.MM.YYYY') + ' г.'
                     }
                 }
 
@@ -208,5 +247,9 @@
         font-size: 16px;
         font-weight: bold;
         color: #362518;
+    }
+    .bigDate {
+        color: #2176bd;
+        font-size: 18px;
     }
 </style>

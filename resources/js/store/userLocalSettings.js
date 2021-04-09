@@ -1,11 +1,13 @@
 const state = {
     filterSettings: {
         contractTable: localStorage.getItem('filterSettings.contractTable') || 0,
+        contractTOTable: localStorage.getItem('filterSettings.contractTOTable') || 0,
         orderTable: localStorage.getItem('filterSettings.orderTable') || 0,
         prescriptionTable: localStorage.getItem('filterSettings.prescriptionTable') || 0,
     },
     tableHeaderSettings: {
         contractTable: JSON.parse(localStorage.getItem('tableHeaderSettings.contractTable')) || {},
+        contractTOTable: JSON.parse(localStorage.getItem('tableHeaderSettings.contractTOTable')) || {},
         orderTable: JSON.parse(localStorage.getItem('tableHeaderSettings.orderTable')) || {},
         prescriptionTable: JSON.parse(localStorage.getItem('tableHeaderSettings.prescriptionTable')) || {},
     }

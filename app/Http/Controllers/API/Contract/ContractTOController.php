@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\API\Contract;
 
 use App\Models\User;
+use App\Models\History;
 use App\Models\Contract;
 use App\Models\ContractTO;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\CrudController;
 use App\Notifications\NotificationsUsers;
 use Illuminate\Support\Facades\Validator;
@@ -31,8 +33,10 @@ class ContractTOController extends CrudController
     public function index()
     {
         $contract_id = empty(request('contract_id')) ? '' : (int) request('contract_id');
+        $to_status = empty(request('to_status')) ? '' : trim(request('to_status'));
 
         $this->filteringByContractId($contract_id);
+        $this->filteringByContractTOStatus($to_status);
 
         return parent::index();
     }
@@ -46,6 +50,37 @@ class ContractTOController extends CrudController
     {
         if ($contract_id != '') {
             $this->model = $this->model->where('to_contract_id', $contract_id);
+        }
+    }
+
+    /**
+     * Filtering contracts TO by status
+     * @TODO: REFACTOR
+     *
+     * @param string $status
+     */
+    public function filteringByContractTOStatus($to_status = '')
+    {
+        if ($to_status != '') {
+            $contractsTO = DB::select(
+                'SELECT DISTINCT
+                        id
+                    FROM
+                        contracts_to
+                    WHERE 
+                        to_status = :to_status
+                    AND
+                        deleted_at IS NULL',
+                ['to_status' => $to_status]
+            );
+
+            $finishedContractTOList = [];
+
+            foreach ($contractsTO as $contractTO) {
+                $finishedContractTOList[] = $contractTO->id;
+            }
+
+            $this->model = $this->model->whereIn('id', $finishedContractTOList);
         }
     }
 
@@ -70,6 +105,14 @@ class ContractTOController extends CrudController
         $this->model = parent::store($request);
 
         $this->sendNotificationClient($this->model->to_contract_id);
+
+        History::addNew([
+            'operation_name' => "Добавлено событие ТО-ВКГО (ID: " . $this->model->id . ")",
+            'model_name' => get_class(new ContractTO()),
+            'model_id' => $this->model->id,
+            'contract_id' => $this->model->to_contract_id,
+            'user_id' => $this->user->id
+        ]);
 
         return $this->model;
     }
@@ -106,7 +149,15 @@ class ContractTOController extends CrudController
 
         $this->model = parent::update($request, $id);
 
-        $this->sendNotificationClient($this->model->to_contract_id, true);
+        // $this->sendNotificationClient($this->model->to_contract_id, "update");
+
+        // History::addNew([
+        //     'operation_name' => "Отредактировано событие ТО-ВКГО (ID: " . $id . ")",
+        //     'model_name' => get_class(new ContractTO()),
+        //     'model_id' => $id,
+        //     'contract_id' => $this->model->to_contract_id,
+        //     'user_id' => $this->user->id
+        // ]);
 
         return $this->model;
     }
@@ -120,6 +171,18 @@ class ContractTOController extends CrudController
     public function destroy($id)
     {
         $this->checkAllowUser($id);
+
+        $contract = ContractTO::find($id);
+
+        History::addNew([
+            'operation_name' => "Удалено событие ТО-ВКГО (ID: " . $id . ")",
+            'model_name' => get_class(new ContractTO()),
+            'model_id' => $id,
+            'contract_id' => $contract->to_contract_id,
+            'user_id' => $this->user->id
+        ]);
+
+        $this->sendNotificationClient($contract->to_contract_id, "delete");
 
         return $this->model::destroy($id);
     }
@@ -175,11 +238,11 @@ class ContractTOController extends CrudController
     }
 
     /**
-     * Send notification for admin.
+     * Send notification for client.
      *
      * @param int $contract_id
      */
-    private function sendNotificationClient(int $contract_id, $update = false)
+    private function sendNotificationClient(int $contract_id, $operation = '')
     {
         $contract = Contract::find($contract_id);
         $users = User::where('id', $contract->contract_on_user_id)->get();
@@ -187,13 +250,16 @@ class ContractTOController extends CrudController
         $parameters = [
             'place' => ['bell'],
             'link' => "/contracts",
-            'linkText' => 'Открыть договор'
+            'linkText' => 'Открыть договор',
+            'contract_id' => $contract_id
         ];
 
-        if ($update) {
-            Notification::locale('ru')->send($users, new NotificationsUsers("Изменения в назначенном ТО по договору №$contract_id.", $parameters));
+        if ($operation == 'update') {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Изменения в назначенном ТО по договору №$contract->contract_number.", $parameters));
+        } else if ($operation == 'delete') {
+            Notification::locale('ru')->send($users, new NotificationsUsers("Удалено назначенное ТО по договору №$contract->contract_number. Ожидайте подробностей в ближайшее время.", $parameters));
         } else {
-            Notification::locale('ru')->send($users, new NotificationsUsers("Назначена дата проведения ТО по договору №$contract_id.", $parameters));
+            Notification::locale('ru')->send($users, new NotificationsUsers("Назначена дата проведения ТО по договору №$contract->contract_number.", $parameters));
         }
     }
 }

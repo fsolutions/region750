@@ -16,13 +16,13 @@
         />
 
         <b-sidebar
-            v-if="isSidebarOpen && contractForTO"
+            v-if="isSidebarOpen && (contractForTO || editedItem.prescription_contract_id)"
             v-model="isSidebarOpen"
             id="sidebar-right"
             right
             backdrop
             shadow
-            width="109em"
+            width="85em"
             backdrop-variant="dark"
             ref="editItem"
             no-close-on-backdrop
@@ -42,24 +42,34 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-md-12" v-if="!contractForTO && editedItem.prescription_contract_id">
                             <label for="contract_number">Номер договора</label>
-                            <input v-model="contractForTO.contract_number" disabled type="text" class="form-control" id="contract_number">
+                            <input disabled type="text" class="form-control" id="contract_number" :value="outputContractNumber()">
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="prescription_number">Номер предисания</label>
+                            <label for="prescription_number">Номер предисания (из бумаг)</label>
                             <input v-model="editedItem.prescription_number" type="text" class="form-control" id="prescription_number">
                         </div>
                         
                         <div class="form-group col-md-12">
-                            <label for="prescription_start_datetime">Дата и время проведения предписания</label>
-                            <input v-model="editedItem.prescription_start_datetime" required type="datetime-local" class="form-control" id="prescription_start_datetime">
+                            <label>Содержимое предписания (видно клиенту)</label>
+                            <b-form-textarea
+                                id="prescription_comment"
+                                v-model="editedItem.prescription_comment"
+                                placeholder="Например, Необходимо заменить кабель."
+                                rows="3"
+                                max-rows="16"
+                            ></b-form-textarea>
+                        </div>                            
+                        <div class="form-group col-md-12">
+                            <label for="prescription_start_datetime">Дата необходимая для исполнения предписания</label>
+                            <input v-model="editedItem.prescription_start_datetime" required type="date" class="form-control" id="prescription_start_datetime">
                         </div>
                         <div class="form-group col-md-12">
                             <label for="prescription_master_user_id">Сотрудник, назначивший предписание</label>
                             <select-user
                                 id="contract_on_user_id"
-                                :roles="`administrator||master||intern`"
+                                :roles="`administrator||master||intern||manager`"
                                 :needNullElement="true"
                                 :selected="editedItem.prescription_master_user_id"
                                 :selectedUser="editedItem.master"
@@ -70,16 +80,6 @@
                             <label for="role">Статус</label>
                             <b-form-select v-model="editedItem.prescription_status" required :options="statusList" id="prescription_status"></b-form-select>
                         </div>
-                        <div class="form-group col-md-12">
-                            <label>Комментарий (виден только сотрудникам компании)</label>
-                            <b-form-textarea
-                                id="prescription_comment"
-                                v-model="editedItem.prescription_comment"
-                                placeholder="Если есть что отметить по предписанию, отметьте."
-                                rows="3"
-                                max-rows="16"
-                            ></b-form-textarea>
-                        </div>                            
                     </div>
                 </form>
             </div>
@@ -128,7 +128,6 @@
         ],
         props: {
             contract_id: { type: Number|String, required: false },
-            prescription_id: { type: Number|String, required: false },
             isNeedCreate: { type: Boolean, required: false, default: true },        // If table needs create new element button
             additionalGetParameter: { type: String, required: false, default: '' }, // If we want to add something, for example, &order_id=10
             typeOfTableFilter: { type: String, required: false, default: '' },      // Type of filter for output: orders, services
@@ -152,7 +151,7 @@
         watch: {
             "editedItem.prescription_start_datetime": function(value) {
                 this.editedItem.prescription_start_datetime = value ?
-                    this.$moment(value).format('YYYY-MM-DDTHH:mm') :
+                    this.$moment(value).format('YYYY-MM-DD') :
                     ''
             },
         },
@@ -163,11 +162,18 @@
         methods: {
             initialAssign() {
                 if (this.contract_id) {
-                    this.editedItem.order_contract_id = this.contract_id
+                    this.editedItem.prescription_contract_id = this.contract_id
                 }
-                if (this.prescription_id) {
-                    this.editedItem.order_prescription_id = this.prescription_id
+            },
+            outputContractNumber() {
+                if (this.contractForTO) {
+                    return this.contractForTO.contract_number
                 }
+                if (this.editedItem.prescription_contract_id) {
+                    return this.editedItem.prescription_contract_id
+                }
+
+                return "-";
             },
             // calls from mixin before sidebaropened
             beforeSidebarOpenedCallback() {
@@ -177,7 +183,7 @@
             // calls from mixin on item save
             onCreatedOrUpdatedCallback() {
                 if (this.editIndex == -1) {
-                    this.editedItem.order_contract_id = this.contract_id
+                    this.editedItem.prescription_contract_id = this.contract_id
                 }
 
                 this.isSidebarOpen = false

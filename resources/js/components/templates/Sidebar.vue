@@ -34,13 +34,13 @@
                         <li class="list-group-item pr-1">
                             <div class="menu-icon-block">
                                 <span class="menu-icon-child-order"><i class="fas fa-clipboard-check"></i></span>
-                                <b-badge class="badge-icon badge-light" pill variant="danger" v-if="notificationsLocal.orders.length > 0">
-                                    {{notificationsLocal.orders.length}}
-                                </b-badge>
                             </div>
                         </li>
                         <li class="list-group-item list-group-name pl-0">
                             <span class="menu-item-name">Обращения</span>
+                            <!-- <b-badge class="badge-icon badge-light ml-1" pill variant="success" v-if="notificationsLocal.orders.length > 0">
+                                {{notificationsLocal.orders.length}}
+                            </b-badge> -->
                         </li>
                     </ul>
                 </router-link>
