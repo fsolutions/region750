@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Company;
+use App\Models\History;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +28,7 @@ class PassportAuthController extends Controller
 
         $validator = Validator::make($data, [
             'name'  => 'required|string|min:2',
-            'email' => 'email|unique:users',
+            // 'email' => 'email|users',
             'phone' => 'required|string|max:50|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
@@ -37,18 +37,12 @@ class PassportAuthController extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        $company = User::withoutEvents(function () use ($data) {
-            return  Company::create($data['company']);
-        });
-
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'phone' => $data['phone'],
             'password' => Hash::make($data['password'])
         ]);
-
-        $user->companies()->attach($company);
 
         if (!isset($data['role'])) {
             $role = Role::where('slug', 'client')->first();
@@ -59,6 +53,14 @@ class PassportAuthController extends Controller
         }
 
         $token = $user->createToken('Region750')->accessToken;
+
+        History::addNew([
+            'operation_name' => "Успешная регистрация, ваш ID в системе " . $user->id,
+            'model_name' => get_class(new User()),
+            'model_id' => $user->id,
+        ]);
+
+        $this->sendNotificationManager($user);
 
         return response()->json([
             'token' => $token,
@@ -80,6 +82,14 @@ class PassportAuthController extends Controller
 
         if (auth()->attempt($data)) {
             $token = auth()->user()->createToken('Region750')->accessToken;
+
+            History::addNew([
+                'operation_name' => "Успешный вход в систему",
+                'model_name' => get_class(new User()),
+                'model_id' => auth()->user()->id,
+                'user_id' => auth()->user()->id
+            ]);
+
             return response()->json([
                 'token' => $token,
                 'user' => auth()->user()->append('role'),
@@ -159,5 +169,26 @@ class PassportAuthController extends Controller
         );
 
         return $status;
+    }
+
+    /**
+     * Send notification for manager.
+     *
+     * @param $user
+     */
+    private function sendNotificationManager($user)
+    {
+        $users = User::whereHas('roles', function ($query) {
+            $query->whereIn('slug', ['administrator', 'manager']);
+        })->get();
+
+        $parameters = [
+            'place' => ['bell'],
+            'link' => "/users",
+            'linkText' => 'Открыть клиентов',
+            'user_id' => $user->id
+        ];
+
+        Notification::locale('ru')->send($users, new NotificationsUsers("Зарегистрирован новый пользователь ID: $user->id, $user->name, $user->phone", $parameters));
     }
 }

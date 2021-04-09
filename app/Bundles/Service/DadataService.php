@@ -3,12 +3,12 @@
 
 namespace App\Bundles\Service;
 
-use App\Bundles\Keyboard\Switcher;
 use Exception;
+use Illuminate\Http\Request;
 
+use App\Bundles\Keyboard\Switcher;
 use Fomvasss\Dadata\Facades\DadataClean;
 use Fomvasss\Dadata\Facades\DadataSuggest;
-use Illuminate\Http\Request;
 
 class DadataService
 {
@@ -17,7 +17,7 @@ class DadataService
      *
      * @var int
      */
-    public static $count = 7;
+    public static $count = 10;
 
 
     /**
@@ -32,8 +32,10 @@ class DadataService
         try {
 
             $result = DadataSuggest::suggest($type, ["query" => $query, "count" => self::$count]);
-
-        } catch(Exception $e) {
+            if (count($result) == 3 && isset($result["value"])) {
+                $result = array($result);
+            }
+        } catch (Exception $e) {
 
             $result = [];
         }
@@ -52,7 +54,7 @@ class DadataService
     {
         $result = self::getResponseToDadata($type, $query);
 
-        if(!count($result)) {
+        if (!count($result)) {
             $query = Switcher::toCyrillic($query);
             $result = self::getResponseToDadata($type, $query);
         }
@@ -69,6 +71,17 @@ class DadataService
     public static function getCompany(Request $request)
     {
         return self::getData('party', $request->company);
+    }
+
+    /**
+     * Get info address to user.
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public static function getAddress(Request $request)
+    {
+        return self::getData('address', $request->address);
     }
 
     /**

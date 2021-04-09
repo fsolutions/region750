@@ -33,7 +33,7 @@ class HistoryController extends CrudController
             switch ($role->slug) {
                 case 'client':
                     $userContracts = Contract::whereIn('contract_on_user_id', [$this->user->id])->get(['id'])->pluck('id')->toArray();
-                    $this->model = $this->model->whereIn('contract_id', $userContracts);
+                    $this->model = $this->model->whereIn('contract_id', $userContracts)->orWhere('user_id', $this->user->id);
                     break;
             }
         }

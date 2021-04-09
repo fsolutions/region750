@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\User;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\History;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CrudController;
 use Illuminate\Support\Facades\Validator;
@@ -73,6 +74,13 @@ class UserController extends CrudController
 
         $this->setUserRole();
         $this->model->load($this->modelLoads);
+
+        History::addNew([
+            'operation_name' => "Успешная регистрация, ваш ID в системе " . $this->model->id,
+            'model_name' => get_class(new User()),
+            'model_id' => $this->model->id,
+            'user_id' => $this->user->id
+        ]);
 
         return $this->model;
     }
@@ -165,7 +173,7 @@ class UserController extends CrudController
 
         $validator = Validator::make($this->formData, [
             'name'  => 'required|string|min:2',
-            'email' => 'required|email|unique:users' . $criteria,
+            // 'email' => 'exists:email',
             'phone' => 'required|string|max:50|unique:users' . $criteriaPhone,
         ]);
 

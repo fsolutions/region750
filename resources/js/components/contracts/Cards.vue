@@ -19,6 +19,11 @@
             </template>
         </div>
         <div class="contract-cards">
+            <div v-if="itemsLocal.data.length == 0 && !dataOverlay">
+                <b-card-text class="text-center">
+                    <h4 class="card-title my-5">Добавьте свой договор в систему, <br>или дождитесь, когда его внесет менеджер</h4>
+                </b-card-text>
+            </div>
             <div 
                 v-if="!dataOverlay"
                 class="one_card my-2"
@@ -187,7 +192,7 @@
                     }
                 }
 
-                return 'Не задано'
+                return 'не задано'
             },
             checkDaysForNextTO(index) {
                 if (this.itemsLocal.data[index].contract_to.length > 0) {

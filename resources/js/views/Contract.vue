@@ -46,7 +46,27 @@
                         </div>
                         <div class="form-group col-md-12">
                             <label for="contract_address">Адрес объекта из договора</label>
-                            <input v-model="editedItem.contract_address" required type="text" class="form-control" id="contract_address">
+                            <multiselect
+                                v-model="editedItem.contract_address"
+                                :placeholder="'Начните вводить адрес с города...'"
+                                :required="true"
+                                select-label="Выбрать"
+                                label="value"
+                                track-by="value"
+                                :options="addresses"
+                                :hide-selected="false"
+                                :searchable="true"
+                                :loading="loadingDadata"
+                                :internal-search="false"
+                                :clear-on-select="false"
+                                :close-on-select="true"                                
+                                @search-change="findAddress"
+                                open-direction="bottom"
+                            >
+                                <span slot="noOptions">Пока ничего не найдено...</span>
+                                <span slot="noResult">Ничего не найдено. Попробуйте снова...</span>
+                            </multiselect>
+                            <!-- <input v-model="editedItem.contract_address" required type="text" class="form-control" id="contract_address"> -->
                         </div>
                         <div class="form-group col-md-12">
                             <label for="contract_start_datetime">Дата заключения договора</label>
@@ -116,7 +136,8 @@
 </template>
 
 <script>
-    import {API_CONTRACTS} from "../constants"
+    import {API_CONTRACTS, API_DADATA_ADDRESS} from "../constants"
+    import debounce from '../services/helpers'
 
     import ContractCards from "../components/contracts/Cards"
     import ContractTOCreateOrEdit from "../components/contracts/ContractTOCreateOrEdit"
@@ -138,7 +159,13 @@
         contract_number: '',
         status: 'В обработке',
         contract_start_datetime: '',
-        contract_comment: ''
+        contract_comment: '',
+        creator: {},
+        contract_on_user: {},
+        contract_to: {},
+        contract_to_last: {},
+        orders: {},
+        prescriptions: {}
     })
 
     export default {
@@ -166,7 +193,10 @@
             ],
             contractForTO: {},
             contractForTOIndex: -1,
-            operationForTO: ""
+            operationForTO: "",
+            loadingDadata: false,
+            daDataSearch: '',
+            addresses: []
         }
     },
     watch: {
@@ -175,11 +205,27 @@
                 this.$moment(value).format('YYYY-MM-DD') :
                 ''
         },
+        // daDataSearch: debounce(function (value) {
+        //     this.loadingDadata = true
+        //     api.call('post', API_DADATA_ADDRESS, {'address': value})
+        //         .then(({data}) => {
+        //             this.addresses = data
+        //             this.loadingDadata = false
+        //         })
+        // }, 700),
     },
     mounted() {
         this.editedItem = initialEditedItem()
     },
     methods: {
+        findAddress: debounce (function(query) {
+            this.loadingDadata = true
+            api.call('post', API_DADATA_ADDRESS, {'address': query})
+                .then(({data}) => {
+                    this.addresses = data
+                    this.loadingDadata = false
+                })
+        }, 700),
         makeToast(variant = null) {
             this.$bvToast.toast(variant === 'success' ? 'Договор сохранен' : 'Договор удален', {
                 title: `Оповещение`,
@@ -195,15 +241,23 @@
 
             return title
         },
+        selectAddress(data) {
+            console.log(data);
+        },
         // calls from mixin on item edit
         onItemEditModalCallback() {
         },
         // calls from mixin on item save
         onCreateOrUpdateItemCallback() {
+            if (this.editedItem.contract_address.value) {
+                this.editedItem.contract_address = this.editedItem.contract_address.value
+            }
         },
         // calls from mixin on item save
         onCreatedOrUpdatedCallback() {
             this.isSidebarOpen = false
+            this.savingProcess = false
+            this.editedItem = initialEditedItem()
         },
         // calls from mixin on modal close
         closeSidePanelCallback() {

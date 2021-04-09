@@ -15,6 +15,7 @@ export const API_REFERENCE = '/api/references'                                  
 export const API_REFERENCE_PROPERTIES = '/api/references/properties'                            // can take reference_id
 
 export const API_DADATA_COMPANY = '/api/dadata/company'
+export const API_DADATA_ADDRESS = '/api/dadata/address'
 
 export const API_GET_NOTIFICATIONS_ALL = '/api/notifications'
 export const API_GET_NOTIFICATIONS_UNREAD = '/api/notifications/unread'

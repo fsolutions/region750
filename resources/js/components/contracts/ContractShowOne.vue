@@ -69,6 +69,14 @@
                     </div>
                     <div class="tab-pane fade" id="contract-history">
                         <h5 class="mb-4">История по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
+                        <app-table
+                            :api="apiHistory"
+                            :additionalGetParameter="`&contract_id=${detailedItem.id}`"
+                            :items.sync="HistoryItems"
+                            :isNeedSearch="false"
+                            :isNeedCreate="false"
+                            :onDataEmptyMessage="'История по контракту отсутствует.'"
+                        ></app-table>
                     </div>
                 </div>
             </div>
@@ -77,6 +85,8 @@
 </template>
 
 <script>
+    import { API_HISTORY } from "../../constants"
+
     import ContractDetails from './ContractDetails'
     import ContractTOTable from './ContractTOTable'
     import OrderTable from '../orders/OrderTable'
@@ -99,6 +109,13 @@
             return {
                 changeLoadOrder: false,
                 onRefreshFinanceRequestsKey: 0, // key of finance requests refreshing
+                apiHistory: API_HISTORY,
+                HistoryItems: {
+                    actionAllows: [],
+                    headers: [],
+                    data: [],
+                    links: []
+                }
             }
         },
         watch: {

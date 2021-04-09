@@ -200,7 +200,7 @@ class Contract extends Model
      * @var array
      */
     protected $sort = [
-        'sortBy' => 'id',
+        'sortBy' => 'contract_to_last.keyword',
         'sortDirection' => 'desc'
     ];
 

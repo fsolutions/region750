@@ -112,7 +112,8 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
-        'position'
+        'position',
+        'phone_verified_at'
     ];
 
     /**
@@ -151,6 +152,7 @@ class User extends Authenticatable
         'other_actions' => [
             'all_roles' => [
                 'roles',
+                // 'contracts'
             ]
         ]
     ];
@@ -278,9 +280,9 @@ class User extends Authenticatable
     {
         foreach ($this->roles()->get()->toArray() as $role) {
             if (
-                Str::endsWith($role['slug'], '-head-manager')
-                || Str::endsWith($role['slug'], 'accountant')
-                || $role['slug'] == 'president'
+                $role['slug'] == 'manager'
+                || $role['slug'] == 'master'
+                || $role['slug'] == 'intern'
                 || $role['slug'] == 'administrator'
             ) {
                 return true;
@@ -322,34 +324,14 @@ class User extends Authenticatable
     }
 
     /**
-     * Orders table relationships One To One
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function creatorOrders()
-    {
-        return $this->hasOne(Order::class, 'creator_user_id', 'id');
-    }
-
-    /**
-     * Orders table relationships One To One
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function salesOrders()
-    {
-        return $this->hasOne(Order::class, 'sales_manager_user_id', 'id');
-    }
-
-    /**
-     * Orders table relationship Belongs To Many
+     * Contracts table relationship Belongs To Many
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function orders()
-    {
-        return $this->belongsToMany(Order::class, 'user_orders');
-    }
+    // public function contracts()
+    // {
+    //     return $this->belongsToMany(Contract::class, 'contract_on_user_id');
+    // }
 
     /**
      * Relationships roles table Many To Many

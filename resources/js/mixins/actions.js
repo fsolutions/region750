@@ -195,7 +195,13 @@ export const actionShowItem = {
                 order_contract: {},
                 order_prescription: {},
                 prescription_contract: {},
-                prescription_order: {}                                
+                prescription_order: {},
+                creator: {},
+                contract_on_user: {},
+                contract_to: {},
+                contract_to_last: {},
+                orders: {},
+                prescriptions: {}                                              
             },
             isSidebarOpenDetail: false,
             detailedItemIndex: -1

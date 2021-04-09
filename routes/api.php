@@ -41,6 +41,7 @@ Route::post('password/reset', [PassportAuthController::class, 'resetPassword'])-
 
 Route::post('dadata/phone', [DadataService::class, 'cleanPhone']);
 Route::post('dadata/company', [DadataService::class, 'getCompany']);
+Route::post('dadata/address', [DadataService::class, 'getAddress']);
 Route::post('dadata/name', [DadataService::class, 'getName']);
 Route::post('dadata/email', [DadataService::class, 'getEmail']);
 
