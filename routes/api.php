@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Bundles\User\UserLists;
+use App\Bundles\Calendar\Calendar;
 use Illuminate\Support\Facades\Route;
 use App\Bundles\Service\DadataService;
 use Illuminate\Support\Facades\Config;
@@ -88,6 +89,11 @@ Route::middleware('auth:api')->group(function () {
      * Users
      */
     Route::get('users/lists', [UserLists::class, 'userLists']);
+
+    /**
+     * Calendar
+     */
+    Route::get('calendar', [Calendar::class, 'index']);
 
     /**
      * ApiResource

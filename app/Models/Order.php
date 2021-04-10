@@ -34,6 +34,14 @@ class Order extends Model
             'id' => [
                 "type" => "long"
             ],
+            'order_user' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
             'order_description' => [
                 "type" =>  "text",
                 "fields" => [
@@ -111,6 +119,9 @@ class Order extends Model
             'id_search' => [
                 "type" => "keyword"
             ],
+            'order_user_id' => [
+                "type" => "long"
+            ],
             'order_reference_service_id' => [
                 "type" => "long"
             ],
@@ -139,6 +150,7 @@ class Order extends Model
      * @var array
      */
     protected $fillable = [
+        'order_user_id',
         'order_description',
         'order_reference_service_id',
         'order_contract_id',
@@ -169,6 +181,7 @@ class Order extends Model
     protected $loads = [
         'index' => [
             'all_roles' => [
+                'order_user:id,name',
                 'order_service:id,name',
                 'master:id,name',
                 'order_contract:id,contract_number,contract_address',
@@ -177,6 +190,7 @@ class Order extends Model
         ],
         'other_actions' => [
             'all_roles' => [
+                'order_user:id,name',
                 'order_service:id,name',
                 'master',
                 'order_contract',
@@ -236,6 +250,14 @@ class Order extends Model
             'key' => 'order_contract.contract_number',
             'sortBy' => 'order_contract.keyword',
             'label' => 'Номер договора',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'order_user.name',
+            'sortBy' => 'order_user.keyword',
+            'label' => 'Обращение от клиента',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -338,6 +360,17 @@ class Order extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
+    public function order_user()
+    {
+        return $this->hasOne(User::class, 'id', 'order_user_id')
+            ->select(['id', 'name', 'email', 'phone']);
+    }
+
+    /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function master()
     {
         return $this->hasOne(User::class, 'id', 'order_master_user_id')
@@ -391,6 +424,7 @@ class Order extends Model
             'id' => $this->id,
             'order_service' => isset($this->order_service->name) ? $this->order_service->name : '',
             'order_description' => $this->order_description,
+            'order_user' => isset($this->order_user->name) ? $this->order_user->name : '',
             'master' => isset($this->master->name) ? $this->master->name : '',
             'order_contract' => isset($this->order_contract->contract_number) ? $this->order_contract->contract_number : '',
             'order_prescription' => isset($this->order_prescription->prescription_number) ? $this->order_prescription->prescription_number : '',
@@ -403,6 +437,7 @@ class Order extends Model
 
         $otherFields = [
             'id_search' => '$id' . $this->id,
+            'order_user_id' => isset($this->order_user_id) ? $this->order_user_id : null,
             'order_reference_service_id' => isset($this->order_reference_service_id) ? $this->order_reference_service_id : null,
             'order_master_user_id' => isset($this->order_master_user_id) ? $this->order_master_user_id : null,
             'order_contract_id' => isset($this->order_contract_id) ? $this->order_contract_id : null,

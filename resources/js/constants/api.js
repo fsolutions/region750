@@ -30,3 +30,5 @@ export const API_HISTORY = '/api/history'
 
 export const API_CONTRACTS = '/api/contracts'
 export const API_CONTRACTS_TO = '/api/contracts-to'
+
+export const API_CALENDAR = '/api/calendar'

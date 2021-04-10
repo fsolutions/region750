@@ -59,27 +59,7 @@
                                 </p> -->
                             </div>
                             <div class="col-sm-6 text-center">
-                                <select-of-properties
-                                    :name="`select_${index}`"
-                                    :reference_id="1"
-                                    :needNullElement="false"
-                                    :needMultipleSelect="false"
-                                    :defaultSelectName="`Выберите нужную услугу`"
-                                    :selected="order_reference_service_id"
-                                    @set="setServiceOfOrder"
-                                ></select-of-properties>
-
-                                <div class="form-group mt-3" v-if="order_reference_service_id">
-                                    <label>Опишите подробности обращения</label>
-                                    <b-form-textarea
-                                        id="order_description"
-                                        v-model="order_description"
-                                        placeholder=""
-                                        rows="3"
-                                        max-rows="16"
-                                    ></b-form-textarea>
-                                </div>                            
-                                <b-button @click="orderMaster(index)" variant="primary" class="mt-3">Вызвать мастера<i class="fas fa-spinner fa-spin reload-sync-icon ml-2" v-if="contract.sendingOrder"></i></b-button>
+                                <b-button @click="orderMaster(index)" variant="primary" class="mt-4">Вызвать мастера</b-button>
                                 <p class="text-small mb-1 mt-2">или позвоните нам</p>
                                 <p><a href="tel:+79153788117" class="big-link">+7 (915) 378-81-17</a></p>
                             </div>
@@ -88,6 +68,11 @@
                 </b-card>
             </div>
         </div>
+        <fast-order-form
+            :openForm="fastOrderFormOpened"
+            :contract_id="selectedContractId"
+            @sended="sendedFastOrderForm"
+        ></fast-order-form>
         <b-overlay
             :show="dataOverlay"
             spinner-variant="success"
@@ -97,6 +82,7 @@
 </template>
 <script>
     import { API_ORDERS } from "../../constants"
+    import fastOrderForm from "../orders/fastOrderForm"
 
     import {
         checkActionAllow
@@ -111,12 +97,17 @@
         mixins: [
             checkActionAllow
         ],
+        components: {
+            'fast-order-form': fastOrderForm
+        },
         data() {
             return {
                 dataOverlay: true,
                 isCardsRefreshing: true,
                 order_reference_service_id: '',
-                order_description: ''
+                order_description: '',
+                fastOrderFormOpened: false,
+                selectedContractId: ''
             }
         },
         computed: {
@@ -140,9 +131,6 @@
                         this.dataOverlay = false
                         this.isCardsRefreshing = false
                         this.itemsLocal = response.data
-                        this.itemsLocal.data.forEach(contract => {
-                            contract.sendingOrder = false
-                        });
                     })
             },
             refreshDataInCards() {
@@ -159,28 +147,8 @@
                 this.order_reference_service_id = value
             },
             orderMaster(index) {
-                this.itemsLocal.data[index].sendingOrder = true
-
-                const order = {
-                    order_description: this.order_description,
-                    order_reference_service_id: this.order_reference_service_id,
-                    order_contract_id: this.itemsLocal.data[index].id,
-                    order_status: 'В обработке'
-                }
-
-                api.call("post", API_ORDERS, order).then(({data}) => {
-                    this.makeToast('success')
-                    this.order_reference_service_id = ''
-                    this.order_description = ''
-                }).catch((response) => {
-                    if (response.status == 422){
-                        this.validationErrors = response.data.error
-                        this.makeToast('danger')
-                    }
-                }).finally(() => {
-                    this.itemsLocal.data[index].sendingOrder = true
-                })
-
+                this.selectedContractId = this.itemsLocal.data[index].id
+                this.fastOrderFormOpened = true
             },
             nextTO(index) {
                 return this.$moment(this.itemsLocal.data[index].contract_to[0].to_start_datetime).format('MMMM YYYY') + ' г.'
@@ -240,7 +208,11 @@
                     }
                 }
                 return sEnding
-            }            
+            },
+            sendedFastOrderForm() {
+                this.selectedContractId = ''
+                this.fastOrderFormOpened = false
+            }        
         }
     }
 </script>

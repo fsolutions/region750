@@ -36,8 +36,8 @@
                         <i class="fas fa-caret-down"></i>
                     </div>
                     <div class="dropdown-menu dropdown-header-right-menu mt-2">
-                        <a class="dropdown-item" href="#"><span class="dropdown-icon-question"><i class="fas fa-question-circle"></i></span> Справка и поддержка</a>
-                        <div class="dropdown-divider"></div>
+                        <!-- <a class="dropdown-item" href="#"><span class="dropdown-icon-question"><i class="fas fa-question-circle"></i></span> Справка и поддержка</a>
+                        <div class="dropdown-divider"></div> -->
                         <router-link class="dropdown-item" to="/logout"><span class="dropdown-icon-exit"><i class="fas fa-sign-out-alt exit-icon"></i></span> Выйти</router-link>
                     </div>
                 </li>

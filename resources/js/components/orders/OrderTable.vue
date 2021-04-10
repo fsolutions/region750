@@ -132,6 +132,7 @@
 
     const initialEditedItem = () => ({
         id: '',
+        order_user_id: '',
         order_reference_service_id: 8,
         order_contract_id: '',
         order_description: '',
@@ -141,6 +142,7 @@
         order_comment: '',
         order_comment_for_user: '',
         order_status: 'В обработке',
+        order_user: {},
         order_service: {},
         master: {},
         order_contract: {},

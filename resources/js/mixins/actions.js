@@ -40,9 +40,6 @@ export const actionCreateOrUpdateItem = {
                     this.onItemEditModalCallback()
                 }
             }
-            if (typeof this.onOpenCompanyModalCallback === 'function') {
-                this.onOpenCompanyModalCallback()
-            }
 
             this.isSidebarOpen = true
 
@@ -191,6 +188,7 @@ export const actionShowItem = {
                 to_manager: {},
                 optional_sales_manager: {},
                 finance_substatuses: [],
+                order_user: {},
                 master: {},
                 order_contract: {},
                 order_prescription: {},

@@ -1,116 +1,307 @@
 <template>
-    <div>
-        <div class="card" v-for="(item, index) in items" :key="index">
-        <img :src="'/img/card-company.svg'" class="card-img">
-        <div class="card-img-overlay">
-            <h4 class="card-title company_name">{{ item.name }}</h4>
-            <div class="row company_contant">
-                <div class="col-md-6">
-                    <h5 class="mt-2">Контакты</h5> 
-                    <ul>
-                        <li class="contant_item"><i class="fas fa-map-marker-alt mr-2"></i> {{ item.address }}</li>
-                        <li class="contant_item"><i class="fas fa-phone-alt mr-1"></i> {{ item.phones }}</li>
-                        <li class="contant_item"><i class="fas fa-envelope mr-1"></i> <a href="#">{{ item.emails }}</a></li>
-                        <li class="contant_item"><i class="fas fa-at mr-1"></i> <a href="#">{{ item.website }}</a></li>
-                    </ul> 
-                </div>
-                <div class="col-md-6">
-                    <h5 class="mt-2">Менеджеры компании</h5>
-                    <ul>
-                        <li class="company_contant_item">O.Sergeev@molkom-adyg.ru</li>
-                        <li class="company_contant_item">T.Nikolaev@molkom-adyg.ru</li>
-                    </ul>
-                    <h5 class="mt-4">Контактное лицо</h5>
-                    <ul>
-                        <li>Иванов Иван, менеджер</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="company_show text-right">
-                <span v-b-toggle="'collapse-'+index"><i class="fas fa-info-circle mr-2"></i>Подробная информация</span><br>
-            </div>
-        </div>
-        <b-collapse :id="'collapse-'+index" class="company_collapse ml-5 mr-5">
-            <h5 class="mt-2 mb-3">Основная информация</h5> 
-            <table class="table company_info_table">
-            <tbody>
-                <tr>
-                    <td class="company_info_item">Тип:</td>
-                    <td>Экспортер</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">Полное название компании</td>
-                    <td>{{item.name}}</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">Юридический адрес</td>
-                    <td>{{item.address}}</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">ФИО директора</td>
-                    <td>{{item.director}}</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">В лице</td>
-                    <td>{{item.type_director}}</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">ИНН</td>
-                    <td>{{item.inn}}</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">ОГРН</td>
-                    <td>{{item.ogrn}}</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">КПП</td>
-                    <td>{{item.kpp}}</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">БИК</td>
-                    <td>{{item.bic}}</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">Название банка</td>
-                    <td>{{item.bank_name}}</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">Корр. счет</td>
-                    <td>{{item.correspondent_account}}</td>
-                </tr>
-                <tr>
-                    <td class="company_info_item">Расч. счет</td>
-                    <td>{{item.payment_account}}</td>
-                </tr>                    
-            </tbody>
-            </table>
-        </b-collapse>
-        </div>
-    </div>
+	<div id="app">
+		<!-- <div class="calendar-controls">
+			<div v-if="message" class="notification is-success">{{ message }}</div>
+
+			<div class="box">
+				<h4 class="title is-5"></h4>
+
+				<div class="field">
+					<label class="label">Период</label>
+					<div class="control">
+						<div class="select">
+							<select v-model="displayPeriodUom">
+								<option>Месяц</option>
+								<option>Неделя</option>
+								<option>Год</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="checkbox">
+						<input v-model="showTimes" type="checkbox" />
+						Show times
+					</label>
+				</div>
+
+			</div>
+
+			<div class="box">
+				<div class="field">
+					<label class="label">Title</label>
+					<div class="control">
+						<input v-model="newItemTitle" class="input" type="text" />
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="label">Start date</label>
+					<div class="control">
+						<input v-model="newItemStartDate" class="input" type="date" />
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="label">End date</label>
+					<div class="control">
+						<input v-model="newItemEndDate" class="input" type="date" />
+					</div>
+				</div>
+
+				<button class="button is-info" @click="clickTestAddItem">
+					Add Item
+				</button>
+			</div>
+		</div> -->
+		<div class="calendar-parent">
+			<calendar-view
+				:items="items"
+				:show-date="showDate"
+				:time-format-options="{ hour: 'numeric', minute: '2-digit' }"
+				:enable-drag-drop="true"
+				:disable-past="disablePast"
+				:disable-future="disableFuture"
+				:show-times="showTimes"
+				:display-period-uom="displayPeriodUom"
+				:display-period-count="3"
+				:starting-day-of-week="1"
+				:class="themeClasses"
+				:period-changed-callback="periodChanged"
+				:current-period-label="''"
+				:displayWeekNumbers="true"
+				:enable-date-selection="true"
+				:selection-start="selectionStart"
+				:selection-end="selectionEnd"
+				@date-selection-start="setSelection"
+				@date-selection="setSelection"
+				@date-selection-finish="finishSelection"
+				@drop-on-date="onDrop"
+				@click-date="onClickDay"
+				@click-item="onClickItem"
+			>
+				<calendar-view-header
+					slot="header"
+					slot-scope="{ headerProps }"
+					:header-props="headerProps"
+					@input="setShowDate"
+				/>
+			</calendar-view>
+		</div>
+	</div>
 </template>
-
 <script>
-import { API_USERS } from '../constants'
+    import { API_CALENDAR } from "../constants"
+    
+    require("../../../node_modules/vue-simple-calendar/static/css/default.css")
+    require("../../../node_modules/vue-simple-calendar/static/css/holidays-us.css")
+    import {
+        CalendarView,
+        CalendarViewHeader,
+        CalendarMathMixin,
+    } from "vue-simple-calendar" // published version
 
-export default {
-    data() {
-        return {
-            items: '',
-            user: auth.user,
-        }
-    },
-    mounted() {
-        Event.$on('userLoggedIn', () => {
-            this.user = auth.user;
-        });
-        this.getUserCompany()    
-    },
-    methods: {
-        getUserCompany(){
-            api.call('get', API_USERS+`/${this.user.id}`).then(({data}) => {
-                this.items = data.companies
-            })
-        }
+    export default {
+        name: "App",
+        components: {
+            CalendarView,
+            CalendarViewHeader,
+        },
+        mixins: [CalendarMathMixin],
+        data() {
+            return {
+                /* Show the current month, and give it some fake items to show */
+                showDate: this.thisMonth(1),
+                message: "",
+                disablePast: false,
+                disableFuture: false,
+                displayPeriodUom: "month",
+                showTimes: true,
+                selectionStart: null,
+                selectionEnd: null,
+                newItemTitle: "",
+                newItemStartDate: "",
+                newItemEndDate: "",
+                useDefaultTheme: true,
+                useHolidayTheme: false,
+                items: [
+                    {
+                        id: "e0",
+                        startDate: "2018-01-05",
+                    },
+                    {
+                        id: "e1",
+                        startDate: this.thisMonth(15, 18, 30),
+                    },
+                    {
+                        id: "e2",
+                        startDate: this.thisMonth(15),
+                        title: "Single-day item with a long title",
+                    },
+                    {
+                        id: "e3",
+                        startDate: this.thisMonth(7, 9, 25),
+                        endDate: this.thisMonth(10, 16, 30),
+                        title: "Multi-day item with a long title and times",
+                    },
+                    {
+                        id: "e4",
+                        startDate: this.thisMonth(20),
+                        title: "My Birthday!",
+                        classes: "birthday",
+                        url: "https://en.wikipedia.org/wiki/Birthday",
+                    },
+                    {
+                        id: "e5",
+                        startDate: this.thisMonth(5),
+                        endDate: this.thisMonth(12),
+                        title: "Multi-day item",
+                        classes: "purple",
+                    },
+                    {
+                        id: "foo",
+                        startDate: this.thisMonth(29),
+                        title: "Same day 1",
+                    },
+                    {
+                        id: "e6",
+                        startDate: this.thisMonth(29),
+                        title: "Same day 2",
+                        classes: "orange",
+                    },
+                    {
+                        id: "e7",
+                        startDate: this.thisMonth(29),
+                        title: "Same day 3",
+                    },
+                    {
+                        id: "e8",
+                        startDate: this.thisMonth(29),
+                        title: "Same day 4",
+                        classes: "orange",
+                    },
+                    {
+                        id: "e9",
+                        startDate: this.thisMonth(29),
+                        title: "Same day 5",
+                    },
+                    {
+                        id: "e10",
+                        startDate: this.thisMonth(29),
+                        title: "Same day 6",
+                        classes: "orange",
+                    },
+                    {
+                        id: "e11",
+                        startDate: this.thisMonth(29),
+                        title: "Same day 7",
+                    },
+                ],
+            }
+        },
+        computed: {
+            userLocale() {
+                return this.getDefaultBrowserLocale
+            },
+            dayNames() {
+                return this.getFormattedWeekdayNames(this.userLocale, "long", 0)
+            },
+            themeClasses() {
+                return {
+                    "theme-default": this.useDefaultTheme,
+                    "holiday-us-traditional": this.useHolidayTheme,
+                    "holiday-us-official": this.useHolidayTheme,
+                }
+            },
+        },
+        mounted() {
+            this.newItemStartDate = this.isoYearMonthDay(this.today())
+            this.newItemEndDate = this.isoYearMonthDay(this.today())
+        },
+        methods: {
+            periodChanged() {
+                // range, eventSource) {
+                // Demo does nothing with this information, just including the method to demonstrate how
+                // you can listen for changes to the displayed range and react to them (by loading items, etc.)
+                //console.log(eventSource)
+                //console.log(range)
+            },
+            thisMonth(d, h, m) {
+                const t = new Date()
+                return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0)
+            },
+            onClickDay(d) {
+                this.selectionStart = null
+                this.selectionEnd = null
+                this.message = `You clicked: ${d.toLocaleDateString()}`
+            },
+            onClickItem(e) {
+                this.message = `You clicked: ${e.title}`
+            },
+            setShowDate(d) {
+                this.message = `Changing calendar view to ${d.toLocaleDateString()}`
+                this.showDate = d
+            },
+            setSelection(dateRange) {
+                this.selectionEnd = dateRange[1]
+                this.selectionStart = dateRange[0]
+            },
+            finishSelection(dateRange) {
+                this.setSelection(dateRange)
+                this.message = `You selected: ${this.selectionStart.toLocaleDateString()} -${this.selectionEnd.toLocaleDateString()}`
+            },
+            onDrop(item, date) {
+                this.message = `You dropped ${item.id} on ${date.toLocaleDateString()}`
+                // Determine the delta between the old start date and the date chosen,
+                // and apply that delta to both the start and end date to move the item.
+                const eLength = this.dayDiff(item.startDate, date)
+                item.originalItem.startDate = this.addDays(item.startDate, eLength)
+                item.originalItem.endDate = this.addDays(item.endDate, eLength)
+            },
+            clickTestAddItem() {
+                this.items.push({
+                    startDate: this.newItemStartDate,
+                    endDate: this.newItemEndDate,
+                    title: this.newItemTitle,
+                    id: "e" + Math.random().toString(36).substr(2, 10),
+                })
+                this.message = "You added a calendar item!"
+            },
+        },
     }
-}
 </script>
+
+<style>
+    .calendar-controls {
+        margin-right: 1rem;
+        min-width: 14rem;
+        max-width: 14rem;
+    }
+    .calendar-parent {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        max-height: 80vh;
+        background-color: white;
+        margin-right: 1rem;
+    }
+    /* For long calendars, ensure each week gets sufficient height. The body of the calendar will scroll if needed */
+    .cv-wrapper.period-month.periodCount-2 .cv-week,
+    .cv-wrapper.period-month.periodCount-3 .cv-week,
+    .cv-wrapper.period-year .cv-week {
+        min-height: 6rem;
+    }
+    /* These styles are optional, to illustrate the flexbility of styling the calendar purely with CSS. */
+    /* Add some styling for items tagged with the "birthday" class */
+    .theme-default .cv-item.birthday {
+        background-color: #e0f0e0;
+        border-color: #d7e7d7;
+    }
+    .theme-default .cv-item.birthday::before {
+        content: "\1F382"; /* Birthday cake */
+        margin-right: 0.5em;
+    }
+</style>

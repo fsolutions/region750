@@ -68,14 +68,26 @@
                         <li class="list-group-item list-group-name pl-0"><span class="menu-item-name">Пользователи</span></li>
                     </ul>
                 </router-link>
-                <!-- <li class="parent_item"><i class="fas fa-chevron-right"></i> <a href="">Обратная связь</a></li> -->
+                <span class="menu-item-link" v-if="!canSeeUsers()" @click="fastOrderMaster()" style="cursor: pointer;">
+                    <ul class="list-group list-group-horizontal menu-item">
+                        <li class="list-group-item pr-1">
+                            <div class="menu-icon-block"><span class="menu-icon-child-company"><i class="fas fa-comments"></i></span></div>
+                        </li>
+                        <li class="list-group-item list-group-name pl-0"><span class="menu-item-name">Обратная связь</span></li>
+                    </ul>
+                </span>
             </div>
             <span class="openbtn" @click="showOrHideSideBar"><i :class="handlerSidebar == true ? 'fas fa-angle-left' : 'fas fa-bars'"></i></span>
         </div>
+        <fast-order-form
+            :openForm="fastOrderFormOpened"
+            @sended="sendedFastOrderForm"
+        ></fast-order-form>
     </div>
 </template>
 
 <script>
+    import fastOrderForm from '../orders/fastOrderForm'
     import { API_USERS_LISTS } from '../../constants'
 
     const initialNotifications = () => ({
@@ -86,13 +98,17 @@
         props: {
             user: { type: Object, required: true },
         },
+        components: {
+            'fast-order-form': fastOrderForm
+        },
         data() {
             return {
                 notificationsLocal: initialNotifications(),
                 handlerSidebar: false,
                 internalUsers: [],
                 isOnlyForAccountant: false,
-                visible: true
+                visible: true,
+                fastOrderFormOpened: false,
             }
         },
         computed: {
@@ -185,7 +201,13 @@
             updateStyle() {
                 let idContent = document.getElementById("main")
                 idContent.setAttribute("style", "margin-left: 55px;")
-            }
+            },
+            fastOrderMaster() {
+                this.fastOrderFormOpened = true
+            },
+            sendedFastOrderForm() {
+                this.fastOrderFormOpened = false
+            }        
         }
     }
 </script>

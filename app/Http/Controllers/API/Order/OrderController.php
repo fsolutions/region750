@@ -41,8 +41,7 @@ class OrderController extends CrudController
             switch ($role->slug) {
                 case 'client':
                     $isClient = true;
-                    $userContracts = Contract::whereIn('contract_on_user_id', [$this->user->id])->get(['id'])->pluck('id')->toArray();
-                    $this->model = $this->model->whereIn('order_contract_id', $userContracts);
+                    $this->findMyOrders();
                     break;
             }
         }
@@ -59,6 +58,10 @@ class OrderController extends CrudController
         return $this->model;
     }
 
+    /**
+     * Prepare headers for client
+     *
+     */
     public function prepareHeadersForClient()
     {
         array_pop($this->model['headers']);
@@ -68,6 +71,20 @@ class OrderController extends CrudController
                 array_splice($this->model['headers'], $key, 1);
             }
         }
+    }
+
+    /**
+     * Filtering only my orders
+     *
+     */
+    public function findMyOrders()
+    {
+        $userContracts = Contract::whereIn('contract_on_user_id', [$this->user->id])->get(['id'])->pluck('id')->toArray();
+
+        $orderIdsByContract = Order::whereIn('order_contract_id', $userContracts)->get(['id'])->pluck('id')->toArray();
+        $orderIdsByUserId = Order::where('order_user_id', $this->user->id)->get(['id'])->pluck('id')->toArray();
+
+        $this->model = $this->model->whereIn('id', $orderIdsByContract + $orderIdsByUserId);
     }
 
     /**
@@ -212,6 +229,12 @@ class OrderController extends CrudController
      */
     private function prepareFormData()
     {
+        if ($this->checkUserIsAdmin()) {
+        } else {
+            $this->formData['order_user_id'] = $this->user->id;
+        }
+
+        return $this->formData;
     }
 
     /**
@@ -264,9 +287,12 @@ class OrderController extends CrudController
      * @param int $contract_id
      * @param bool $update
      */
-    private function sendNotificationManager(int $contract_id, $update = false)
+    private function sendNotificationManager($contract_id, $update = false)
     {
-        $contract = Contract::find($contract_id);
+        if ($contract_id) {
+            $contract = Contract::find($contract_id);
+        }
+
         $users = User::whereHas('roles', function ($query) {
             $query->whereIn('slug', ['administrator', 'manager']);
         })->get();
@@ -278,10 +304,30 @@ class OrderController extends CrudController
             'order_id' => $this->model->id
         ];
 
+        $orderDescription = $this->model->order_description != "" ? $this->model->order_description : "Отстствует";
+
         if ($update) {
             Notification::locale('ru')->send($users, new NotificationsUsers("Обновления в обращении по договору №$contract->contract_number.", $parameters));
         } else {
-            Notification::locale('ru')->send($users, new NotificationsUsers("Зарегистрировано новое обращение по договору №$contract->contract_number.", $parameters));
+            if ($contract_id) {
+                Notification::locale('ru')->send($users, new NotificationsUsers("Зарегистрировано новое обращение по договору №$contract->contract_number.", $parameters));
+                History::addNew([
+                    'operation_name' => "Зарегистрировано новое обращение по договору №$contract->contract_number (ID: " . $this->model->id . "). Содержимое: " . $orderDescription,
+                    'model_name' => get_class(new Order()),
+                    'model_id' => $this->model->id,
+                    'contract_id' => $contract_id,
+                    'user_id' => $this->user->id
+                ]);
+            } else {
+                Notification::locale('ru')->send($users, new NotificationsUsers("Зарегистрировано новое обращение без договора. От пользователя с ID: " . $this->model->order_user_id, $parameters));
+
+                History::addNew([
+                    'operation_name' => "Зарегистрировано новое обращение без договора с ID: " . $this->model->id . ". Содержимое: " . $orderDescription,
+                    'model_name' => get_class(new Order()),
+                    'model_id' => $this->model->id,
+                    'user_id' => $this->model->order_user_id
+                ]);
+            }
         }
     }
 
@@ -291,17 +337,23 @@ class OrderController extends CrudController
      * @param int $contract_id
      * @param bool $update
      */
-    private function sendNotificationClient(int $contract_id, $operation = '')
+    private function sendNotificationClient($contract_id, $operation = '')
     {
-        $contract = Contract::find($contract_id);
-        $users = User::where('id', $contract->contract_on_user_id)->get();
+        if ($contract_id) {
+            $contract = Contract::find($contract_id);
+            $users = User::where('id', $contract->contract_on_user_id)->get();
+        } else {
+            $users = User::where('id', $this->model->order_user_id)->get();
+        }
 
         $parameters = [
             'place' => ['bell'],
-            'link' => "/orders",
-            'linkText' => 'Открыть обращения',
+            'link' => "/history",
+            'linkText' => 'Открыть историю',
             'order_id' => $this->model->id
         ];
+
+        $orderDescription = $this->model->order_description != "" ? $this->model->order_description : "Отстствует";
 
         if ($operation == 'update') {
             Notification::locale('ru')->send($users, new NotificationsUsers("Оставлен комментарий в обращении (ID: " . $this->model->id . ") по договору №$contract->contract_number: <em>" . $this->model->order_comment_for_user . "</em>", $parameters));
@@ -314,15 +366,26 @@ class OrderController extends CrudController
                 'user_id' => $this->user->id
             ]);
         } else if ($operation == 'delete') {
-            Notification::locale('ru')->send($users, new NotificationsUsers("Удалено обращение (ID: " . $this->model->id . ") по договору №$contract->contract_number", $parameters));
+            if ($contract_id) {
+                Notification::locale('ru')->send($users, new NotificationsUsers("Удалено обращение (ID: " . $this->model->id . ") по договору №$contract->contract_number", $parameters));
 
-            History::addNew([
-                'operation_name' => "Удалено обращение (ID: " . $this->model->id . ")",
-                'model_name' => get_class(new Order()),
-                'model_id' => $this->model->id,
-                'contract_id' => $contract_id,
-                'user_id' => $this->user->id
-            ]);
+                History::addNew([
+                    'operation_name' => "Удалено обращение (ID: " . $this->model->id . "). Содержимое: " . $orderDescription,
+                    'model_name' => get_class(new Order()),
+                    'model_id' => $this->model->id,
+                    'contract_id' => $contract_id,
+                    'user_id' => $this->user->id
+                ]);
+            } else {
+                Notification::locale('ru')->send($users, new NotificationsUsers("Удалено обращение с ID: " . $this->model->id, $parameters));
+
+                History::addNew([
+                    'operation_name' => "Удалено обращение с ID: " . $this->model->id . ". Содержимое: " . $orderDescription,
+                    'model_name' => get_class(new Order()),
+                    'model_id' => $this->model->id,
+                    'user_id' => $this->model->order_user_id
+                ]);
+            }
         } else {
             Notification::locale('ru')->send($users, new NotificationsUsers("Зарегистрировано новое обращение по договору №$contract->contract_number.", $parameters));
 
