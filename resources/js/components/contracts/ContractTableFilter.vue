@@ -4,7 +4,7 @@
         >
             <span
                 :class="`green-dropdown mr-0 active`"
-            >Фильтр</span>
+            >{{selectedFilterName}}</span>
             <span
                 :class="`green-arrow-dropdown dropdown-toggle dropdown-toggle-split active`"
                 data-toggle="dropdown"
@@ -38,7 +38,8 @@
                     {title: "Нет бумажного договора", active: false, status: "Нет бумажного договора"},
                     {title: "Есть бумажный договор", active: false, status: "Есть бумажный договор"},
                     {title: "Договор расторгнут", active: false, status: "Договор расторгнут"},
-                ]
+                ],
+                selectedFilterName: 'Фильтр'
             }
         },
         mounted() {
@@ -55,6 +56,7 @@
                     item.active = false
                     if (activeIndex == index) {
                         item.active = true
+                        this.selectedFilterName = item.title
                         if (item.status) {
                             additionalParameter = '&status=' + item.status
                         }

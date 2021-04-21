@@ -23,6 +23,13 @@ export const actionCreateOrUpdateItem = {
             savingProcess: false
         }
     },
+    watch: {
+        isSidebarOpen(value) {
+            if (value == false) {
+                this.closeSidePanelCallback()
+            }
+        }
+    },
     mounted() {
     },
     methods: {

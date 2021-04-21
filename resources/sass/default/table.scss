@@ -222,6 +222,11 @@
     border-top: 1px solid #dee2e6;
 }
 
+.table.b-table.b-table-stacked>tbody>tr> :first-child {
+    border-top-width: 2px;
+    border-color: #003897;
+}
+
 @media (max-width: 767.98px) {
 
     .fa-search,

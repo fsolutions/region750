@@ -47,7 +47,8 @@
                         <div class="form-group col-md-12">
                             <label for="contract_address">Адрес объекта из договора</label>
                             <multiselect
-                                v-model="editedItem.contract_address"
+                                v-if="!editedItem.contract_address"
+                                v-model="selectedAddress"
                                 :placeholder="'Начните вводить адрес с города...'"
                                 :required="true"
                                 select-label="Выбрать"
@@ -62,11 +63,12 @@
                                 :close-on-select="true"                                
                                 @search-change="findAddress"
                                 open-direction="bottom"
+                                @select="onAddressSelect"
                             >
                                 <span slot="noOptions">Пока ничего не найдено...</span>
                                 <span slot="noResult">Ничего не найдено. Попробуйте снова...</span>
                             </multiselect>
-                            <!-- <input v-model="editedItem.contract_address" required type="text" class="form-control" id="contract_address"> -->
+                            <input v-if="editedItem.contract_address" v-model="editedItem.contract_address" required type="text" class="form-control" id="contract_address">
                         </div>
                         <div class="form-group col-md-12">
                             <label for="contract_start_datetime">Дата заключения договора</label>
@@ -196,7 +198,8 @@
             operationForTO: "",
             loadingDadata: false,
             daDataSearch: '',
-            addresses: []
+            addresses: [],
+            selectedAddress: ''
         }
     },
     watch: {
@@ -242,15 +245,19 @@
             return title
         },
         selectAddress(data) {
-            console.log(data);
         },
         // calls from mixin on item edit
         onItemEditModalCallback() {
         },
         // calls from mixin on item save
         onCreateOrUpdateItemCallback() {
-            if (this.editedItem.contract_address.value) {
-                this.editedItem.contract_address = this.editedItem.contract_address.value
+            if (this.selectedAddress.value) {
+                this.editedItem.contract_address = this.selectedAddress.value
+            }
+        },
+        onAddressSelect(option) {
+            if (option.value) {
+                this.editedItem.contract_address = option.value
             }
         },
         // calls from mixin on item save
@@ -258,10 +265,12 @@
             this.isSidebarOpen = false
             this.savingProcess = false
             this.editedItem = initialEditedItem()
+            this.selectedAddress = ''
         },
         // calls from mixin on modal close
-        closeSidePanelCallback() {
+        onSidePanelCallback() {
             this.editedItem = initialEditedItem()
+            this.selectedAddress = ''
         },
         setUserOfContract(value) {
             this.editedItem.contract_on_user_id = value

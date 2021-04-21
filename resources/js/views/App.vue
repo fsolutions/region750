@@ -61,7 +61,7 @@
             },
             handlerMarginStyle(){
                 if(this.$mq === 'sm'){
-                    let mobileMargin = 'margin-left: 55px'
+                    let mobileMargin = 'margin-left: 60px'
                     return mobileMargin
                 }
             }

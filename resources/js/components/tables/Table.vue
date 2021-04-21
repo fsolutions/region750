@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div :class="$mq == 'sm' ? 'row justify-content-between mb-3' : 'row justify-content-between text-nowrap'">
-            <template v-if="$mq != 'sm'">
+        <div :class="$mq == 'sm' ? 'row justify-content-between mb-2' : 'row justify-content-between text-nowrap'">
+            <template v-if="$mq != 'sm' && canSeeFilters()">
                 <div class="col-md-6 col-6" v-if="typeOfTableFilter">
                     <contract-table-filter
                         v-if="typeOfTableFilter == 'contracts'"
@@ -32,10 +32,13 @@
                     </template>
                 </div>
             </template>
-            <template v-if="$mq == 'sm'">
+            <template v-if="$mq == 'sm' && canSeeFilters()">
                 <div class="col">
                     <span class="button-filter-table" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="fas fa-sort-down filter-table-icon"></i></span>
                 </div>
+            </template>
+            <template v-if="!canSeeFilters()">
+                <div class="col"></div>
             </template>
             <div :class="$mq == 'sm' ? 'col text-right' : (typeOfTableFilter!='' ? 'col-md-5 text-right':'col text-right')">
                 <template>
@@ -266,7 +269,8 @@
                 sortParamsLine: "",
                 openedTableHeaderMenuEvent: null,
                 visibleHeaders: [],
-                restoreHeader: true
+                restoreHeader: true,
+                user: auth.user,
             }
         },
         computed: {
@@ -403,6 +407,12 @@
 
                 return -1 
             },
+            canSeeFilters() {
+                if (!this.user.role.includes("client")) {
+                    return true
+                }
+                return false
+            },            
         }
     }
 </script>

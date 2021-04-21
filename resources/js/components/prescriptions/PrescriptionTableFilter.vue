@@ -4,7 +4,7 @@
         >
             <span
                 :class="`green-dropdown mr-0 active`"
-            >Фильтр</span>
+            >{{selectedFilterName}}</span>
             <span
                 :class="`green-arrow-dropdown dropdown-toggle dropdown-toggle-split active`"
                 data-toggle="dropdown"
@@ -38,7 +38,8 @@
                     {title: "Проведено", active: false, status: "Проведено"},
                     {title: "Отменено", active: false, status: "Отменено"},
                     {title: "Перенесено", active: false, status: "Перенесено"},
-                ]
+                ],
+                selectedFilterName: 'Фильтр'
             }
         },
         mounted() {
@@ -55,6 +56,7 @@
                     item.active = false
                     if (activeIndex == index) {
                         item.active = true
+                        this.selectedFilterName = item.title
                         if (item.status) {
                             additionalParameter = '&prescription_status=' + item.status
                         }

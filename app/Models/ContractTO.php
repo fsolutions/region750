@@ -265,6 +265,16 @@ class ContractTO extends Model
             ->select(['id', 'contract_number', 'contract_address']);
     }
 
+    /**
+     * User table relationships hasOneThrough
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\hasOneThrough
+     */
+    public function to_contract_for_user()
+    {
+        return $this->hasOneThrough(User::class, Contract::class, 'id', 'id', 'to_contract_id', 'contract_on_user_id')
+            ->select(['users.id', 'users.name', 'users.phone']);
+    }
 
     /**
      * Get the indexable data array for the model.

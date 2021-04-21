@@ -1,99 +1,163 @@
 <template>
-	<div id="app">
-		<!-- <div class="calendar-controls">
-			<div v-if="message" class="notification is-success">{{ message }}</div>
+	<div>
+        <div class="field">
+            <div class="form-group row justify-content-between">
+                <div class="col-sm-6">
+                    <!-- <label for="needs" class="col-form-label">Показывать в календаре:</label> -->
+                    <b-form-checkbox
+                        id="needTO"
+                        v-model="needTO"
+                        name="needTO"
+                    >
+                        ТО-ВКГО
+                    </b-form-checkbox>                    
+                    <b-form-checkbox
+                        id="needPRE"
+                        v-model="needPRE"
+                        name="needPRE"
+                    >
+                        Предписания
+                    </b-form-checkbox>                    
+                </div>
 
-			<div class="box">
-				<h4 class="title is-5"></h4>
+                <div class="col-sm-6 text-right" @click="openedDay=false">
+                    <label for="displayPeriod" class="form-label">Период отображения:</label>
+                    <b-form-select 
+                    style="max-width: 150px;"
+                    class="mr-3"
+                    size="sm"
+                    v-model="displayPeriodUom" 
+                    :options="[
+                        {value: 'month', text: 'Месяц'},
+                        {value: 'week', text: 'Неделя'},
+                        {value: 'year', text: 'Год'},
+                    ]"></b-form-select>
+                </div>
+            </div>
+        </div>
 
-				<div class="field">
-					<label class="label">Период</label>
-					<div class="control">
-						<div class="select">
-							<select v-model="displayPeriodUom">
-								<option>Месяц</option>
-								<option>Неделя</option>
-								<option>Год</option>
-							</select>
-						</div>
-					</div>
-				</div>
+    	<div id="full-calendar">
+            <!-- <div class="calendar-controls">
+                <div v-if="message" class="notification is-success">{{ message }}</div>
 
-				<div class="field">
-					<label class="checkbox">
-						<input v-model="showTimes" type="checkbox" />
-						Show times
-					</label>
-				</div>
+                <div class="box">
+                    <h4 class="title is-5"></h4>
 
-			</div>
+                    <div class="field">
+                        <label class="label">Период</label>
+                        <div class="control">
+                            <div class="select">
+                                <select v-model="displayPeriodUom">
+                                    <option>Месяц</option>
+                                    <option>Неделя</option>
+                                    <option>Год</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-			<div class="box">
-				<div class="field">
-					<label class="label">Title</label>
-					<div class="control">
-						<input v-model="newItemTitle" class="input" type="text" />
-					</div>
-				</div>
+                    <div class="field">
+                        <label class="checkbox">
+                            <input v-model="showTimes" type="checkbox" />
+                            Show times
+                        </label>
+                    </div>
 
-				<div class="field">
-					<label class="label">Start date</label>
-					<div class="control">
-						<input v-model="newItemStartDate" class="input" type="date" />
-					</div>
-				</div>
+                </div>
 
-				<div class="field">
-					<label class="label">End date</label>
-					<div class="control">
-						<input v-model="newItemEndDate" class="input" type="date" />
-					</div>
-				</div>
+                <div class="box">
+                    <div class="field">
+                        <label class="label">Title</label>
+                        <div class="control">
+                            <input v-model="newItemTitle" class="input" type="text" />
+                        </div>
+                    </div>
 
-				<button class="button is-info" @click="clickTestAddItem">
-					Add Item
-				</button>
-			</div>
-		</div> -->
-		<div class="calendar-parent">
-			<calendar-view
-				:items="items"
-				:show-date="showDate"
-				:time-format-options="{ hour: 'numeric', minute: '2-digit' }"
-				:enable-drag-drop="true"
-				:disable-past="disablePast"
-				:disable-future="disableFuture"
-				:show-times="showTimes"
-				:display-period-uom="displayPeriodUom"
-				:display-period-count="3"
-				:starting-day-of-week="1"
-				:class="themeClasses"
-				:period-changed-callback="periodChanged"
-				:current-period-label="''"
-				:displayWeekNumbers="true"
-				:enable-date-selection="true"
-				:selection-start="selectionStart"
-				:selection-end="selectionEnd"
-				@date-selection-start="setSelection"
-				@date-selection="setSelection"
-				@date-selection-finish="finishSelection"
-				@drop-on-date="onDrop"
-				@click-date="onClickDay"
-				@click-item="onClickItem"
-			>
-				<calendar-view-header
-					slot="header"
-					slot-scope="{ headerProps }"
-					:header-props="headerProps"
-					@input="setShowDate"
-				/>
-			</calendar-view>
-		</div>
+                    <div class="field">
+                        <label class="label">Start date</label>
+                        <div class="control">
+                            <input v-model="newItemStartDate" class="input" type="date" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">End date</label>
+                        <div class="control">
+                            <input v-model="newItemEndDate" class="input" type="date" />
+                        </div>
+                    </div>
+
+                    <button class="button is-info" @click="clickTestAddItem">
+                        Add Item
+                    </button>
+                </div>
+            </div> -->
+            <div class="calendar-parent mb-4">
+                <calendar-view
+                    :items="items.filter(item => item.showable)"
+                    :show-date="showDate"
+                    :time-format-options="{ hour: 'numeric', minute: '2-digit' }"
+                    :enable-drag-drop="enableDragDrop"
+                    :disable-past="disablePast"
+                    :disable-future="disableFuture"
+                    :show-times="showTimes"
+                    :display-period-uom="displayPeriodUom"
+                    :display-period-count="displayPeriodCount"
+                    :starting-day-of-week="1"
+                    :class="themeClasses"
+                    :period-changed-callback="periodChanged"
+                    :current-period-label="''"
+                    :displayWeekNumbers="true"
+                    :enable-date-selection="true"
+                    :selection-start="selectionStart"
+                    :selection-end="selectionEnd"
+                    @date-selection-start="setSelection"
+                    @date-selection="setSelection"
+                    @date-selection-finish="finishSelection"
+                    @drop-on-date="onDrop"
+                    @click-date="onClickDay"
+                    @click-item="onClickItem"
+                >
+                    <calendar-view-header
+                        slot="header"
+                        slot-scope="{ headerProps }"
+                        :header-props="headerProps"
+                        @input="setShowDate"
+                    />
+                </calendar-view>
+            </div>
+            <div class="calendar-controls" v-if="openedDay">
+                <h3 class="text-center">{{ selectedDay }}</h3>
+                <hr>
+                <div v-for="(item, index) in selectedItems.filter(item => item.showable)" :key="index">
+                    <template v-if="item.model == 'Prescription'">
+                        <div class="smallTextInDay"><em>{{item.startDate | formattedDate}} - {{item.title}}</em></div>
+                        <div class="mt-1">Клиент: {{item.to_contract_for_user.name}}: <a :href="`+${item.to_contract_for_user.phone}`">{{item.to_contract_for_user.phone | VMask('+#(###)###-##-##')}}</a></div>
+                    </template>
+                    <template v-else>
+                        <div class="smallTextInDay"><em>{{item.startDate | formattedDateTime}} - {{item.title}}</em></div>
+                        <div class="mt-1">Клиент: {{item.to_contract_for_user.name}}: <a :href="`+${item.to_contract_for_user.phone}`">{{item.to_contract_for_user.phone | VMask('+#(###)###-##-##')}}</a></div>
+                    </template>
+                    <hr>
+                </div>
+                <div 
+                    class="text-center"
+                    v-if="selectedItems.filter(item => item.showable).length == 0"
+                >
+                    Список событий пуст...
+                </div>
+            </div>
+        </div>        
+        <b-overlay
+            :show="isCalendarBusy"
+            spinner-variant="success"
+            no-wrap
+        ></b-overlay>
 	</div>
 </template>
 <script>
     import { API_CALENDAR } from "../constants"
-    
+
     require("../../../node_modules/vue-simple-calendar/static/css/default.css")
     require("../../../node_modules/vue-simple-calendar/static/css/holidays-us.css")
     import {
@@ -111,12 +175,22 @@
         mixins: [CalendarMathMixin],
         data() {
             return {
-                /* Show the current month, and give it some fake items to show */
+                api: API_CALENDAR,
+                additionalGetParameter: '',
+                filter: '',
+                isCalendarBusy: true,
+                needTO: true,
+                needPRE: true,
+                openedDay: false,
+                selectedDay: '',
+                selectedItems: [],
                 showDate: this.thisMonth(1),
                 message: "",
+                enableDragDrop: false,
                 disablePast: false,
                 disableFuture: false,
                 displayPeriodUom: "month",
+                displayPeriodCount: 1,
                 showTimes: true,
                 selectionStart: null,
                 selectionEnd: null,
@@ -125,79 +199,7 @@
                 newItemEndDate: "",
                 useDefaultTheme: true,
                 useHolidayTheme: false,
-                items: [
-                    {
-                        id: "e0",
-                        startDate: "2018-01-05",
-                    },
-                    {
-                        id: "e1",
-                        startDate: this.thisMonth(15, 18, 30),
-                    },
-                    {
-                        id: "e2",
-                        startDate: this.thisMonth(15),
-                        title: "Single-day item with a long title",
-                    },
-                    {
-                        id: "e3",
-                        startDate: this.thisMonth(7, 9, 25),
-                        endDate: this.thisMonth(10, 16, 30),
-                        title: "Multi-day item with a long title and times",
-                    },
-                    {
-                        id: "e4",
-                        startDate: this.thisMonth(20),
-                        title: "My Birthday!",
-                        classes: "birthday",
-                        url: "https://en.wikipedia.org/wiki/Birthday",
-                    },
-                    {
-                        id: "e5",
-                        startDate: this.thisMonth(5),
-                        endDate: this.thisMonth(12),
-                        title: "Multi-day item",
-                        classes: "purple",
-                    },
-                    {
-                        id: "foo",
-                        startDate: this.thisMonth(29),
-                        title: "Same day 1",
-                    },
-                    {
-                        id: "e6",
-                        startDate: this.thisMonth(29),
-                        title: "Same day 2",
-                        classes: "orange",
-                    },
-                    {
-                        id: "e7",
-                        startDate: this.thisMonth(29),
-                        title: "Same day 3",
-                    },
-                    {
-                        id: "e8",
-                        startDate: this.thisMonth(29),
-                        title: "Same day 4",
-                        classes: "orange",
-                    },
-                    {
-                        id: "e9",
-                        startDate: this.thisMonth(29),
-                        title: "Same day 5",
-                    },
-                    {
-                        id: "e10",
-                        startDate: this.thisMonth(29),
-                        title: "Same day 6",
-                        classes: "orange",
-                    },
-                    {
-                        id: "e11",
-                        startDate: this.thisMonth(29),
-                        title: "Same day 7",
-                    },
-                ],
+                items: [],
             }
         },
         computed: {
@@ -215,17 +217,57 @@
                 }
             },
         },
+        watch: {
+            'needTO': {
+                handler(need) {
+                    this.items.forEach((item, index) => {
+                        if (item.model == 'ContractTO') {
+                            item.showable = need
+                        }
+                    })
+                },
+                immediate: true,
+                deep: true,
+            },
+            'needPRE': {
+                handler(need) {
+                    this.items.forEach((item, index) => {
+                        if (item.model == 'Prescription') {
+                            item.showable = need
+                        }
+                    })
+                },
+                immediate: true,
+                deep: true,
+            },
+        },
         mounted() {
             this.newItemStartDate = this.isoYearMonthDay(this.today())
             this.newItemEndDate = this.isoYearMonthDay(this.today())
         },
         methods: {
-            periodChanged() {
+            getDataHandler: async function() {
+                this.isCalendarBusy = true
+                let filter = '';
+                if (this.filter) {
+                    filter = "&q=" + this.filter
+                }
+                await api.call('get', this.api + `?${this.additionalGetParameter}${filter}`)
+                    .then((response) => {
+                        this.isCalendarBusy = false
+                        this.items = response.data
+                    })
+            },
+            periodChanged(range) {
                 // range, eventSource) {
                 // Demo does nothing with this information, just including the method to demonstrate how
                 // you can listen for changes to the displayed range and react to them (by loading items, etc.)
-                //console.log(eventSource)
-                //console.log(range)
+                // console.log(eventSource)
+                // console.log(range)
+
+                this.additionalGetParameter = `&start_date=${this.isoYearMonthDay(range.displayFirstDate)}&end_date=${this.isoYearMonthDay(range.displayLastDate)}`;
+
+                this.getDataHandler()
             },
             thisMonth(d, h, m) {
                 const t = new Date()
@@ -234,10 +276,16 @@
             onClickDay(d) {
                 this.selectionStart = null
                 this.selectionEnd = null
-                this.message = `You clicked: ${d.toLocaleDateString()}`
+
+                this.openedDay = true
+                this.selectedDay = d.toLocaleDateString()
+
+                let localSelectedDay = this.$moment(d).format('YYYY-MM-DD')
+                this.selectedItems = this.items.filter((item => (this.$moment(item.startDate).format('YYYY-MM-DD') == localSelectedDay && item.showable)));
             },
             onClickItem(e) {
                 this.message = `You clicked: ${e.title}`
+                console.log(this.message);
             },
             setShowDate(d) {
                 this.message = `Changing calendar view to ${d.toLocaleDateString()}`
@@ -273,18 +321,33 @@
 </script>
 
 <style>
+    #full-calendar {
+        display: flex;
+        flex-wrap: wrap;
+        /* flex-direction: row;
+        width: 95vw; */
+        min-width: 30rem;
+        max-width: 100rem;
+        min-height: 40rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
     .calendar-controls {
-        margin-right: 1rem;
+        flex: 1 1 auto;
+        margin-left: 1rem;
         min-width: 14rem;
         max-width: 14rem;
+        overflow-y: auto;
+        max-height: 75vh;
     }
     .calendar-parent {
         display: flex;
-        flex-direction: column;
-        flex-grow: 1;
+        flex: 1 1 auto;
+        /* flex-direction: column;
+        flex-grow: 1; */
         overflow-x: hidden;
         overflow-y: hidden;
-        max-height: 80vh;
+        max-height: 75vh;
         background-color: white;
         margin-right: 1rem;
     }
@@ -294,14 +357,39 @@
     .cv-wrapper.period-year .cv-week {
         min-height: 6rem;
     }
-    /* These styles are optional, to illustrate the flexbility of styling the calendar purely with CSS. */
-    /* Add some styling for items tagged with the "birthday" class */
-    .theme-default .cv-item.birthday {
-        background-color: #e0f0e0;
-        border-color: #d7e7d7;
+    .cv-week, .cv-weekdays {
+        min-height: 20vh;
     }
-    .theme-default .cv-item.birthday::before {
-        content: "\1F382"; /* Birthday cake */
+    .period-week .cv-week, .period-week .cv-weekdays {
+        min-height: 75vh;
+    }
+    
+    .theme-default .cv-item {
+        white-space: pre-wrap;
+    }
+    .theme-default .cv-item.primary {
+        background-color: #AAAAAA;
+        border-color: #AAAAAA;
+    }
+    .theme-default .cv-item.success {
+        background-color: #52ae34;
+        border-color: #52ae34;
+    }
+    .theme-default .cv-item.warning {
+        background-color: #ffed4a;
+        border-color: #ffed4a;
+    }
+    .theme-default .cv-item.danger {
+        background-color: #e3342f;
+        border-color: #e3342f;
+    }
+    .smallTextInDay {
+        font-size:12px; 
+        line-height: 13px;                            
+    }
+
+    /* .theme-default .cv-item.birthday::before {
+        content: "\1F382";
         margin-right: 0.5em;
-    }
+    } */
 </style>
