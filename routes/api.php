@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use App\Bundles\User\UserLists;
 use App\Bundles\Calendar\Calendar;
+use App\Bundles\Notifications\SMSC;
 use Illuminate\Support\Facades\Route;
 use App\Bundles\Service\DadataService;
 use Illuminate\Support\Facades\Config;
@@ -37,8 +38,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('register', [PassportAuthController::class, 'register']);
 Route::post('login', [PassportAuthController::class, 'login']);
 
-Route::post('password/forgot', [PassportAuthController::class, 'forgotPassword']);
-Route::post('password/reset', [PassportAuthController::class, 'resetPassword'])->name('password.reset');
+Route::get('get-password/{user_id}', [SMSC::class, 'getPassword']);
+
+// Route::post('password/forgot', [PassportAuthController::class, 'forgotPassword']);
+// Route::post('password/reset', [PassportAuthController::class, 'resetPassword'])->name('password.reset');
+
+Route::post('password-reset', [PassportAuthController::class, 'resetSMSPassword']);
 
 Route::post('dadata/phone', [DadataService::class, 'cleanPhone']);
 Route::post('dadata/company', [DadataService::class, 'getCompany']);

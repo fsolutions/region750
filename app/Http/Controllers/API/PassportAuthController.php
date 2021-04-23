@@ -8,11 +8,14 @@ use App\Models\History;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Bundles\Notifications\SMSC;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use App\Notifications\NotificationsUsers;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Notification;
 
 class PassportAuthController extends Controller
 {
@@ -35,6 +38,10 @@ class PassportAuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        if (isset($data['phone']) && $data['phone'] != "") {
+            $data['phone'] = preg_replace('![^0-9]+!', '', $data['phone']);   //Чистим телефон
         }
 
         $user = User::create([
@@ -61,6 +68,8 @@ class PassportAuthController extends Controller
         ]);
 
         $this->sendNotificationManager($user);
+        $smsc = new SMSC();
+        $smsc->sendPassword($user->id, $data['password']);
 
         return response()->json([
             'token' => $token,
@@ -169,6 +178,48 @@ class PassportAuthController extends Controller
         );
 
         return $status;
+    }
+
+    /**
+     * Reset password via SMS
+     * @param Request $request
+     * @return mixed
+     */
+    public function resetSMSPassword(Request $request)
+    {
+        $data = $request->all();
+        $data['phone'] = preg_replace('![^0-9]+!', '', $data['phone']);   //Чистим телефон
+
+        $validator = Validator::make($data, [
+            'phone' => 'required|string|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $data['password'] = Str::random(8);
+
+        $user = User::where('phone', $data['phone'])->first();
+        $user->password = Hash::make($data['password']);
+        $user->save();
+
+        // $token = $user->createToken('Region750')->accessToken;
+
+        History::addNew([
+            'operation_name' => "Успешное восстановление пароля в системе, пароль отправлен в SMS.",
+            'model_name' => get_class(new User()),
+            'model_id' => $user->id,
+        ]);
+
+        $this->sendNotificationManager($user);
+        $smsc = new SMSC();
+        $smsc->sendPassword($user->id, $data['password']);
+
+        return response()->json([
+            // 'token' => $token,
+            // 'user' => $user
+        ], 200);
     }
 
     /**

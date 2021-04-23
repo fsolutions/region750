@@ -32,3 +32,5 @@ export const API_CONTRACTS = '/api/contracts'
 export const API_CONTRACTS_TO = '/api/contracts-to'
 
 export const API_CALENDAR = '/api/calendar'
+
+export const API_GET_PASSWORD_CODE = '/api/get-password'

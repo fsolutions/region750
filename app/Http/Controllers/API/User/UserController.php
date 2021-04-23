@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\History;
 use Illuminate\Http\Request;
+use App\Bundles\Notifications\SMSC;
 use App\Http\Controllers\CrudController;
 use Illuminate\Support\Facades\Validator;
 
@@ -63,6 +64,7 @@ class UserController extends CrudController
     public function store(Request $request)
     {
         $this->formData = $request->all();
+        $clearPassword = $this->formData['password'];
 
         $validator = $this->validationFormData();
         if ($validator->fails()) {
@@ -74,6 +76,9 @@ class UserController extends CrudController
 
         $this->setUserRole();
         $this->model->load($this->modelLoads);
+
+        $smsc = new SMSC();
+        $smsc->sendPassword($this->model->id, $clearPassword);
 
         History::addNew([
             'operation_name' => "Успешная регистрация, ваш ID в системе " . $this->model->id,

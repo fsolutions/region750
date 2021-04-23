@@ -19,7 +19,15 @@
                 </div>
                 <div class="form-row">
                     <div class="col p-0 mt-3">
-                        <button @click="login()" class="btn btn-primary btn-action w-100">Войти</button>
+                        <button @click="login()" class="btn btn-primary btn-action w-100">Войти<i class="fas fa-spinner fa-spin ml-1" v-if="savingProcess"></i></button>
+                    </div>
+                    <div class="col p-0 mt-3">
+                        <router-link to="/register" class="btn btn-secondary btn-action w-100" style="height: 50px; line-height: 36px;">Регистрация</router-link>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col p-0 mt-2 text-center">
+                        <router-link to="/reset-password" style="line-height: 36px;">Забыли пароль? Восстановить &raquo;</router-link>
                     </div>
                 </div>
             </div>
@@ -36,6 +44,7 @@
                 password: '',
                 errorMsg: '',
                 authenticated: auth.check(),
+                savingProcess: false,
             };
         },
         mounted() {
@@ -60,6 +69,8 @@
         },
         methods: {
             login() {
+                this.savingProcess = true
+
                 let data = {
                     phone: this.phone,
                     password: this.password
@@ -72,11 +83,13 @@
                         auth.login(data.token, data.user);
 
                         this.$router.push('/contracts');
+                        this.savingProcess = false
                     })
                     .catch(({
                         response
                     }) => {
                         this.errorMsg = "Ошибка авторизации, попробуйте снова."
+                        this.savingProcess = false
                     });
             },
             updateStyle() {

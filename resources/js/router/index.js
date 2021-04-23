@@ -11,6 +11,7 @@ import Contract from '../views/Contract.vue'
 import Prescription from '../views/Prescription.vue'
 import History from '../views/History.vue'
 import Calendar from '../views/Calendar.vue'
+import PasswordReset from '../views/PasswordReset.vue'
 
 let routes = [
         {
@@ -32,6 +33,11 @@ let routes = [
             path: '/logout',
             name: 'logout',
             meta: { logout: true }
+        },
+        {
+            path: '/reset-password',
+            name: 'passwordReset',
+            component: PasswordReset
         },
         {
             path: '/dashboard',
