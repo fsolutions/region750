@@ -34,3 +34,4 @@ export const API_CONTRACTS_TO = '/api/contracts-to'
 export const API_CALENDAR = '/api/calendar'
 
 export const API_GET_PASSWORD_CODE = '/api/get-password'
+export const API_POST_SEND_SMS = '/api/send-sms'

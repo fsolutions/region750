@@ -167,13 +167,21 @@ class User extends Authenticatable
             'create',
             // 'show',
             'edit',
-            'delete'
+            'delete',
+            'send_sms'
+        ],
+        'client' => [
+            // 'create',
+            // 'show',
+            // 'edit',
+            // 'delete'
         ],
         'all_roles' => [
             'create',
             // 'show',
             'edit',
-            // 'delete'
+            // 'delete',
+            'send_sms'
         ]
     ];
 

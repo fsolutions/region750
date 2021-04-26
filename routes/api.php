@@ -116,4 +116,5 @@ Route::middleware('auth:api')->group(function () {
      */
     Route::get('/get-user', [PassportAuthController::class, 'getUser']);
     Route::post('/logout', [PassportAuthController::class, 'logout']);
+    Route::post('/send-sms', [SMSC::class, 'sendSMSNotifyAction']);
 });

@@ -262,9 +262,18 @@
     background-color: #09402f;
 }
 
+.table_send_sms {
+    background-color: #52ae34;
+}
+
+.table_send_sms:hover {
+    background-color: #09402f;
+}
+
 .table_actions_supply,
 .table_actions_create_order,
-.table_create_to {
+.table_create_to,
+.table_send_sms {
     text-transform: uppercase !important;
     font-size: 12px;
     position: relative;
@@ -296,10 +305,15 @@
     top: 3px;
 }
 
-.table_create_to-title {
+.table_create_to-title,
+.table_send_sms-title {
     position: absolute;
     left: 5px;
     top: 3px;
+}
+
+.table_send_sms-title {
+    left: 3px;
 }
 
 .table_actions_supply-title {

@@ -1,12 +1,14 @@
 <template>
     <div>
         <app-table
+            :name="'user'"
             :api="tableApiUrl"
             :items.sync="items"
             :isNeedSearch="true"
             @show="showItem"
             @edit="createOrEditItemModal"
             @delete="deleteItem"
+            @sendSms="sendSms"
         ></app-table>
 
         <b-sidebar
@@ -86,11 +88,39 @@
                 <pre>{{detailedItem}}</pre>
             </div>
         </b-sidebar>
+        <b-sidebar
+            v-model="isSidebarOpenForSMS"
+            id="sidebar-right"
+            title="Отправка SMS"
+            right
+            backdrop
+            shadow
+            width="35em"
+            backdrop-variant="dark"
+            ref="showItem"
+        >
+            <div class="d-block">
+                <p>
+                    <b>Имя пользователя:</b> {{userForSMS.name}}<br>
+                    <b>Телефон:</b> {{userForSMS.phone}}
+                </p>
+                <b-form-textarea
+                    id="textarea"
+                    v-model="sms_text"
+                    placeholder="Введите сообщение для SMS. Старайтесь делать его небольшим, чтобы экономить бюджет компании..."
+                    rows="5"
+                    max-rows="6"
+                ></b-form-textarea>
+                <div class="text-right mt-4">
+                    <button @click="sendSmsAction()" :disabled="sms_text.length ==0 ? true:false" class="btn btn-action btn-primary w-100 mt-1">Отправить SMS<i class="fas fa-spinner fa-spin ml-1" v-if="sendingSMS"></i></button>
+                </div>
+            </div>
+        </b-sidebar>
   </div>
 </template>
 
 <script>
-    import {API_USERS} from "../constants"
+    import {API_USERS, API_POST_SEND_SMS} from "../constants"
 
     import {
         defaultDataItems,
@@ -125,11 +155,17 @@
         return {
             tableApiUrl: API_USERS,
             fieldFIO: 'name',
-            maskPhone: ''
+            maskPhone: '',
+            isSidebarOpenForSMS: false,
+            userForSMSIndex: '',
+            userForSMS: {},
+            sms_text: '',
+            sendingSMS: false
         }
     },
     mounted() {
         this.editedItem = initialEditedItem()
+        this.userForSMS = initialEditedItem()
     },
     watch: {
         'maskPhone': function (phone){
@@ -138,6 +174,14 @@
                 this.editedItem.phone = freshPhone
             }
         },
+        isSidebarOpenForSMS(value) {
+            if (!value) {
+                this.userForSMSIndex = ''
+                this.userForSMS = initialEditedItem()
+                this.sms_text = ''
+                this.sendingSMS = false
+            }
+        }
     },
     methods: {
         makeToast(variant = null) {
@@ -182,6 +226,37 @@
         generatePassword() {
             let randomstring = Math.random().toString(36).slice(-8);
             this.editedItem.password = randomstring
+        },
+        sendSms(index) {
+            this.isSidebarOpenForSMS = true
+            this.userForSMSIndex = index
+            this.userForSMS = this.items.data[index]
+        },
+        sendSmsAction() {
+            this.sendingSMS = true
+
+            const data = {
+                phone: this.userForSMS.phone,
+                message: this.sms_text
+            }
+            api.call("post", API_POST_SEND_SMS, data).then(({data}) => {
+                this.isSidebarOpenForSMS = false
+                this.$bvToast.toast('SMS сообщение успешно отправлено пользователю!', {
+                    title: `Оповещение`,
+                    variant: 'success',
+                    solid: true
+                })
+            }).catch(() => {
+                this.$bvToast.toast('SMS сообщение не отправлено! Обратитесь к администратору.', {
+                    title: `Оповещение`,
+                    variant: 'danger',
+                    solid: true
+                })
+            })
+            .finally(() => {
+                this.sendingSMS = false
+            })
+
         }
     }
   }

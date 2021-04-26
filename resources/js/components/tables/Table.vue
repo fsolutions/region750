@@ -226,6 +226,7 @@
     import ContractTOTableFilter from '../contracts/ContractTOTableFilter'
     import OrderTableFilter from '../orders/OrderTableFilter'
     import PrescriptionTableFilter from '../prescriptions/PrescriptionTableFilter'
+    import ActionUser from "./actions/actionUser";
     import ActionContract from "./actions/actionContract";
     import ActionOrder from "./actions/actionOrder";
     import ActionCustom from "./actions/actionCustom";
@@ -253,6 +254,7 @@
             "order-table-filter": OrderTableFilter,
             "prescription-table-filter": PrescriptionTableFilter,
             "action-contract": ActionContract,
+            "action-user": ActionUser,
             "action-order": ActionOrder,
             "action-custom": ActionCustom,
         },

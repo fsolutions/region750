@@ -41,13 +41,22 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'sms' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/sms/sms.log'),
+        ],
+
+        'jobs' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/jobs/job.log'),
+        ],
+
         'push' => [
             'driver' => 'daily',
             'path' => storage_path('logs/pushserve/ps.log'),
             'level' => 'debug',
             'days' => 14,
         ],
-
         'chat' => [
             'driver' => 'daily',
             'path' => storage_path('logs/chatserve/cs.log'),
