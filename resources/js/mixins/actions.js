@@ -170,6 +170,40 @@ export const actionCopyItem = {
     }
 }
 
+// Action создание автоматического ТО события
+// Необходимо наличие this.tableApiUrl
+export const actionAutoTOItem = {
+    data() {
+        return {
+            needAutoTO: false
+        }
+    },
+    methods: {
+        autoTOItem(index) {
+            let id = this.items.data[index].id
+
+            this.$swal({
+                title: 'Подтверждаете желание создать автоматическое событие на следующее ТО',
+                icon: 'question',
+                showCancelButton: true,
+                cancelButtonText: 'Нет',
+                confirmButtonText: 'Да',
+            }).then((result) => {
+                if(result.isConfirmed){
+                    api.call("get", `${this.tableApiUrl}/auto-to/${id}`).then(({data}) => {
+                        this.items.data.unshift(data)
+
+                        this.closeSidePanelCallback()
+                    })
+                }
+            }).finally(() => {
+                this.needAutoTO = false
+                this.makeToast('success')
+            })
+        },
+    }
+}
+
 // Action просмотра карточки подробностей
 // Необходимо наличие v-model="isSidebarOpenDetail" ; this.tableApiUrl
 export const actionShowItem = {

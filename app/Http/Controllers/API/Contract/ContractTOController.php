@@ -187,6 +187,29 @@ class ContractTOController extends CrudController
         return $this->model::destroy($id);
     }
 
+    public function autoTO($id)
+    {
+        $contractTO = ContractTO::findOrFail($id);
+
+        // change fields original to
+        $contractTO->to_master_user_id = null;
+        $contractTO->to_comment = null;
+        $contractTO->to_sms_sended = null;
+        $contractTO->to_email_sended = null;
+        $contractTO->to_status = "Запланировано";
+
+        $new_to_start_datetime = date("Y-m-d H:m:s", strtotime($contractTO->to_start_datetime . "+1 year"));
+
+        $contractTO->to_start_datetime = $new_to_start_datetime;
+
+        // add copy order
+        $copyContractTO = ContractTO::create($contractTO->toArray());
+
+        $loads = $copyContractTO->getLoads();
+
+        return $copyContractTO->load($loads['all_roles']);
+    }
+
     /**
      * Prepare form data
      *

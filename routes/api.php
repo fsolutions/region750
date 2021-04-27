@@ -101,6 +101,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('calendar', [Calendar::class, 'index']);
 
     /**
+     * ContractTO
+     */
+    Route::get('contracts-to/auto-to/{id}', [ContractTOController::class, 'autoTO']);
+
+    /**
      * ApiResource
      */
     Route::apiResource('references/properties', ReferencePropertyController::class);

@@ -133,7 +133,8 @@ class ContractTO extends Model
         ],
         'other_actions' => [
             'all_roles' => [
-                'master'
+                'master',
+                'to_contract'
             ]
         ]
     ];

@@ -51,6 +51,16 @@
                                 max-rows="16"
                             ></b-form-textarea>
                         </div>                            
+                        <div class="form-group col-md-12" v-if="editIndex != -1 && (editedItem.to_status == 'Проведено' || editedItem.to_status == 'Отменено')">
+                            <b-form-checkbox
+                                id="needAutoTO"
+                                v-model="needAutoTO"
+                                name="needAutoTO"
+                            >
+                                Назначить автоматическое ТО?
+                            </b-form-checkbox>                    
+                            
+                        </div>
                     </div>
                     <div class="text-right">
                         <button type="submit" class="btn btn-primary">Сохранить<i class="fas fa-spinner fa-spin ml-1" v-if="savingProcess"></i></button>
@@ -84,6 +94,7 @@
         actionShowItem,
         actionCreateOrUpdateItem,
         actionDeleteItem,
+        actionAutoTOItem
     } from '../../mixins'
 
     const initialEditedItem = () => ({
@@ -111,6 +122,7 @@
             actionShowItem,
             actionCreateOrUpdateItem,
             actionDeleteItem,
+            actionAutoTOItem
         ],
         data() {
             return {
@@ -121,7 +133,8 @@
                     'Проведено',
                     'Отменено',
                     'Перенесено'
-                ]
+                ],
+                needAutoTO: false
             }
         },
         watch: {
@@ -175,6 +188,9 @@
             },
             // calls from mixin on item save
             onCreatedOrUpdatedCallback() {
+                if (this.needAutoTO) {
+                    this.autoTOItem(this.editIndex)
+                }
                 this.isSidebarOpen = false
             },
             // calls from mixin on modal close

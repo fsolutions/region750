@@ -33,7 +33,12 @@
                         <b-td
                             stacked-heading="Услуга обращения"
                         >
+                          <template v-if="detailedItem.order_service">
                             {{ detailedItem.order_service.name }}
+                          </template>
+                          <template v-else>
+                            Произвольное обращение
+                          </template>
                         </b-td>
                         <b-td
                             stacked-heading="Описание обращения"

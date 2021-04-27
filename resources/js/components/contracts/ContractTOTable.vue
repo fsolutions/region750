@@ -75,6 +75,16 @@
                                 max-rows="16"
                             ></b-form-textarea>
                         </div>                            
+                        <div class="form-group col-md-12" v-if="editIndex != -1 && (editedItem.to_status == 'Проведено' || editedItem.to_status == 'Отменено')">
+                            <b-form-checkbox
+                                id="needAutoTO"
+                                v-model="needAutoTO"
+                                name="needAutoTO"
+                            >
+                                Назначить автоматическое ТО?
+                            </b-form-checkbox>                    
+                            
+                        </div>
                     </div>
                 </form>
             </div>
@@ -97,6 +107,7 @@
         actionShowItem,
         actionCreateOrUpdateItem,
         actionDeleteItem,
+        actionAutoTOItem
     } from '../../mixins'
 
     const initialEditedItem = () => ({
@@ -119,6 +130,7 @@
             actionShowItem,
             actionCreateOrUpdateItem,
             actionDeleteItem,
+            actionAutoTOItem
         ],
         props: {
             contract_id: { type: Number|String, required: false },
@@ -139,7 +151,7 @@
                     'Проведено',
                     'Отменено',
                     'Перенесено'
-                ]
+                ],
             }
         },
         watch: {
@@ -168,6 +180,10 @@
             onCreatedOrUpdatedCallback() {
                 if (this.editIndex == -1) {
                     this.editedItem.to_contract_id = this.contract_id
+                }
+
+                if (this.needAutoTO) {
+                    this.autoTOItem(this.editIndex)
                 }
 
                 this.isSidebarOpen = false
