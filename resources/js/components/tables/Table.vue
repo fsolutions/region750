@@ -126,6 +126,12 @@
             <template #cell(to_start_datetime)="data">
                 {{ data.value | formattedDateTime }}
             </template>
+            <template #cell(created_at)="data">
+                {{ data.value | formattedDateTime }}
+            </template>
+            <template #cell(updated_at)="data">
+                {{ data.value | formattedDateTime }}
+            </template>
             <template #cell(contract_start_datetime)="data">
                 {{ data.value | formattedDate }}
             </template>

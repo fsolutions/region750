@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Log extends Model
 {
@@ -49,9 +49,9 @@ class Log extends Model
      *
      * @var array
      */
-    protected $casts = [
-        'created_at' => 'datetime:d.m.Y H:i',
-    ];
+    // protected $casts = [
+    //     'created_at' => 'datetime:d.m.Y H:i',
+    // ];
 
     /**
      *  Attributes models.
@@ -86,5 +86,4 @@ class Log extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
-
 }

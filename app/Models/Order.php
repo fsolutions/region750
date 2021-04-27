@@ -167,11 +167,11 @@ class Order extends Model
      *
      * @var array
      */
-    protected $casts = [
-        'created_at' => 'datetime:d.m.Y H:i',
-        'updated_at' => 'datetime:d.m.Y H:i',
-        'deleted_at' => 'datetime:d.m.Y H:i',
-    ];
+    // protected $casts = [
+    //     'created_at' => 'datetime:d.m.Y H:i',
+    //     'updated_at' => 'datetime:d.m.Y H:i',
+    //     'deleted_at' => 'datetime:d.m.Y H:i',
+    // ];
 
     /**
      * Load relationship.
@@ -181,16 +181,16 @@ class Order extends Model
     protected $loads = [
         'index' => [
             'all_roles' => [
-                'order_user:id,name',
+                'order_user:id,name,phone',
                 'order_service:id,name',
-                'master:id,name',
+                'master:id,name,phone',
                 'order_contract:id,contract_number,contract_address',
                 'order_prescription:id,prescription_number'
             ]
         ],
         'other_actions' => [
             'all_roles' => [
-                'order_user:id,name',
+                'order_user:id,name,phone',
                 'order_service:id,name',
                 'master',
                 'order_contract',

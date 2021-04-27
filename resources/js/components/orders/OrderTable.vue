@@ -69,7 +69,15 @@
                         </div>                            
                         <div class="form-group col-md-12">
                             <label for="order_start_datetime">Планируемая дата исполнения обращения</label>
-                            <input v-model="editedItem.order_start_datetime" type="date" class="form-control" id="order_start_datetime">
+                            <!-- <input v-model="editedItem.order_start_datetime" type="date" class="form-control" id="order_start_datetime"> -->
+                            <b-form-datepicker 
+                                id="order_start_datetime" 
+                                placeholder="Выберите дату" 
+                                locale="ru"
+                                label-help="Используйте клавиши для передвижения по календарю"
+                                label-no-date-selected="Выберите дату"
+                                v-model="editedItem.order_start_datetime"
+                            ></b-form-datepicker>
                         </div>
                         <div class="form-group col-md-12">
                             <label for="contract_address">Мастер на выполнение обращения</label>

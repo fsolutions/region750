@@ -113,11 +113,11 @@ class ContractTO extends Model
      *
      * @var array
      */
-    protected $casts = [
-        'created_at' => 'datetime:d.m.Y H:i',
-        'updated_at' => 'datetime:d.m.Y H:i',
-        'deleted_at' => 'datetime:d.m.Y H:i',
-    ];
+    // protected $casts = [
+    //     'created_at' => 'datetime:d.m.Y H:i',
+    //     'updated_at' => 'datetime:d.m.Y H:i',
+    //     'deleted_at' => 'datetime:d.m.Y H:i',
+    // ];
 
     /**
      * Load relationship.

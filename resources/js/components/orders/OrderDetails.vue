@@ -85,7 +85,7 @@
                             <template v-if="detailedItem.order_user">
                                 <b>ФИО:</b> {{detailedItem.order_user.name}}<br>
                                 <b>Телефон:</b> <a :href="`tel:+${detailedItem.order_user.phone}`">{{detailedItem.order_user.phone | VMask('+#(###)###-##-##')}}</a><br>
-                                <b>Email:</b> {{detailedItem.order_user.email || "Не задан"}}
+                                <span v-if="detailedItem.order_user.email"><b>Email:</b> {{detailedItem.order_user.email}}</span>
                             </template>
                             <template v-else>
                                 Не задан
@@ -121,7 +121,7 @@
                         <b-td
                             stacked-heading="Дата составления обращения"
                         >
-                            {{ detailedItem.created_at }}
+                            {{ detailedItem.created_at | formattedDateTime }}
                         </b-td>
                     </b-tr>
                 </b-tbody>

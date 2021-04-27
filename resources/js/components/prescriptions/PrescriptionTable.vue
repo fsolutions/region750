@@ -63,7 +63,15 @@
                         </div>                            
                         <div class="form-group col-md-12">
                             <label for="prescription_start_datetime">Дата необходимая для исполнения предписания</label>
-                            <input v-model="editedItem.prescription_start_datetime" required type="date" class="form-control" id="prescription_start_datetime">
+                            <!-- <input v-model="editedItem.prescription_start_datetime" required type="date" class="form-control" id="prescription_start_datetime"> -->
+                            <b-form-datepicker 
+                                id="prescription_start_datetime" 
+                                placeholder="Выберите дату" 
+                                locale="ru"
+                                label-help="Используйте клавиши для передвижения по календарю"
+                                label-no-date-selected="Выберите дату"
+                                v-model="editedItem.prescription_start_datetime"
+                            ></b-form-datepicker>
                         </div>
                         <div class="form-group col-md-12">
                             <label for="prescription_master_user_id">Сотрудник, назначивший предписание</label>

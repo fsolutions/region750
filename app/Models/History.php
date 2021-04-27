@@ -52,9 +52,9 @@ class History extends Model
      *
      * @var array
      */
-    protected $casts = [
-        'created_at' => 'datetime:d.m.Y H:i',
-    ];
+    // protected $casts = [
+    //     'created_at' => 'datetime:d.m.Y H:i',
+    // ];
 
     /**
      *  Attributes models.

@@ -133,9 +133,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'created_at' => 'datetime:d.m.Y H:i',
-        'updated_at' => 'datetime:d.m.Y H:i',
-        'deleted_at' => 'datetime:d.m.Y H:i',
+        // 'created_at' => 'datetime:d.m.Y H:i',
+        // 'updated_at' => 'datetime:d.m.Y H:i',
+        // 'deleted_at' => 'datetime:d.m.Y H:i',
     ];
 
     /**

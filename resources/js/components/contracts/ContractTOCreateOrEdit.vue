@@ -24,7 +24,27 @@
                         </div>
                         <div class="form-group col-md-12">
                             <label for="to_start_datetime">Дата и время проведения ТО (ориентировочно или точно)</label>
-                            <input v-model="editedItem.to_start_datetime" required type="datetime-local" class="form-control" id="to_start_datetime">
+                            <div class="row">
+                                <div class="col-4">
+                                    <b-form-datepicker 
+                                        id="to_start_datetime_date" 
+                                        placeholder="Выберите дату" 
+                                        locale="ru"
+                                        label-help="Используйте клавиши для передвижения по календарю"
+                                        label-no-date-selected="Выберите дату"
+                                        v-model="to_start_datetime_date"
+                                    ></b-form-datepicker>
+                                </div>
+                                <div class="col-2">
+                                    <b-form-timepicker 
+                                        id="to_start_datetime_time"
+                                        v-model="to_start_datetime_time" 
+                                        locale="ru"
+                                        label-no-time-selected="Выберите время"
+                                    ></b-form-timepicker>
+                                </div>
+                            </div>
+                            <!-- <input v-model="editedItem.to_start_datetime" required type="datetime-local" class="form-control" id="to_start_datetime"> -->
                         </div>
                         <div class="form-group col-md-12">
                             <label for="contract_address">Мастер на выполнение ТО</label>
@@ -134,14 +154,16 @@
                     'Отменено',
                     'Перенесено'
                 ],
-                needAutoTO: false
+                to_start_datetime_date: '',
+                to_start_datetime_time: '12:00',
             }
         },
         watch: {
-            "editedItem.to_start_datetime": function(value) {
-                this.editedItem.to_start_datetime = value ?
-                    this.$moment(value).format('YYYY-MM-DDTHH:mm') :
-                    ''
+            "to_start_datetime_date": function(value) {
+                this.editedItem.to_start_datetime = this.to_start_datetime_date + ' ' + this.to_start_datetime_time
+            },
+            "to_start_datetime_time": function(value) {
+                this.editedItem.to_start_datetime = this.to_start_datetime_date + ' ' + this.to_start_datetime_time
             },
             operationForTO(operation) {
                 handleOperation(operation)
@@ -179,6 +201,11 @@
             },
             // calls from mixin on item edit
             onItemEditModalCallback() {
+                if (this.editedItem.to_start_datetime) {
+                    let dateArray = this.editedItem.to_start_datetime.split(" ")
+                    this.to_start_datetime_date = dateArray[0]
+                    this.to_start_datetime_time = dateArray[1]
+                }
             },
             // calls from mixin on item save
             onCreateOrUpdateItemCallback() {
