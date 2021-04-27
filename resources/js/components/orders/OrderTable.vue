@@ -22,7 +22,7 @@
             right
             backdrop
             shadow
-            width="85em"
+            width="65em"
             backdrop-variant="dark"
             ref="editItem"
             no-close-on-backdrop
@@ -117,11 +117,29 @@
                 </div>
             </template>
         </b-sidebar>
+        <b-sidebar
+            v-model="isSidebarOpenDetail"
+            id="sidebar-right"
+            title="Детальная информация"
+            right
+            backdrop
+            shadow
+            width="65em"
+            backdrop-variant="dark"
+            ref="showItem"
+        >
+            <div class="d-block">
+                <order-details
+                    :detailedItem="detailedItem"
+                ></order-details>
+            </div>
+        </b-sidebar>        
     </div>
 </template>
 
 <script>
     import {API_ORDERS} from "../../constants"
+    import OrderDetails from "./OrderDetails"
 
     import {
         defaultDataItems,
@@ -151,6 +169,7 @@
 
     export default {
         components: {
+            "order-details": OrderDetails
         },
         mixins: [
             defaultDataItems,

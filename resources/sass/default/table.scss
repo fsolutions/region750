@@ -212,7 +212,7 @@
 }
 
 .table-action-cell {
-    width: 100px;
+    min-width: 100px;
 }
 
 .table th,
@@ -277,7 +277,7 @@
     text-transform: uppercase !important;
     font-size: 12px;
     position: relative;
-    padding: 5px 50px;
+    padding: 5px 50%;
     color: white !important;
     cursor: pointer;
 }
@@ -314,6 +314,10 @@
 
 .table_send_sms-title {
     left: 3px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .table_actions_supply-title {

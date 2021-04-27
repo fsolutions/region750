@@ -288,15 +288,6 @@ class Order extends Model
             'visible' => true
         ],
         [
-            'key' => 'order_description',
-            'sortBy' => 'order_description',
-            'label' => 'Описание обращения',
-            'stickyColumn' => true,
-            'sortable' => true,
-            'sortDirection' => 'desc',
-            'visible' => true
-        ],
-        [
             'key' => 'master.name',
             'sortBy' => 'master.keyword',
             'label' => 'Обработал обращение',

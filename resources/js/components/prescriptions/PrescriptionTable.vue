@@ -22,7 +22,7 @@
             right
             backdrop
             shadow
-            width="85em"
+            width="65em"
             backdrop-variant="dark"
             ref="editItem"
             no-close-on-backdrop

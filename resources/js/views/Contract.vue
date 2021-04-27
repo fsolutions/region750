@@ -29,7 +29,7 @@
             right
             backdrop
             shadow
-            width="85em"
+            width="65em"
             backdrop-variant="dark"
             ref="editItem"
             :title="modalTitle()"
@@ -117,7 +117,7 @@
             right
             backdrop
             shadow
-            width="85em"
+            width="65em"
             backdrop-variant="dark"
             no-close-on-backdrop
         >

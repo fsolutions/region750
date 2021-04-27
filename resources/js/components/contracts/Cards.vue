@@ -48,15 +48,12 @@
                                         <b>Дата следующего ТО <span class="bigDate">не назначена</span></b>
                                     </template>
                                 </p>
-                                <p><b>Дата последнего ТО-ВКГО <span class="bigDate" style="font-size:16px;" v-html="findLastTO(index)"></span></b></p>
-                                <!-- <p>
-                                    <template v-if="findMasterOnNextTO(index) != -1">
-                                        <b>Мастер на следующее ТО:</b> {{ findMasterOnNextTO(index) }}
-                                    </template>
-                                    <template v-else>
-                                        <b>Мастер на следующее ТО не назначен</b>
-                                    </template>
-                                </p> -->
+                                <p class="mb-0"><b>Дата последнего ТО <span class="bigDate" style="font-size:16px;" v-html="findLastTO(index)"></span></b></p>
+                                <template v-if="findMasterOfPreviousTO(index) != -1">
+                                    <p>
+                                        <b>Работы выполнял </b> {{ findMasterOfPreviousTO(index) }}
+                                    </p>
+                                </template>
                             </div>
                             <div class="col-sm-6 text-center">
                                 <b-button @click="orderMaster(index)" variant="primary" class="mt-4">Вызвать мастера</b-button>
@@ -154,13 +151,17 @@
                 return this.$moment(this.itemsLocal.data[index].contract_to[0].to_start_datetime).format('MMMM YYYY') + ' г.'
             },
             findLastTO(index) {
+                let result = 'не задано'
                 if (this.itemsLocal.data[index].contract_to.length > 0) {
-                    if (this.itemsLocal.data[index].contract_to[1]) {
-                        return this.$moment(this.itemsLocal.data[index].contract_to[1].to_start_datetime).format('DD.MM.YYYY') + ' г.'
-                    }
+                    this.itemsLocal.data[index].contract_to.some((to_element, to_index) => {
+                        if (to_element.to_status == 'Проведено') {
+                            result = this.$moment(to_element.to_start_datetime).format('DD.MM.YYYY') + ' г.'   
+                            return true 
+                        }
+                    })
                 }
 
-                return 'не задано'
+                return result
             },
             checkDaysForNextTO(index) {
                 if (this.itemsLocal.data[index].contract_to.length > 0) {
@@ -172,15 +173,23 @@
 
                 return -1 
             },
-            findMasterOnNextTO(index) {
+            findMasterOfPreviousTO(index) {
+                let result = -1
+
                 if (this.itemsLocal.data[index].contract_to.length > 0) {
-                    let days = this.checkDaysForNextTO(index)
-                    if (days > 0 && this.itemsLocal.data[index].contract_to[0].master) {
-                        return this.itemsLocal.data[index].contract_to[0].master.name
-                    }
+                    this.itemsLocal.data[index].contract_to.some((to_element, to_index) => {
+                        if (to_element.to_status == 'Проведено') {
+                            if (to_element.master) {
+                                result = to_element.master.name
+                            } else {
+                                result = -1
+                            }
+                            return true 
+                        }
+                    })
                 }
 
-                return -1
+                return result
             },
             /**
              * Функция возвращает окончание для множественного числа слова на основании числа и массива окончаний
