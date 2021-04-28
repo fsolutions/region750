@@ -145,7 +145,9 @@ class Prescription extends Model
         'other_actions' => [
             'all_roles' => [
                 'master',
-                'prescription_order'
+                'prescription_contract',
+                'prescription_order',
+                'to_contract_for_user'
             ]
         ]
     ];
@@ -158,7 +160,7 @@ class Prescription extends Model
     protected $actionAllows = [
         'administrator' => [
             'create',
-            // 'show',
+            'show',
             'edit',
             'delete'
         ],
@@ -167,7 +169,7 @@ class Prescription extends Model
         ],
         'all_roles' => [
             'create',
-            // 'show',
+            'show',
             'edit'
         ],
     ];

@@ -125,7 +125,7 @@
             right
             backdrop
             shadow
-            width="65em"
+            width="85em"
             backdrop-variant="dark"
             no-close-on-backdrop
         >

@@ -132,6 +132,9 @@
             <template #cell(updated_at)="data">
                 {{ data.value | formattedDateTime }}
             </template>
+            <template #cell(to_sms_sended)="data">
+                {{ data.value | formattedDateTime }}
+            </template>
             <template #cell(contract_start_datetime)="data">
                 {{ data.value | formattedDate }}
             </template>

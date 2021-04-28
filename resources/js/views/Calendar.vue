@@ -132,11 +132,17 @@
                 <div v-for="(item, index) in selectedItems.filter(item => item.showable)" :key="index">
                     <template v-if="item.model == 'Prescription'">
                         <div class="smallTextInDay"><em>{{item.startDate | formattedDate}} - {{item.title}}</em></div>
-                        <div class="mt-1">Клиент: {{item.to_contract_for_user.name}}: <a :href="`+${item.to_contract_for_user.phone}`">{{item.to_contract_for_user.phone | VMask('+#(###)###-##-##')}}</a></div>
+                        <div class="mt-1">Клиент: {{item.to_contract_for_user.name}}: <a :href="`tel:+${item.to_contract_for_user.phone}`">{{item.to_contract_for_user.phone | VMask('+#(###)###-##-##')}}</a></div>
+                        <div class="mt-1 mb-5">
+                            <b-button size="sm" @click="showItem(item.id, 'Prescription')" class="float-right mr-1">Открыть</b-button>
+                        </div>
                     </template>
                     <template v-else>
                         <div class="smallTextInDay"><em>{{item.startDate | formattedDateTime}} - {{item.title}}</em></div>
-                        <div class="mt-1">Клиент: {{item.to_contract_for_user.name}}: <a :href="`+${item.to_contract_for_user.phone}`">{{item.to_contract_for_user.phone | VMask('+#(###)###-##-##')}}</a></div>
+                        <div class="mt-1">Клиент: {{item.to_contract_for_user.name}}: <a :href="`tel:+${item.to_contract_for_user.phone}`">{{item.to_contract_for_user.phone | VMask('+#(###)###-##-##')}}</a></div>
+                        <div class="mt-1 mb-5">
+                            <b-button size="sm" @click="showItem(item.id, 'ContractTO')" class="float-right mr-1">Открыть</b-button>
+                        </div>
                     </template>
                     <hr>
                 </div>
@@ -153,10 +159,36 @@
             spinner-variant="success"
             no-wrap
         ></b-overlay>
+        <b-sidebar
+            v-model="isSidebarOpenDetail"
+            id="sidebar-right"
+            title="Детальная информация"
+            right
+            backdrop
+            shadow
+            width="65em"
+            backdrop-variant="dark"
+            ref="showItem"
+        >
+            <div class="d-block">
+                <template v-if="selectedApiVariant == 'ContractTO'">
+                    <contract-to-details
+                        :detailedItem="detailedItem"
+                    ></contract-to-details>
+                </template>
+                <template v-if="selectedApiVariant == 'Prescription'">
+                    <prescription-details
+                        :detailedItem="detailedItem"
+                    ></prescription-details>
+                </template>
+            </div>
+        </b-sidebar>        
 	</div>
 </template>
 <script>
-    import { API_CALENDAR } from "../constants"
+    import { API_CALENDAR, API_CONTRACTS_TO, API_PRESCRIPTIONS } from "../constants"
+    import ContractTODetails from "../components/contracts/ContractTODetails"
+    import PrescriptionDetails from "../components/prescriptions/PrescriptionDetails"
 
     require("../../../node_modules/vue-simple-calendar/static/css/default.css")
     require("../../../node_modules/vue-simple-calendar/static/css/holidays-us.css")
@@ -166,11 +198,40 @@
         CalendarMathMixin,
     } from "vue-simple-calendar" // published version
 
+    const initialEditedItem = () => ({
+        id: '',
+        type: {},
+        contract_on_user: {},
+        source: {},
+        company: {},
+        company_employee: {},
+        client: {},
+        status: {},
+        order: {},
+        user: {},
+        order_user: {},
+        master: {},
+        order_contract: {},
+        order_prescription: {},
+        prescription_contract: {},
+        prescription_order: {},
+        creator: {},
+        contract_on_user: {},
+        contract_to: {},
+        contract_to_last: {},
+        orders: {},
+        prescriptions: {},
+        to_contract: {},
+        to_contract_for_user: {}     
+    })    
+
     export default {
         name: "App",
         components: {
             CalendarView,
             CalendarViewHeader,
+            "contract-to-details": ContractTODetails,
+            "prescription-details": PrescriptionDetails
         },
         mixins: [CalendarMathMixin],
         data() {
@@ -200,6 +261,10 @@
                 useDefaultTheme: true,
                 useHolidayTheme: false,
                 items: [],
+                detailedItem: {},
+                isSidebarOpenDetail: false,
+                detailedItemIndex: -1,
+                selectedApiVariant: ''
             }
         },
         computed: {
@@ -240,10 +305,16 @@
                 immediate: true,
                 deep: true,
             },
+            isSidebarOpenDetail(value) {
+                if (!value) {
+                    this.detailedItem = initialEditedItem()
+                }
+            }
         },
         mounted() {
             this.newItemStartDate = this.isoYearMonthDay(this.today())
             this.newItemEndDate = this.isoYearMonthDay(this.today())
+            this.detailedItem = initialEditedItem()
         },
         methods: {
             getDataHandler: async function() {
@@ -284,8 +355,7 @@
                 this.selectedItems = this.items.filter((item => (this.$moment(item.startDate).format('YYYY-MM-DD') == localSelectedDay && item.showable)));
             },
             onClickItem(e) {
-                this.message = `You clicked: ${e.title}`
-                console.log(this.message);
+                this.showItem(e.originalItem.id, e.originalItem.model)
             },
             setShowDate(d) {
                 this.message = `Changing calendar view to ${d.toLocaleDateString()}`
@@ -315,6 +385,26 @@
                     id: "e" + Math.random().toString(36).substr(2, 10),
                 })
                 this.message = "You added a calendar item!"
+            },
+            showItem(id, apiVariant = 'ContractTO') {
+                let tableApiUrl = ''
+
+                if (apiVariant == 'ContractTO') {
+                    tableApiUrl = API_CONTRACTS_TO
+                } else if (apiVariant == 'Prescription') {
+                    tableApiUrl = API_PRESCRIPTIONS
+                }
+
+                this.selectedApiVariant = ''
+
+                if (tableApiUrl) {
+                    this.selectedApiVariant = apiVariant
+                    api.call("get", `${tableApiUrl}/${id}`).then((data) => {
+                        this.detailedItem = data.data
+                        this.isSidebarOpenDetail = true
+                    }).finally(() => {
+                    })
+                }
             },
         },
     }

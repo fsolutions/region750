@@ -240,7 +240,9 @@ export const actionShowItem = {
                 contract_to: {},
                 contract_to_last: {},
                 orders: {},
-                prescriptions: {}                                              
+                prescriptions: {},
+                to_contract: {},
+                to_contract_for_user: {}                                             
             },
             isSidebarOpenDetail: false,
             detailedItemIndex: -1

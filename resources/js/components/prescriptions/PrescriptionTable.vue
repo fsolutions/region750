@@ -99,11 +99,30 @@
                 </div>
             </template>
         </b-sidebar>
+
+        <b-sidebar
+            v-model="isSidebarOpenDetail"
+            id="sidebar-right"
+            title="Детальная информация"
+            right
+            backdrop
+            shadow
+            width="65em"
+            backdrop-variant="dark"
+            ref="showItem"
+        >
+            <div class="d-block">
+                <prescription-details
+                    :detailedItem="detailedItem"
+                ></prescription-details>
+            </div>
+        </b-sidebar>        
     </div>
 </template>
 
 <script>
     import {API_PRESCRIPTIONS} from "../../constants"
+    import PrescriptionDetails from "./PrescriptionDetails"
 
     import {
         defaultDataItems,
@@ -127,6 +146,7 @@
 
     export default {
         components: {
+            "prescription-details": PrescriptionDetails
         },
         mixins: [
             defaultDataItems,

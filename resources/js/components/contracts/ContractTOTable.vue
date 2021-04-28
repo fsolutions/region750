@@ -116,11 +116,30 @@
                 </div>
             </template>
         </b-sidebar>
+
+        <b-sidebar
+            v-model="isSidebarOpenDetail"
+            id="sidebar-right"
+            title="Детальная информация"
+            right
+            backdrop
+            shadow
+            width="65em"
+            backdrop-variant="dark"
+            ref="showItem"
+        >
+            <div class="d-block">
+                <contract-to-details
+                    :detailedItem="detailedItem"
+                ></contract-to-details>
+            </div>
+        </b-sidebar>        
     </div>
 </template>
 
 <script>
     import {API_CONTRACTS_TO} from "../../constants"
+    import ContractTODetails from "./ContractTODetails"
 
     import {
         defaultDataItems,
@@ -144,6 +163,7 @@
 
     export default {
         components: {
+            "contract-to-details": ContractTODetails
         },
         mixins: [
             defaultDataItems,

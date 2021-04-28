@@ -52,6 +52,10 @@ class ContractTO extends Model
                 "type" => "date",
                 "format" => "dd.MM.yyyy HH:mm"
             ],
+            'to_sms_sended' => [
+                "type" => "date",
+                "format" => "dd.MM.yyyy HH:mm"
+            ],
             'to_comment' => [
                 "type" =>  "text",
                 "fields" => [
@@ -134,7 +138,8 @@ class ContractTO extends Model
         'other_actions' => [
             'all_roles' => [
                 'master',
-                'to_contract'
+                'to_contract',
+                'to_contract_for_user'
             ]
         ]
     ];
@@ -147,7 +152,7 @@ class ContractTO extends Model
     protected $actionAllows = [
         'administrator' => [
             'create',
-            // 'show',
+            'show',
             'edit',
             'delete'
         ],
@@ -156,7 +161,7 @@ class ContractTO extends Model
         ],
         'all_roles' => [
             'create',
-            // 'show',
+            'show',
             'edit'
         ],
     ];
@@ -203,19 +208,27 @@ class ContractTO extends Model
             'visible' => true
         ],
         [
+            'key' => 'to_start_datetime',
+            'sortBy' => 'to_start_datetime',
+            'label' => 'ТО назначено на дату',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'to_sms_sended',
+            'sortBy' => 'to_sms_sended.keyword',
+            'label' => 'SMS отправлено',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
             'key' => 'to_comment',
             'sortBy' => 'to_comment',
             'label' => 'Комментарий',
             'stickyColumn' => false,
             'sortable' => false,
-            'sortDirection' => 'desc',
-            'visible' => true
-        ],
-        [
-            'key' => 'to_start_datetime',
-            'sortBy' => 'to_start_datetime',
-            'label' => 'Дата ТО',
-            'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
         ],
@@ -295,6 +308,7 @@ class ContractTO extends Model
             'to_status' => isset($this->to_status) ? $this->to_status : '',
             'to_comment' => isset($this->to_comment) ? $this->to_comment : '',
             'to_start_datetime' => isset($this->to_start_datetime) ? date('d.m.Y H:i', strtotime($this->to_start_datetime)) : '01.01.1900 00:00',
+            'to_sms_sended' => isset($this->to_sms_sended) ? date('d.m.Y H:i', strtotime($this->to_sms_sended)) : '01.01.1900 00:00',
             'created_at' => isset($this->created_at) ? date('d.m.Y H:i', strtotime($this->created_at)) : '01.01.1900 00:00'
         ];
 
