@@ -76,7 +76,14 @@ class User extends Authenticatable
                     ]
                 ]
             ],
-
+            'user_contracts' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
             // other fields
             'id_search' => [
                 "type" => "keyword"
@@ -146,13 +153,14 @@ class User extends Authenticatable
     protected $loads = [
         'index' => [
             'all_roles' => [
-                'roles'
+                'roles',
+                'user_contracts:id,contract_on_user_id,contract_number'
             ]
         ],
         'other_actions' => [
             'all_roles' => [
                 'roles',
-                // 'contracts'
+                'user_contracts'
             ]
         ]
     ];
@@ -226,6 +234,13 @@ class User extends Authenticatable
             'key' => 'phone',
             'sortBy' => 'phone.keyword',
             'label' => 'Телефон',
+            'sortable' => true,
+            'sortDirection' => 'desc'
+        ],
+        [
+            'key' => 'user_contracts',
+            'sortBy' => 'user_contracts.keyword',
+            'label' => 'Договор',
             'sortable' => true,
             'sortDirection' => 'desc'
         ],
@@ -310,9 +325,15 @@ class User extends Authenticatable
         $this->load($relationships['all_roles']);
 
         $roles = null;
+        $user_contracts = null;
 
         foreach ($this->roles as $role) {
             $roles = $role->name . ' ';
+        }
+
+        foreach ($this->user_contracts as $contract) {
+            // $user_contracts = $contract->contract_number . ' ' . $contract->contract_address . ' ';
+            $user_contracts = $contract->contract_number . ' ';
         }
 
         $fieldsTable = [
@@ -321,7 +342,8 @@ class User extends Authenticatable
             'email' => isset($this->email) ? $this->email : '',
             'phone' => isset($this->phone) ? $this->phone : '',
             'position' => isset($this->position) ? $this->position : '',
-            'roles' => $roles
+            'roles' => $roles,
+            'user_contracts' => $user_contracts,
         ];
 
         $otherFields = [
@@ -332,16 +354,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Contracts table relationship Belongs To Many
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    // public function contracts()
-    // {
-    //     return $this->belongsToMany(Contract::class, 'contract_on_user_id');
-    // }
-
-    /**
      * Relationships roles table Many To Many
      *
      * @return mixed
@@ -349,5 +361,15 @@ class User extends Authenticatable
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'user_role');
+    }
+
+    /**
+     * Relationships contract table Many To Many
+     *
+     * @return mixed
+     */
+    public function user_contracts()
+    {
+        return $this->hasMany(Contract::class, 'contract_on_user_id', 'id');
     }
 }

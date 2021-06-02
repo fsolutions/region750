@@ -138,6 +138,14 @@
             <template #cell(contract_start_datetime)="data">
                 {{ data.value | formattedDate }}
             </template>
+            <template #cell(user_contracts)="data">
+                <template v-if="data.value.length > 0">
+                    <div v-for="(contract, index) in data.value" :key="contract.id">{{contract.contract_number}}</div>
+                </template>
+                <template v-else>
+                    {{ "—" }}
+                </template>
+            </template>
             <template #cell(contract_to_last)="data">
                 <template v-if="data.value[0]">
                     <span :class="checkDaysForNextTO(data.value) < 0 ? 'text-danger':'text-success'">{{ data.value[0].to_start_datetime | formattedDateTime }}</span>

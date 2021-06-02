@@ -2,6 +2,7 @@
     <div>
         <app-table
             :name="'user'"
+            :typeOfTableFilter="'user'"
             :api="tableApiUrl"
             :items.sync="items"
             :isNeedSearch="true"
