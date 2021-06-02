@@ -32,12 +32,12 @@
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <b-form-checkbox
-                                id="checkbox-1"
-                                v-model="disabled"
-                                name="checkbox-1"
-                                @click="disabled = !disabled"
+                                    id="checkbox-1"
+                                    v-model="disabled"
+                                    name="checkbox-1"
+                                    @click="disabled = !disabled"
                                 >
-                                Соглашение на обработку персональных данных
+                                Я даю согласие на обработку персональных данных (<a style="cursor:pointer;" v-b-toggle.sidebar-policy>Политика конфиденциальности/обработки персональных данных</a>), а также принимаю <a style="cursor:pointer;" v-b-toggle.sidebar-rules>Правила пользования сайтом</a>.
                                 </b-form-checkbox>
                             </div>
                         </div>
@@ -64,6 +64,16 @@
                 </template>
             </div>
         </div>
+        <b-sidebar id="sidebar-policy" title="Политика конфиденциальности (обработки персональных данных)" width="100%" right shadow>
+            <div class="px-3 py-2">
+                <policy></policy>
+            </div>
+        </b-sidebar>        
+        <b-sidebar id="sidebar-rules" title="Пользовательское соглашение" width="100%" right shadow>
+            <div class="px-3 py-2">
+                <rules></rules>
+            </div>
+        </b-sidebar>        
     </div>
 </template>
 
@@ -72,64 +82,71 @@
     import {
     } from '../mixins'
 
-    export default {
-    mixins: [
-    ],
-    data() {
-        return {
-            client: {
-                name: '',
-                phone: '',
-                email: '',
-                password: '',
-                password_confirmation: '',
-            },
-            firstName: '',
-            lastName: '',
-            surName: '',
-            disabled: false,
-            maskPhone: '',
-            registered: false,
-            validationErrors: '',
-            savingProcess: false,
-        }
-    },
-    watch: {
-        'maskPhone': function (phone){
-            if (phone) {
-                let freshPhone = phone.replace(/[^0-9]/g, '')
-                this.editedItem.phone = freshPhone
-            }
-        },
-    },
-    methods: {
-        createClient() {
-            this.savingProcess = true
+    import Policy from "../components/docs/Policy"
+    import Rules from "../components/docs/Rules"
 
-            this.client.phone = this.maskPhone
-            if(this.lastName && this.firstName && this.surName) {
-                // Присваиваем обьекту user.name ФИО из полей
-                this.client.name = `${this.lastName} ${this.firstName} ${this.surName}`
-            }
-            this.client.password = this.generatePassword()
-            this.client.password_confirmation = this.client.password
-            api.call('post', API_REGISTRATION, this.client)
-                .then(({data}) => {
-                    this.registered = true
-                    this.validationErrors = ""
-                    this.savingProcess = false
-                })
-                .catch((response) => {
-                    this.validationErrors = response.data.error
-                    this.savingProcess = false
-                });
+    export default {
+        components: {
+            "policy": Policy,
+            "rules": Rules
         },
-        generatePassword() {
-            let randomstring = Math.random().toString(36).slice(-8)
-            return randomstring
+        mixins: [
+        ],
+        data() {
+            return {
+                client: {
+                    name: '',
+                    phone: '',
+                    email: '',
+                    password: '',
+                    password_confirmation: '',
+                },
+                firstName: '',
+                lastName: '',
+                surName: '',
+                disabled: false,
+                maskPhone: '',
+                registered: false,
+                validationErrors: '',
+                savingProcess: false,
+            }
+        },
+        watch: {
+            'maskPhone': function (phone){
+                if (phone) {
+                    let freshPhone = phone.replace(/[^0-9]/g, '')
+                    this.editedItem.phone = freshPhone
+                }
+            },
+        },
+        methods: {
+            createClient() {
+                this.savingProcess = true
+
+                this.client.phone = this.maskPhone
+                if(this.lastName && this.firstName && this.surName) {
+                    // Присваиваем обьекту user.name ФИО из полей
+                    this.client.name = `${this.lastName} ${this.firstName} ${this.surName}`
+                }
+                this.client.password = this.generatePassword()
+                this.client.password_confirmation = this.client.password
+                api.call('post', API_REGISTRATION, this.client)
+                    .then(({data}) => {
+                        this.registered = true
+                        this.validationErrors = ""
+                        this.savingProcess = false
+                    })
+                    .catch((response) => {
+                        this.validationErrors = response.data.error
+                        this.savingProcess = false
+                    });
+            },
+            generatePassword() {
+                let randomstring = Math.random().toString(36).slice(-8)
+                return randomstring
+            }
         }
     }
-}
 </script>
 <style scoped>
     .main-form {
