@@ -294,7 +294,7 @@ class OrderController extends CrudController
         }
 
         $users = User::whereHas('roles', function ($query) {
-            $query->whereIn('slug', ['administrator', 'manager']);
+            $query->whereIn('slug', ['administrator', 'manager', 'master', 'intern']);
         })->get();
 
         $parameters = [
