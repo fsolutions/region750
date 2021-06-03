@@ -22,6 +22,13 @@
             >
                 <i class="fas fa-trash text-danger"></i>
             </b-button>
+            <b-button 
+                class="button-group-fill-delete"
+                v-if="checkActionAllow('reject') && row.item.order_status && row.item.order_status == 'В обработке'"
+                @click="rejectItem(row.index)"
+            >
+                Отменить
+            </b-button>
         </b-button-group>
     </div>
 </template>
@@ -51,6 +58,9 @@
             },
             deleteItem(index) {
                 this.$emit('universalEmit', 'delete', index)
+            },
+            rejectItem(index) {
+                this.$emit('universalEmit', 'reject', index)
             },
         }
     }

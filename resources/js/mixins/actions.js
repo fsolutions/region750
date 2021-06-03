@@ -288,3 +288,23 @@ export const actionRefreshItemByIndex = {
         },
     }
 }
+
+// Action обновления полей элемента по индексу
+// Необходимо наличие this.tableApiUrl
+export const actionUpdateItemByIndex = {
+    data() {
+        return {
+        }
+    },
+    methods: {
+        updateItemByIndex(index, updateData, apiUrl = '') {
+            if (apiUrl == '') {
+                apiUrl = this.tableApiUrl
+            }
+            let id = this.items.data[index].id
+            api.call("put", `${apiUrl}/${id}`, updateData).then(({data}) => {
+                this.items.data[index] = Object.assign(this.items.data[index], data)
+            })
+        },
+    }
+}

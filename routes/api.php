@@ -106,6 +106,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('contracts-to/auto-to/{id}', [ContractTOController::class, 'autoTO']);
 
     /**
+     * Orders
+     */
+    Route::put('orders/update-easy/{id}', [OrderController::class, 'updateEasy']);
+
+    /**
      * ApiResource
      */
     Route::apiResource('references/properties', ReferencePropertyController::class);

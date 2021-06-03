@@ -209,15 +209,18 @@ class Order extends Model
             'create',
             'show',
             'edit',
-            'delete'
+            'delete',
+            'reject'
         ],
         'client' => [
-            'show'
+            // 'show',
+            'reject'
         ],
         'all_roles' => [
             'create',
             'show',
-            'edit'
+            'edit',
+            'reject'
         ],
     ];
 

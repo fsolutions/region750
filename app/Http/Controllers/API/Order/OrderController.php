@@ -64,7 +64,7 @@ class OrderController extends CrudController
      */
     public function prepareHeadersForClient()
     {
-        array_pop($this->model['headers']);
+        // array_pop($this->model['headers']);
 
         foreach ($this->model['headers'] as $key => $header) {
             if ($header['key'] === 'order_comment') {
@@ -196,6 +196,30 @@ class OrderController extends CrudController
             if ($this->checkUserIsAdmin()) {
                 $this->sendNotificationClient($this->model->order_contract_id, 'update');
             }
+        }
+
+        $this->model = parent::update($request, $id);
+
+        return $this->model;
+    }
+
+    /**
+     * Update the specified resource in storage without logic.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \App\Http\Controllers\Model
+     */
+    public function updateEasy(Request $request, $id)
+    {
+        $this->model = Order::findOrFail($id);
+
+        $this->formData = $request->all();
+
+        $validator = $this->validationFormData();
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
         $this->model = parent::update($request, $id);

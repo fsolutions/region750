@@ -9,6 +9,7 @@ export const API_USERS = '/api/users'
 export const API_USERS_LISTS = '/api/users/lists'                                               // {list-type} - for-accountants, etc
 
 export const API_ORDERS = '/api/orders'
+export const API_ORDERS_UPDATE_EASY = '/api/orders/update-easy'
 export const API_PRESCRIPTIONS = '/api/prescriptions'
 
 export const API_REFERENCE = '/api/references'                                                  // can take reference_id as reference_parent_id

@@ -13,6 +13,7 @@
             @show="showItem"
             @edit="createOrEditItemModal"
             @delete="deleteItem"
+            @reject="rejectItem"
         />
 
         <b-sidebar
@@ -146,7 +147,7 @@
 </template>
 
 <script>
-    import {API_ORDERS} from "../../constants"
+    import {API_ORDERS, API_ORDERS_UPDATE_EASY} from "../../constants"
     import OrderDetails from "./OrderDetails"
 
     import {
@@ -154,6 +155,7 @@
         actionShowItem,
         actionCreateOrUpdateItem,
         actionDeleteItem,
+        actionUpdateItemByIndex
     } from '../../mixins'
 
     const initialEditedItem = () => ({
@@ -184,6 +186,7 @@
             actionShowItem,
             actionCreateOrUpdateItem,
             actionDeleteItem,
+            actionUpdateItemByIndex
         ],
         props: {
             contract_id: { type: Number|String, required: false },
@@ -289,6 +292,11 @@
             },
             updateParentData() {
                 this.$emit("updateParentData")
+            },
+            rejectItem(index){
+                this.updateItemByIndex(index, {
+                    'order_status': 'Отменено'
+                }, API_ORDERS_UPDATE_EASY)
             }
         }
     }
