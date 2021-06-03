@@ -430,7 +430,7 @@ class Order extends Model
         ];
 
         $otherFields = [
-            'id_search' => '$id' . $this->id,
+            'id_search' => $this->id,
             'order_user_id' => isset($this->order_user_id) ? $this->order_user_id : null,
             'order_reference_service_id' => isset($this->order_reference_service_id) ? $this->order_reference_service_id : null,
             'order_master_user_id' => isset($this->order_master_user_id) ? $this->order_master_user_id : null,

@@ -395,7 +395,7 @@ class Contract extends Model
         ];
 
         $otherFields = [
-            'id_search' => '$id' . $this->id,
+            'id_search' => $this->id,
             'creator_user_id' => isset($this->creator_user_id) ? $this->creator_user_id : null,
             'contract_on_user_id' => isset($this->contract_on_user_id) ? $this->contract_on_user_id : null,
         ];

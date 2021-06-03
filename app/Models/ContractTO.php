@@ -313,7 +313,7 @@ class ContractTO extends Model
         ];
 
         $otherFields = [
-            'id_search' => '$id' . $this->id,
+            'id_search' => $this->id,
             'to_master_user_id' => isset($this->to_master_user_id) ? $this->to_master_user_id : null,
             'to_contract_id' => isset($this->to_contract_id) ? $this->to_contract_id : null,
         ];

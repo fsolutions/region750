@@ -347,7 +347,7 @@ class User extends Authenticatable
         ];
 
         $otherFields = [
-            'id_search' => '$id' . $this->id
+            'id_search' => $this->id
         ];
 
         return $fieldsTable + $otherFields;

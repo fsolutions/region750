@@ -12,7 +12,7 @@
         <div class="col">
             <ul class="list-group list-group-horizontal float-right mr-3">
                 <li class="list-group-item header-group-item">
-                    <div class="notification-block-parent" v-b-toggle.notification-sidebar>
+                    <div class="notification-block-parent" @click="sidebarNotification = !sidebarNotification">
                         <span class="pulse" v-if="notificationsLocal['bell'].length > 0"></span>
                         <b-iconstack font-scale="3">
                             <b-icon stacked icon="circle-fill" variant="notification-background"></b-icon>
@@ -45,7 +45,7 @@
                 </li>
             </ul>
         </div>
-        <b-sidebar id="notification-sidebar" title="Уведомления" right shadow backdrop>
+        <b-sidebar v-model="sidebarNotification" id="notification-sidebar" aria-controls="id" title="Уведомления" right shadow backdrop>
             <div class="pr-3 pt-1">
                 <ul class="fa-ul" style="margin-left: 10px;">
                     <li v-for="(notify, index) in notificationsLocal['bell']" class="pb-3">
@@ -53,7 +53,7 @@
                         <div>
                             <span v-html="notify.data.message"></span>
                             <template v-if="notify.data.parameters.link">
-                                <router-link :to="notify.data.parameters.link">{{notify.data.parameters.linkText || 'Открыть'}}</router-link>
+                               <span @click="sidebarNotification=false"><router-link :to="notify.data.parameters.link">{{notify.data.parameters.linkText || 'Открыть'}}</router-link></span>
                             </template>
                         </div>
                         <div>
@@ -86,13 +86,14 @@
             return {
                 notificationsLocal: initialNotifications(),
                 isOnlyForAccountant: false,
-                internalUsers: []
+                internalUsers: [],
+                sidebarNotification: false
             };
         },
         computed: {
             notifications() {
                 return this.$store.getters.NOTIFICATIONS
-            }
+            },
         },
         watch: {
             notifications(newNotifications) {

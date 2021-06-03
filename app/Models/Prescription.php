@@ -334,7 +334,7 @@ class Prescription extends Model
         ];
 
         $otherFields = [
-            'id_search' => '$id' . $this->id,
+            'id_search' => $this->id,
             'prescription_master_user_id' => isset($this->prescription_master_user_id) ? $this->prescription_master_user_id : null,
             'prescription_contract_id' => isset($this->prescription_contract_id) ? $this->prescription_contract_id : null,
         ];
