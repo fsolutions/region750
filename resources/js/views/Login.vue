@@ -3,6 +3,7 @@
         <div class="row main-form">
             <div class="col">
                 <div class="text-center"><img class="img-login" :src="'/img/header-logo.png'"></div>
+                <div class="text-center" style="font-size: 13px;line-height: 17px;margin-bottom: 23px;">Комплексное техническое обслуживание внутридомового газового оборудования, внутриквартирного газового оборудования, вентканалов и дымоходов</div>
                 <h1 class="text-center">Вход в кабинет</h1>
                 <b-alert show variant="danger" v-if="errorMsg">{{ errorMsg }}</b-alert>
                 <div class="form-row">

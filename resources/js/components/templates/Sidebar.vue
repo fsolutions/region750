@@ -1,6 +1,6 @@
 <template>
     <div id="app-sidebar">
-        <div id="mySidebar" class="sidebar mt-2">
+        <div id="mySidebar" :class="handlerSidebar ? 'sidebar sidebar-wide mt-2':'sidebar sidebar-narrow mt-2'">
             <div class="hidden-left-block">
                 <div v-show="!handlerSidebar" class="title-active-pages" v-html="handlerActivePageName()"></div>
             </div>
@@ -76,6 +76,9 @@
                         <li class="list-group-item menu-name list-group-name pl-0"><span class="menu-item-name">Обратная связь</span></li>
                     </ul>
                 </span>
+            </div>
+            <div class="sidebar-copy-text">
+                © 2021 Комплексное техническое обслуживание внутридомового газового оборудования, внутриквартирного газового оборудования, вентканалов и дымоходов
             </div>
             <span class="openbtn" @click="showOrHideSideBar"><i :class="handlerSidebar == true ? 'fas fa-angle-left' : 'fas fa-bars'"></i></span>
         </div>
@@ -155,7 +158,7 @@
                     }, 300)
                     this.handlerSidebar = false
 
-                }else{
+                } else{
                     document.getElementById("mySidebar").style.width = "300px";
                     if(this.$mq != 'sm'){
                         document.getElementById("main").style.marginLeft = "300px";

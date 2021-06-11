@@ -2,11 +2,11 @@
     <div class="row justify-content-between header-block mb-4">
         <div class="col header-logo">
             <template v-if="$mq != 'sm'">
-                <img :src="'/img/header-logo-mid.png'" class="ml-2">
+                <a href="https://region750.ru"><img :src="'/img/header-logo-mid.png'" class="ml-2"></a>
                 <a href="tel:+79153788117" class="head-phone-link ml-3">+7 (915) 378-81-17</a>
             </template>
             <template v-else>
-                <img :src="'/img/header-logo-min.png'" class="ml-2">
+                <a href="https://region750.ru"><img :src="'/img/header-logo-min.png'" class="ml-2"></a>
             </template>
         </div>
         <div class="col">

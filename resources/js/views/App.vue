@@ -16,7 +16,7 @@
                 <router-view></router-view>
             </div>
         </div>
-        <!-- <div id="footer" class="fixed-bottom" v-if="$route.path != '/login'">
+        <!-- <div id="footer" class="fixed-bottom" v-if="authenticated">
             <app-footer v-if="$mq != 'sm'" />
         </div> -->
     </div>

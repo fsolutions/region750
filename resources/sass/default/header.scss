@@ -1,6 +1,6 @@
 // HEADER NEW DESIGN
 @media screen and (max-width: 768px) {
-    .header-logo>img {
+    .header-logo>a img {
         margin-top: 3px !important;
         width: 40px !important;
         height: auto;
@@ -91,7 +91,7 @@
     z-index: 9;
 }
 
-.header-logo>img {
+.header-logo>a img {
     margin-top: 7px;
     width: 139px;
 }

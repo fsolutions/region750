@@ -3,6 +3,7 @@
         <div class="row main-form mb-5">
             <div class="col">
                 <div class="text-center"><img class="img-login" :src="'/img/header-logo.png'"></div>
+                <div class="text-center" style="font-size: 13px;line-height: 17px;margin-bottom: 23px;">Комплексное техническое обслуживание внутридомового газового оборудования, внутриквартирного газового оборудования, вентканалов и дымоходов</div>
                 <template v-if="!registered">
                     <h1 class="text-center">Регистрация</h1>
                     <validation-errors :errors="validationErrors" v-if="validationErrors"></validation-errors>
