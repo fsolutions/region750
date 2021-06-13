@@ -36,3 +36,9 @@ export const API_CALENDAR = '/api/calendar'
 
 export const API_GET_PASSWORD_CODE = '/api/get-password'
 export const API_POST_SEND_SMS = '/api/send-sms'
+
+export const API_FLATS = '/api/addresses/flats'
+export const API_HOUSES = '/api/addresses/houses'
+export const API_STREETS = '/api/addresses/streets'
+export const API_CITIES = '/api/addresses/cities'
+export const API_REGIONS = '/api/addresses/regions'

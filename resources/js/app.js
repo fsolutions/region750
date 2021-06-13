@@ -72,6 +72,7 @@ Vue.component('vue-bootstrap-typeahead', VueBootstrapTypeahead)
 Vue.component('multiselect', Multiselect)
 Vue.component('select-of-properties', require('./components/references/SelectOfPropertiesByReference.vue').default)
 Vue.component('select-user', require('./components/references/SelectOfUsersByRole.vue').default)
+Vue.component('select-address-structure', require('./components/references/SelectOfAddressStructure.vue').default)
 
 // ContextMenus
 Vue.component('context-menu-headers', require('./components/contextmenu/ContextMenuHeaders.vue').default)

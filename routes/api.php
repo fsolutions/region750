@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Config;
 use App\Http\Controllers\API\Log\LogController;
 use App\Http\Controllers\API\User\UserController;
 use App\Http\Controllers\API\Order\OrderController;
+use App\Http\Controllers\API\Address\FlatController;
 use App\Http\Controllers\API\PassportAuthController;
 use App\Http\Controllers\API\History\HistoryController;
 use App\Http\Controllers\API\User\UserCommentController;
@@ -120,6 +121,11 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('contracts-to', ContractTOController::class);
     Route::apiResource('orders', OrderController::class);
     Route::apiResource('prescriptions', PrescriptionController::class);
+    Route::apiResource('addresses/flats', FlatController::class);
+    Route::apiResource('addresses/houses', FlatController::class);
+    Route::apiResource('addresses/streets', FlatController::class);
+    Route::apiResource('addresses/cities', FlatController::class);
+    Route::apiResource('addresses/regions', FlatController::class);
 
     /**
      * Other routes

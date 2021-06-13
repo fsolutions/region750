@@ -1,6 +1,6 @@
 {
     "name": "Region750",
-    "version": "0.0.13",
+    "version": "0.0.20",
     "private": true,
     "scripts": {
         "dev": "npm run development",

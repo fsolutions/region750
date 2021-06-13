@@ -310,7 +310,6 @@ class Prescription extends Model
             ->select(['users.id', 'users.name', 'users.phone']);
     }
 
-
     /**
      * Get the indexable data array for the model.
      *

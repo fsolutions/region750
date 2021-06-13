@@ -242,7 +242,11 @@ export const actionShowItem = {
                 orders: {},
                 prescriptions: {},
                 to_contract: {},
-                to_contract_for_user: {}                                             
+                to_contract_for_user: {},
+                region: {},
+                city: {},
+                street: {},
+                flat: {}        
             },
             isSidebarOpenDetail: false,
             detailedItemIndex: -1

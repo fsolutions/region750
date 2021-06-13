@@ -9,6 +9,7 @@ import Order from '../views/Order.vue'
 import Profile from '../views/Profile.vue'
 import Contract from '../views/Contract.vue'
 import Prescription from '../views/Prescription.vue'
+import Flat from '../views/Flat.vue'
 import History from '../views/History.vue'
 import Calendar from '../views/Calendar.vue'
 import PasswordReset from '../views/PasswordReset.vue'
@@ -80,6 +81,12 @@ let routes = [
             name: 'prescriptions',
             component: Prescription,
             meta: { title: 'Предписания', middlewareAuth: true }
+        },
+        {
+            path: '/addresses',
+            name: 'addresses',
+            component: Flat,
+            meta: { title: 'Адреса', middlewareAuth: true }
         },
         {
             path: '/history',

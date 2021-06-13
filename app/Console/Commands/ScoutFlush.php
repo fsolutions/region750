@@ -43,7 +43,12 @@ class ScoutFlush extends Command
             'ContractTO',
             'Order',
             'User',
-            'Prescription'
+            'Prescription',
+            'Region',
+            'City',
+            'Street',
+            'House',
+            'Flat'
         ];
 
         foreach ($models as $model) {

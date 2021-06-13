@@ -43,7 +43,12 @@ class ElasticSearchFresh extends Command
             'ContractTO',
             'Order',
             'User',
-            'Prescription'
+            'Prescription',
+            'Region',
+            'City',
+            'Street',
+            'House',
+            'Flat'
         ];
 
         $bar = $this->output->createProgressBar(count($models));
