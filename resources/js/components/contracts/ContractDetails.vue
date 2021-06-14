@@ -38,6 +38,7 @@
                             <b-badge variant="success" class="small-badge" v-if="detailedItem.status == 'Есть бумажный договор'"><i class="fas fa-check"></i> {{detailedItem.status}}</b-badge>
                             <b-badge variant="warning" class="small-badge" v-if="detailedItem.status == 'Нет бумажного договора'">{{detailedItem.status}}</b-badge>
                             <b-badge variant="secondary" class="small-badge" v-if="detailedItem.status == 'В обработке'">{{detailedItem.status}}</b-badge>
+                            <b-badge variant="danger" class="always-small-badge" v-if="detailedItem.status == 'Передать в ГЖИ' || detailedItem.status == 'Передано в ГЖИ'">{{detailedItem.status}}</b-badge>
                         </b-col>
                     </b-row>
                 </caption>

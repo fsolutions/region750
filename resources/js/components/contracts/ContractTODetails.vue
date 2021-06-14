@@ -67,6 +67,18 @@
                                 Не задан
                             </template>
                         </b-td>
+                        <b-td
+                            v-if="detailedItem.to_no_access_times != 0"
+                            style="background: #ffeaea;"
+                            stacked-heading="Клиент не обеспечил доступ"
+                        >
+                            <template v-if="detailedItem.to_no_access_times == 1">
+                                {{ detailedItem.to_no_access_times }} раз
+                            </template>
+                            <template v-if="detailedItem.to_no_access_times == 2">
+                                {{ detailedItem.to_no_access_times }} раза
+                            </template>
+                        </b-td>
                         <template v-if="detailedItem.to_contract">
                           <b-td
                               stacked-heading="Номер договора"

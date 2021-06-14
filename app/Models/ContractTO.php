@@ -72,6 +72,14 @@ class ContractTO extends Model
                     ]
                 ]
             ],
+            'to_no_access_times' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
             'created_at' => [
                 "type" => "date",
                 "format" => "dd.MM.yyyy HH:mm"
@@ -108,8 +116,9 @@ class ContractTO extends Model
         'to_start_datetime',
         'to_comment',
         'to_status',
+        'to_no_access_times',
         'to_sms_sended',
-        'to_email_sended'
+        'to_email_sended',
     ];
 
     /**
@@ -234,9 +243,17 @@ class ContractTO extends Model
         ],
         [
             'key' => 'to_status',
-            'sortBy' => 'to_status',
+            'sortBy' => 'to_status.keyword',
             'label' => 'Статус',
             'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'to_no_access_times',
+            'sortBy' => 'to_no_access_times.keyword',
+            'label' => 'Клиент не обеспечил доступ',
+            'sortable' => false,
             'sortDirection' => 'desc',
             'visible' => true
         ],
@@ -306,6 +323,7 @@ class ContractTO extends Model
             'master' => isset($this->master->name) ? $this->master->name : '',
             'to_contract' => isset($this->to_contract->contract_number) ? $this->to_contract->contract_number : '',
             'to_status' => isset($this->to_status) ? $this->to_status : '',
+            'to_no_access_times' => isset($this->to_no_access_times) ? $this->to_no_access_times : 0,
             'to_comment' => isset($this->to_comment) ? $this->to_comment : '',
             'to_start_datetime' => isset($this->to_start_datetime) ? date('d.m.Y H:i', strtotime($this->to_start_datetime)) : '01.01.1900 00:00',
             'to_sms_sended' => isset($this->to_sms_sended) ? date('d.m.Y H:i', strtotime($this->to_sms_sended)) : '01.01.1900 00:00',

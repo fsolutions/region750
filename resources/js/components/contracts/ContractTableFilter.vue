@@ -38,6 +38,8 @@
                     {title: "Нет бумажного договора", active: false, status: "Нет бумажного договора"},
                     {title: "Есть бумажный договор", active: false, status: "Есть бумажный договор"},
                     {title: "Договор расторгнут", active: false, status: "Договор расторгнут"},
+                    {title: "Передать в ГЖИ", active: false, status: "Передать в ГЖИ"},
+                    {title: "Передано в ГЖИ", active: false, status: "Передано в ГЖИ"},
                 ],
                 selectedFilterName: 'Фильтр'
             }

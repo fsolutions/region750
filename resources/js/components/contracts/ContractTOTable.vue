@@ -103,7 +103,23 @@
                             >
                                 Назначить автоматическое ТО?
                             </b-form-checkbox>                    
-                            
+                        </div>
+                        <div class="form-group col-md-12" v-if="editedItem.to_status != 'Проведено'">
+                            <p class="my-2"><b>Клиент не обеспечил доступ</b></p>
+                            <b-form-checkbox
+                                id="to_no_access_1"
+                                v-model="to_no_access_1"
+                                name="to_no_access_1"
+                            >
+                                Первый раз
+                            </b-form-checkbox>                    
+                            <b-form-checkbox
+                                id="to_no_access_2"
+                                v-model="to_no_access_2"
+                                name="to_no_access_2"
+                            >
+                                Второй раз
+                            </b-form-checkbox>                    
                         </div>
                     </div>
                 </form>
@@ -155,7 +171,8 @@
         to_master_user_id: '',
         to_start_datetime: '',
         to_comment: '',
-        to_status: 'Запланировано',   
+        to_status: 'Запланировано',
+        to_no_access_times: 0,     
         master: {},
         to_sms_sended: '',
         to_email_sended: ''
@@ -194,6 +211,8 @@
                 ],
                 to_start_datetime_date: '',
                 to_start_datetime_time: '12:00',
+                to_no_access_1: false,
+                to_no_access_2: false
             }
         },
         watch: {
@@ -202,6 +221,18 @@
             },
             "to_start_datetime_time": function(value) {
                 this.editedItem.to_start_datetime = this.to_start_datetime_date + ' ' + this.to_start_datetime_time
+            },
+            "editedItem.to_no_access_times": function(value) {
+                if (value == 0) {
+                    this.to_no_access_1 = false
+                    this.to_no_access_2 = false
+                } else if (value == 1) {
+                    this.to_no_access_1 = true
+                    this.to_no_access_2 = false
+                } else if (value == 2) {
+                    this.to_no_access_1 = true
+                    this.to_no_access_2 = true
+                }
             },
         },
         mounted() {
@@ -225,6 +256,14 @@
                     let dateArray = this.editedItem.to_start_datetime.split(" ")
                     this.to_start_datetime_date = dateArray[0]
                     this.to_start_datetime_time = dateArray[1]
+                }
+            },
+            onCreateOrUpdateItemCallback() {
+                if (this.to_no_access_1) {
+                    this.editedItem.to_no_access_times = 1
+                }
+                if (this.to_no_access_2) {
+                    this.editedItem.to_no_access_times = 2
                 }
             },
             // calls from mixin on item save

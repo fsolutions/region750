@@ -160,6 +160,17 @@
             <template #cell(lead_phone)="data">
                 {{ data.value | VMask('+#(###)###-##-##') }}
             </template>
+            <template #cell(to_no_access_times)="data">
+                <template v-if="data.value == 0">
+                    {{ "—" }}
+                </template>
+                <template v-else-if="data.value == 1">
+                    {{ data.value }} раз
+                </template>
+                <template v-else>
+                    {{ data.value }} раза
+                </template>
+            </template>
             <template v-slot:cell(actions)="row">
                 <div class="ml-auto mr-auto text-center table-action-cell">
                     <component

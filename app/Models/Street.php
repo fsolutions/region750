@@ -8,13 +8,12 @@ use App\Models\Region;
 use ScoutElastic\Searchable;
 use App\Traits\ModelGettersTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Bundles\Elasticsearch\StreetIndexConfigurator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Street extends Model
 {
-    use HasFactory, SoftDeletes, ModelGettersTrait, Searchable;
+    use HasFactory, ModelGettersTrait, Searchable;
 
     /**
      * Settings to index

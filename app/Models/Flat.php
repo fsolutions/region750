@@ -3,19 +3,17 @@
 namespace App\Models;
 
 use App\Models\City;
-use App\Models\House;
 use App\Models\Region;
 use App\Models\Street;
 use ScoutElastic\Searchable;
 use App\Traits\ModelGettersTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Bundles\Elasticsearch\FlatIndexConfigurator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Flat extends Model
 {
-    use HasFactory, SoftDeletes, ModelGettersTrait, Searchable;
+    use HasFactory, ModelGettersTrait, Searchable;
 
     /**
      * Settings to index

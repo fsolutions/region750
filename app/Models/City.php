@@ -7,13 +7,12 @@ use App\Models\Street;
 use ScoutElastic\Searchable;
 use App\Traits\ModelGettersTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Bundles\Elasticsearch\CityIndexConfigurator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class City extends Model
 {
-    use HasFactory, SoftDeletes, ModelGettersTrait, Searchable;
+    use HasFactory, ModelGettersTrait, Searchable;
 
     /**
      * Settings to index

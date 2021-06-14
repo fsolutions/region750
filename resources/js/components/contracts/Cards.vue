@@ -38,6 +38,7 @@
                                 <b-badge variant="success" class="always-small-badge" v-if="contract.status == 'Есть бумажный договор'"><i class="fas fa-check"></i> {{contract.status}}</b-badge>
                                 <b-badge variant="warning" class="always-small-badge" v-if="contract.status == 'Нет бумажного договора'">{{contract.status}}</b-badge>
                                 <b-badge variant="secondary" class="always-small-badge" v-if="contract.status == 'В обработке'">{{contract.status}}</b-badge>
+                                <b-badge variant="danger" class="always-small-badge" v-if="contract.status == 'Передать в ГЖИ' || contract.status == 'Передано в ГЖИ'">{{contract.status}}</b-badge>
                                 <p><em class="text-muted">Адрес: {{ contract.contract_address}}</em></p>
                                 <p>
                                     <template v-if="checkDaysForNextTO(index) > -1">
