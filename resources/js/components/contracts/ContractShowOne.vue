@@ -20,6 +20,10 @@
                     </li>
                     <hr>
                     <li class="parent_item pb-0">
+                        <a class="nav-link" data-toggle="tab" role="tab" aria-controls="contract-equipment" aria-selected="true" href="#contract-equipment"><span class="fa-li"><i class="fas fa-chevron-right"></i></span> Оборудование</a>
+                    </li>
+                    <hr>
+                    <li class="parent_item pb-0">
                         <a class="nav-link" data-toggle="tab" role="tab" aria-controls="contract-history" aria-selected="true" href="#contract-history"><span class="fa-li"><i class="fas fa-chevron-right"></i></span> История</a>
                     </li>
                     <hr>
@@ -67,6 +71,14 @@
                             :typeOfTableFilter="'prescriptions'"
                         ></prescriptions-table>
                     </div>
+                    <div class="tab-pane fade" id="contract-equipment">
+                        <h5 class="mb-4">Оборудование по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
+                        <equipment-table
+                            :contract_id="detailedItem.id"
+                            :additionalGetParameter="`&equip_contract_id=${detailedItem.id}`"
+                            :isNeedCreate="false"
+                        ></equipment-table>
+                    </div>
                     <div class="tab-pane fade" id="contract-history">
                         <h5 class="mb-4">История по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
                         <app-table
@@ -91,6 +103,8 @@
     import ContractTOTable from './ContractTOTable'
     import OrderTable from '../orders/OrderTable'
     import PrescriptionTable from '../prescriptions/PrescriptionTable'
+    import EquipmentTable from '../equipment/EquipmentTable'
+    
     // import ChangeHistory from '../logs/ChangeHistory'
 
     export default {
@@ -99,6 +113,7 @@
             "contract-to-table": ContractTOTable,
             "orders-table": OrderTable,
             "prescriptions-table": PrescriptionTable,
+            "equipment-table": EquipmentTable
             // 'change-history': ChangeHistory,
         },
         props: {

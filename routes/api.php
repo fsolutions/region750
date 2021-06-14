@@ -15,6 +15,7 @@ use App\Http\Controllers\API\PassportAuthController;
 use App\Http\Controllers\API\History\HistoryController;
 use App\Http\Controllers\API\User\UserCommentController;
 use App\Http\Controllers\API\Contract\ContractController;
+use App\Http\Controllers\API\Contract\EquipmentController;
 use App\Http\Controllers\API\Contract\ContractTOController;
 use App\Http\Controllers\API\Reference\ReferenceController;
 use App\Http\Controllers\API\Notification\NotificationController;
@@ -121,6 +122,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('contracts-to', ContractTOController::class);
     Route::apiResource('orders', OrderController::class);
     Route::apiResource('prescriptions', PrescriptionController::class);
+    Route::apiResource('equipment', EquipmentController::class);
     Route::apiResource('addresses/flats', FlatController::class);
     Route::apiResource('addresses/houses', FlatController::class);
     Route::apiResource('addresses/streets', FlatController::class);

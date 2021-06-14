@@ -138,6 +138,9 @@
             <template #cell(contract_start_datetime)="data">
                 {{ data.value | formattedDate }}
             </template>
+            <template #cell(equip_date_of_release)="data">
+                {{ data.value | formattedDate }}
+            </template>
             <template #cell(user_contracts)="data">
                 <template v-if="data.value.length > 0">
                     <div v-for="(contract, index) in data.value" :key="contract.id">{{contract.contract_number}}</div>

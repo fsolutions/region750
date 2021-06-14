@@ -42,3 +42,5 @@ export const API_HOUSES = '/api/addresses/houses'
 export const API_STREETS = '/api/addresses/streets'
 export const API_CITIES = '/api/addresses/cities'
 export const API_REGIONS = '/api/addresses/regions'
+
+export const API_EQUIPMENT = '/api/equipment'

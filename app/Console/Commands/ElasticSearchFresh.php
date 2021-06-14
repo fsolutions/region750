@@ -48,7 +48,8 @@ class ElasticSearchFresh extends Command
             'City',
             'Street',
             'House',
-            'Flat'
+            'Flat',
+            'Equipment'
         ];
 
         $bar = $this->output->createProgressBar(count($models));

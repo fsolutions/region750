@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\User;
+use App\Models\Order;
+use App\Models\Equipment;
+use App\Models\ContractTO;
+use App\Models\Prescription;
 use ScoutElastic\Searchable;
 use App\Traits\ModelGettersTrait;
 use Illuminate\Database\Eloquent\Model;
@@ -133,6 +138,24 @@ class Contract extends Model
     ];
 
     /**
+     * Appends
+     *
+     * @var array
+     */
+    protected $appends = [
+        'preparedEquipment',
+    ];
+
+    /**
+     * Get append of preparedEquipment
+     * @return array
+     */
+    public function getPreparedEquipmentAttribute()
+    {
+        return [];
+    }
+
+    /**
      * Customize format.
      *
      * @var array
@@ -154,7 +177,8 @@ class Contract extends Model
                 'creator',
                 'contract_on_user',
                 'contract_to',
-                'contract_to_last'
+                'contract_to_last',
+                'equipment'
             ]
         ],
         'other_actions' => [
@@ -164,7 +188,8 @@ class Contract extends Model
                 'contract_to',
                 'contract_to_last',
                 'orders',
-                'prescriptions'
+                'prescriptions',
+                'equipment'
             ]
         ]
     ];
@@ -184,6 +209,7 @@ class Contract extends Model
         ],
         'client' => [
             'create',
+            'edit',
             'show',
         ],
         'all_roles' => [
@@ -363,6 +389,16 @@ class Contract extends Model
     public function prescriptions()
     {
         return $this->hasMany(Prescription::class, 'prescription_contract_id', 'id')->orderBy('prescription_start_datetime', 'desc');
+    }
+
+    /**
+     * Equipment table relationships One To Many.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function equipment()
+    {
+        return $this->hasMany(Equipment::class, 'equip_contract_id', 'id');
     }
 
     /**

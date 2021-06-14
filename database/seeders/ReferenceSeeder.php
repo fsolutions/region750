@@ -10,6 +10,7 @@ class ReferenceSeeder extends Seeder
 {
     public $references = [
         ['name' => 'Услуги по договору'],       // ID = 1
+        ['name' => 'Типы приборов'],            // ID = 2
     ];
 
     /**

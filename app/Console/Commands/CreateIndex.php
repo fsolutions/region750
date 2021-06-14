@@ -49,7 +49,8 @@ class CreateIndex extends Command
             'City',
             'Street',
             'House',
-            'Flat'
+            'Flat',
+            'Equipment'
         ];
 
         foreach ($models as $model) {

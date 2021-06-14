@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Contract;
 use App\Models\User;
 use App\Models\History;
 use App\Models\Contract;
+use App\Models\Equipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\CrudController;
@@ -111,6 +112,12 @@ class ContractController extends CrudController
             'user_id' => $this->user->id
         ]);
 
+        if (isset($this->formData['preparedEquipment'])) {
+            $this->saveEquipmentOfContract();
+            $this->model->preparedEquipment = [];
+            $this->model->equipment = $this->model->equipment();
+        }
+
         return $this->model;
     }
 
@@ -136,7 +143,7 @@ class ContractController extends CrudController
      */
     public function update(Request $request, $id)
     {
-        $this->checkAllowUser($id);
+        // $this->checkAllowUser($id);
 
         $this->model = $this->model::findOrFail($id);
 
@@ -163,6 +170,12 @@ class ContractController extends CrudController
             'contract_id' => $this->model->id,
             'user_id' => $this->user->id
         ]);
+
+        if (isset($this->formData['preparedEquipment'])) {
+            $this->saveEquipmentOfContract();
+            $this->model->preparedEquipment = [];
+            $this->model->equipment = $this->model->equipment();
+        }
 
         return $this->model;
     }
@@ -215,6 +228,23 @@ class ContractController extends CrudController
     private function validationFormData()
     {
         return Validator::make($this->formData, []);
+    }
+
+    /**
+     * Save equiipment of contract
+     */
+    public function saveEquipmentOfContract()
+    {
+        foreach ($this->formData['preparedEquipment'] as $index => $equip) {
+            $this->formData['preparedEquipment'][$index]['equip_user_id'] = $this->model->contract_on_user_id;
+            $this->formData['preparedEquipment'][$index]['equip_contract_id'] = $this->model->id;
+        }
+
+        Equipment::where('equip_contract_id', $this->model->id)->delete();
+
+        foreach ($this->formData['preparedEquipment'] as $equip) {
+            $newEquip = Equipment::create($equip);
+        }
     }
 
     /**

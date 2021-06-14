@@ -68,14 +68,14 @@
                         <li class="list-group-item menu-name list-group-name pl-0"><span class="menu-item-name">Пользователи</span></li>
                     </ul>
                 </router-link>
-                <router-link to="/addresses" class="menu-item-link colored-menu-link gray-menu-link" v-if="canSeeUsers()">
+                <!-- <router-link to="/addresses" class="menu-item-link colored-menu-link gray-menu-link" v-if="canSeeUsers()">
                     <ul class="list-group list-group-horizontal menu-item">
                         <li class="list-group-item menu-icon mr-4 pr-0">
                             <div class="menu-icon-block"><span class="menu-icon-child-all"><i class="fas fa-map-marked-alt"></i></span></div>
                         </li>
                         <li class="list-group-item menu-name list-group-name pl-0"><span class="menu-item-name">Адреса</span></li>
                     </ul>
-                </router-link>
+                </router-link> -->
                 <span class="menu-item-link colored-menu-link purple-menu-link" v-if="!canSeeUsers()" @click="fastOrderMaster()" style="cursor: pointer;">
                     <ul class="list-group list-group-horizontal menu-item">
                         <li class="list-group-item menu-icon mr-4 pr-0">

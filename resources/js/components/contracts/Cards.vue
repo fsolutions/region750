@@ -33,8 +33,16 @@
                 <b-card v-if="contract.status != 'Договор расторгнут'">
                     <b-card-text>
                         <div class="row">
-                            <div class="col-sm-4">
-                                <h4 class="card-title mb-0">Договор №{{contract.contract_number}}</h4>
+                            <div class="col-sm-5">
+                                <h4 class="card-title mb-0">
+                                    Договор №{{contract.contract_number}}
+                                    <template v-if="contract.equipment.length == 0">
+                                        <b-button @click="createOrEditItemModal(index)" size="sm" variant="outline-danger">Добавьте приборы</b-button>
+                                    </template>
+                                    <template v-if="contract.equipment.length > 0 && contract.status == 'В обработке'">
+                                        <b-button @click="createOrEditItemModal(index)" size="sm" variant="secondary"><i class="fas fa-pencil-alt"></i></b-button>
+                                    </template>
+                                </h4>
                                 <b-badge variant="success" class="always-small-badge" v-if="contract.status == 'Есть бумажный договор'"><i class="fas fa-check"></i> {{contract.status}}</b-badge>
                                 <b-badge variant="warning" class="always-small-badge" v-if="contract.status == 'Нет бумажного договора'">{{contract.status}}</b-badge>
                                 <b-badge variant="secondary" class="always-small-badge" v-if="contract.status == 'В обработке'">{{contract.status}}</b-badge>
@@ -56,7 +64,7 @@
                                     </p>
                                 </template>
                             </div>
-                            <div class="col-sm-6 text-center">
+                            <div class="col-sm-5 text-center">
                                 <b-button @click="orderMaster(index)" variant="primary" class="mt-4">Вызвать мастера</b-button>
                                 <p class="text-small mb-1 mt-2">или позвоните нам</p>
                                 <p><a href="tel:+79153788117" class="big-link">+7 (915) 378-81-17</a></p>

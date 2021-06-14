@@ -29,7 +29,7 @@
             right
             backdrop
             shadow
-            width="65em"
+            width="75em"
             backdrop-variant="dark"
             ref="editItem"
             :title="modalTitle()"
@@ -82,7 +82,42 @@
                                 v-model="editedItem.contract_start_datetime"
                             ></b-form-datepicker>
                         </div>
-
+                        <div class="form-group col-md-5">
+                            <label for="contract_start_datetime">Установленное оборудование</label>
+                            <p class="mb-2"><small>Отметьте галочками, установленные в квартире/доме приборы.</small></p>
+                            <b-form-group label="" v-slot="{ ariaDescribedby }">
+                                <b-form-checkbox-group
+                                    v-model="selectedEquipment"
+                                    :options="optionsEquipment"
+                                    :aria-describedby="ariaDescribedby"
+                                    plain
+                                    stacked
+                                ></b-form-checkbox-group>
+                            </b-form-group>                            
+                        </div>
+                        <div class="form-group col-md-7" v-if="selectedEquipment.length > 0">
+                            <p class="mt-2 mb-2"><small>Укажите подробности о приборах, которые знаете. <br>Если не уверены - оставьте поля пустыми.</small></p>
+                            <div v-for="(equip, index) in editedItem.preparedEquipment" :key="index" class="mb-2">
+                                <b>{{equip.visName}}</b>
+                                <div class="row mt-2">
+                                    <span style="display:none;"><b-form-input v-model="equip.equip_type_reference_id" size="sm" placeholder="Номер паспорта"></b-form-input></span>
+                                    <div class="col-4"><b-form-input v-model="equip.equip_passport" size="sm" placeholder="Номер паспорта"></b-form-input></div>
+                                    <div class="col-4"><b-form-input v-model="equip.equip_mark" size="sm" placeholder="Марка прибора"></b-form-input></div>
+                                    <div class="col-4">
+                                        <b-form-datepicker 
+                                            :id="`equip_date_of_release_${index}`" 
+                                            size="sm"
+                                            placeholder="Дата выпуска" 
+                                            locale="ru"
+                                            label-help="Используйте клавиши для передвижения по календарю"
+                                            label-no-date-selected="Дата выпуска"
+                                            :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+                                            v-model="equip.equip_date_of_release"
+                                        ></b-form-datepicker>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <template v-if="onlyForBackOffice()">
                             <div class="form-group col-md-12">
                                 <label>Пользователь, на которого зарегистрирован договор</label>
@@ -175,7 +210,9 @@
         contract_to: {},
         contract_to_last: {},
         orders: {},
-        prescriptions: {}
+        prescriptions: {},
+        equipment: [],
+        preparedEquipment: []
     })
 
     export default {
@@ -209,7 +246,19 @@
             loadingDadata: false,
             daDataSearch: '',
             addresses: [],
-            selectedAddress: ''
+            selectedAddress: '',
+            selectedEquipment: [], 
+            optionsEquipment: [
+                { text: 'Варочная панель ВП-2 (2 конфорки)', value: 9 },
+                { text: 'Варочная панель ВП-3 (3 конфорки)', value: 10 },
+                { text: 'Варочная панель ВП-4 (4 конфорки)', value: 11 },
+                { text: 'Газовая плита ПГ-2 (2 конфорки)', value: 12 },
+                { text: 'Газовая плита ПГ-3 (3 конфорки)', value: 13 },
+                { text: 'Газовая плита ПГ-4 (4 конфорки)', value: 14 },
+                { text: 'Проточный водонагреватель ПВ', value: 15 },
+                { text: 'Газовый котел', value: 16 }
+            ],
+            isFormingEquipmentList: false
         }
     },
     watch: {
@@ -218,7 +267,22 @@
                 this.$moment(value).format('YYYY-MM-DD') :
                 ''
         },
-        // daDataSearch: debounce(function (value) {
+        "selectedEquipment": function(value) {
+            if (!this.isFormingEquipmentList) {
+                this.formEquipmentList()
+            }
+        },
+        "isSidebarOpen": function(value) {
+            if (!value) {
+                this.editedItem = initialEditedItem()
+                this.selectedAddress = ''
+
+                this.editedItem.preparedEquipment.splice(0, this.editedItem.preparedEquipment.length)
+                this.selectedEquipment.splice(0, this.selectedEquipment.length)
+            }
+        },
+
+// daDataSearch: debounce(function (value) {
         //     this.loadingDadata = true
         //     api.call('post', API_DADATA_ADDRESS, {'address': value})
         //         .then(({data}) => {
@@ -231,6 +295,51 @@
         this.editedItem = initialEditedItem()
     },
     methods: {
+        formEquipmentList() {
+            // Добавляем
+            this.selectedEquipment.forEach((equipid, index) => {
+                let ifHasElement = this.editedItem.preparedEquipment.filter(item => {
+                    if (item.equip_type_reference_id == equipid) {
+                        return item
+                    }
+                })
+
+                if (ifHasElement.length == 0) {
+                    this.editedItem.preparedEquipment.push({
+                        'visName': this.takeNameOfEquipById(equipid),
+                        'equip_type_reference_id': equipid,
+                        'equip_passport': '',
+                        'equip_mark': '',
+                        'equip_date_of_release': '',
+                    })
+                }
+            })
+
+            // Удаляем
+            this.editedItem.preparedEquipment = this.editedItem.preparedEquipment.filter(equip => {
+                let tempId = equip.equip_type_reference_id
+                let tempFinedArray = this.selectedEquipment.filter(itemId => {
+                    if (itemId == tempId) {
+                        return itemId
+                    }
+                })
+
+                if (tempFinedArray.length > 0) {
+                    return equip
+                }
+            })
+        }, 
+        takeNameOfEquipById(id) {
+            let findedElement = this.optionsEquipment.filter((item) => {
+                if (item.value == id) {
+                    return item
+                }
+            })
+
+            if (findedElement.length > 0) {
+                return findedElement[0].text
+            }
+        },
         findAddress: debounce (function(query) {
             this.loadingDadata = true
             api.call('post', API_DADATA_ADDRESS, {'address': query})
@@ -258,12 +367,33 @@
         },
         // calls from mixin on item edit
         onItemEditModalCallback() {
+            this.$set(this.editedItem, 'preparedEquipment', [])
+            this.isFormingEquipmentList = true
+
+            this.editedItem.equipment.forEach((item, index) => {
+                this.selectedEquipment.push(item.equip_type_reference_id)
+                this.editedItem.preparedEquipment.push({
+                    'visName': this.takeNameOfEquipById(item.equip_type_reference_id),
+                    'equip_type_reference_id': item.equip_type_reference_id,
+                    'equip_passport': item.equip_passport ? item.equip_passport : '',
+                    'equip_mark': item.equip_mark ? item.equip_mark : '',
+                    'equip_date_of_release': item.equip_date_of_release ? this.$moment(item.equip_date_of_release).format('YYYY-MM-DD') : '',
+                })
+            })
+
+            this.isFormingEquipmentList = false
         },
         // calls from mixin on item save
         onCreateOrUpdateItemCallback() {
             if (this.selectedAddress.value) {
                 this.editedItem.contract_address = this.selectedAddress.value
             }
+
+            this.editedItem.preparedEquipment.forEach((item, index) => {
+                if (item.equip_date_of_release) {
+                    item.equip_date_of_release = this.$moment(item.equip_date_of_release).format('YYYY-MM-DD')    
+                }
+            }) 
         },
         onAddressSelect(option) {
             if (option.value) {
@@ -276,11 +406,21 @@
             this.savingProcess = false
             this.editedItem = initialEditedItem()
             this.selectedAddress = ''
+            
+            this.editedItem.preparedEquipment.splice(0, this.editedItem.preparedEquipment.length)
+            this.selectedEquipment.splice(0, this.selectedEquipment.length)
+
+            if (this.editIndex != -1) {
+                this.refreshItemByIndex(this.editIndex)
+            }
         },
         // calls from mixin on modal close
         onSidePanelCallback() {
             this.editedItem = initialEditedItem()
             this.selectedAddress = ''
+
+            this.editedItem.preparedEquipment.splice(0, this.editedItem.preparedEquipment.length)
+            this.selectedEquipment.splice(0, this.selectedEquipment.length)
         },
         setUserOfContract(value) {
             this.editedItem.contract_on_user_id = value

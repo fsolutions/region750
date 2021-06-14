@@ -8,6 +8,7 @@ use App\Models\ReferenceProperty;
 class ReferencePropertySeeder extends Seeder
 {
     public $properties = [
+        // Услуги по договору
         ['name' => 'Замена газового крана', 'ordering_number' => 10, 'reference_id' => 1],
         ['name' => 'Замена газового шланга', 'ordering_number' => 20, 'reference_id' => 1],
         ['name' => 'Подключение плиты', 'ordering_number' => 30, 'reference_id' => 1],
@@ -16,6 +17,16 @@ class ReferencePropertySeeder extends Seeder
         ['name' => 'Замена термопары (плита, колонка)', 'ordering_number' => 60, 'reference_id' => 1],
         ['name' => 'Запись на повторное техническое обслуживание', 'ordering_number' => 70, 'reference_id' => 1],
         ['name' => 'Другое', 'ordering_number' => 80, 'reference_id' => 1],
+
+        // Типы приборов
+        ['name' => 'Варочная панель ВП-2 (2 конфорки)', 'ordering_number' => 10, 'reference_id' => 2],
+        ['name' => 'Варочная панель ВП-3 (3 конфорки)', 'ordering_number' => 20, 'reference_id' => 2],
+        ['name' => 'Варочная панель ВП-4 (4 конфорки)', 'ordering_number' => 30, 'reference_id' => 2],
+        ['name' => 'Газовая плита ПГ-2 (2 конфорки)', 'ordering_number' => 40, 'reference_id' => 2],
+        ['name' => 'Газовая плита ПГ-3 (3 конфорки)', 'ordering_number' => 50, 'reference_id' => 2],
+        ['name' => 'Газовая плита ПГ-4 (4 конфорки)', 'ordering_number' => 60, 'reference_id' => 2],
+        ['name' => 'Проточный водонагреватель ПВ', 'ordering_number' => 70, 'reference_id' => 2],
+        ['name' => 'Газовый котел', 'ordering_number' => 80, 'reference_id' => 2],
     ];
 
     /**
