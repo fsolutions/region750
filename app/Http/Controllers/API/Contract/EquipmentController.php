@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Contract;
 
+use App\Models\Contract;
 use App\Models\Equipment;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CrudController;
@@ -80,6 +81,11 @@ class EquipmentController extends CrudController
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        if (!isset($this->formData['equip_user_id']) || $this->formData['equip_user_id'] == '') {
+            $contract = Contract::findOrFail($this->formData['equip_contract_id']);
+            $this->formData['equip_user_id'] = $contract->contract_on_user_id;
         }
 
         $this->model = parent::store($request);

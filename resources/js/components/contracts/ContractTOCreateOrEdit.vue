@@ -40,6 +40,7 @@
                                         id="to_start_datetime_time"
                                         v-model="to_start_datetime_time" 
                                         locale="ru"
+                                        label-close-button="Закрыть"
                                         label-no-time-selected="Выберите время"
                                     ></b-form-timepicker>
                                 </div>
@@ -47,7 +48,7 @@
                             <!-- <input v-model="editedItem.to_start_datetime" required type="datetime-local" class="form-control" id="to_start_datetime"> -->
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="contract_address">Мастер на выполнение ТО</label>
+                            <label for="contract_on_user_id">Мастер на выполнение ТО</label>
                             <select-user
                                 id="contract_on_user_id"
                                 :roles="`administrator||master||intern`"

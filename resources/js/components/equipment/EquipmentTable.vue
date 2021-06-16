@@ -15,7 +15,7 @@
             @delete="deleteItem"
         />
 
-        <!-- <b-sidebar
+        <b-sidebar
             v-if="isSidebarOpen"
             v-model="isSidebarOpen"
             id="sidebar-right"
@@ -38,7 +38,48 @@
                 <form class="needs-validation mb-4" novalidate id="EquipmentForm">
                     <div class="row">
                         <div class="col-sm-12">
-                            <h5 class="mb-3">Заполните данные по предписанию</h5>
+                            <h5 class="mb-3">Заполните данные по оборудованию</h5>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-12 col-md-8">
+                            <b-form-select 
+                                v-model="editedItem.equip_type_reference_id" 
+                                required 
+                                :options="optionsEquipment" 
+                                id="equip_type_reference_id"
+                            ></b-form-select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4">
+                            <b-form-input v-model="editedItem.equip_passport" placeholder="Номер паспорта"></b-form-input>
+                        </div>
+                        <div class="col-4">
+                            <b-form-input v-model="editedItem.equip_mark" placeholder="Марка прибора"></b-form-input>
+                        </div>
+                        <div class="col-4">
+                            <b-form-datepicker 
+                                :id="`equip_date_of_release`"                                
+                                placeholder="Дата выпуска" 
+                                locale="ru"
+                                label-help="Используйте клавиши для передвижения по календарю"
+                                label-no-date-selected="Дата выпуска"
+                                :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+                                v-model="editedItem.equip_date_of_release"
+                            ></b-form-datepicker>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label>Комментарий</label>
+                            <b-form-textarea
+                                id="equip_comment"
+                                v-model="editedItem.equip_comment"
+                                placeholder="Если есть что отметить по прибору, отметьте."
+                                rows="3"
+                                max-rows="16"
+                            ></b-form-textarea>
                         </div>
                     </div>
                 </form>
@@ -52,7 +93,7 @@
             </template>
         </b-sidebar>
 
-        <b-sidebar
+        <!-- <b-sidebar
             v-model="isSidebarOpenDetail"
             id="sidebar-right"
             title="Детальная информация"
@@ -82,15 +123,17 @@
 
     const initialEditedItem = () => ({
         id: '',
-        prescription_number: '',
-        prescription_contract_id: '',
-        prescription_master_user_id: '',
-        prescription_start_datetime: '',
-        prescription_comment: '',
-        prescription_status: 'Запланировано',
-        master: {},
-        prescription_contract: {},
-        prescription_order: {}
+        equip_user_id: '',
+        equip_contract_id: '',
+        equip_type_reference_id: '',
+
+        equip_mark: '',
+        equip_date_of_release: '',
+        equip_passport: '',
+        equip_comment: '',
+        equip_user: {},
+        equip_contract: {},
+        equip_type: {},
     })
 
     export default {
@@ -115,9 +158,24 @@
                 tableApiUrl: API_EQUIPMENT,
                 componentRefreshKey: 0,
                 user: auth.user,
+                optionsEquipment: [
+                    { text: 'Варочная панель ВП-2 (2 конфорки)', value: 9 },
+                    { text: 'Варочная панель ВП-3 (3 конфорки)', value: 10 },
+                    { text: 'Варочная панель ВП-4 (4 конфорки)', value: 11 },
+                    { text: 'Газовая плита ПГ-2 (2 конфорки)', value: 12 },
+                    { text: 'Газовая плита ПГ-3 (3 конфорки)', value: 13 },
+                    { text: 'Газовая плита ПГ-4 (4 конфорки)', value: 14 },
+                    { text: 'Проточный водонагреватель ПВ', value: 15 },
+                    { text: 'Газовый котел', value: 16 }
+                ],
             }
         },
         watch: {
+            "editedItem.equip_date_of_release": function(value) {
+                this.editedItem.equip_date_of_release = value ?
+                    this.$moment(value).format('YYYY-MM-DD') :
+                    ''
+            },
         },
         mounted() {
             this.editedItem = initialEditedItem()
@@ -126,7 +184,7 @@
         methods: {
             initialAssign() {
                 if (this.contract_id) {
-                    this.editedItem.prescription_contract_id = this.contract_id
+                    this.editedItem.equip_contract_id = this.contract_id
                 }
             },
             // calls from mixin before sidebaropened
@@ -137,7 +195,7 @@
             // calls from mixin on item save
             onCreatedOrUpdatedCallback() {
                 if (this.editIndex == -1) {
-                    this.editedItem.prescription_contract_id = this.contract_id
+                    this.editedItem.equip_contract_id = this.contract_id
                 }
 
                 this.isSidebarOpen = false
@@ -171,9 +229,6 @@
                 }
 
                 return title
-            },
-            setUserOfPrescription(value) {
-                this.editedItem.prescription_master_user_id = value
             },
             updateParentData() {
                 this.$emit("updateParentData")

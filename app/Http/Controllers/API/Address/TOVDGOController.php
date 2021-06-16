@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers\API\Address;
 
-use App\Models\Flat;
+use App\Models\TOVDGO;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\CrudController;
 use Illuminate\Support\Facades\Validator;
 
-class FlatController extends CrudController
+class TOVDGOController extends CrudController
 {
     /**
-     * Flat constructor
+     * TO VGKO constructor
      *
-     * FlatController constructor.
-     * @param Flat $model
+     * TOVDGOController constructor.
+     * @param TOVDGO $model
      */
-    public function __construct(Flat $model)
+    public function __construct(TOVDGO $model)
     {
         $this->orderBy = [
-            'column' => 'name',
-            'type' => 'asc'
+            'column' => 'vgko_date_of_work',
+            'type' => 'desc'
         ];
 
         parent::__construct($model);
@@ -32,15 +33,17 @@ class FlatController extends CrudController
      */
     public function index()
     {
-        $region_id = empty(request('region_id')) ? '' : (int) request('region_id');
-        $city_id = empty(request('city_id')) ? '' : (int) request('city_id');
-        $street_id = empty(request('street_id')) ? '' : (int) request('street_id');
-        $house_id = empty(request('house_id')) ? '' : (int) request('house_id');
+        $vgko_region_id = empty(request('vgko_region_id')) ? '' : (int) request('vgko_region_id');
+        $vgko_city_id = empty(request('vgko_city_id')) ? '' : (int) request('vgko_city_id');
+        $vgko_street_id = empty(request('vgko_street_id')) ? '' : (int) request('vgko_street_id');
+        $vgko_house_id = empty(request('vgko_house_id')) ? '' : (int) request('vgko_house_id');
+        $vgko_status = empty(request('vgko_status')) ? '' : request('vgko_status');
 
-        $this->filteringByRegion($region_id);
-        $this->filteringByCity($city_id);
-        $this->filteringByStreet($street_id);
-        $this->filteringByHouse($house_id);
+        $this->filteringByRegion($vgko_region_id);
+        $this->filteringByCity($vgko_city_id);
+        $this->filteringByStreet($vgko_street_id);
+        $this->filteringByHouse($vgko_house_id);
+        $this->filteringByStatus($vgko_status);
 
         return parent::index();
     }
@@ -48,48 +51,76 @@ class FlatController extends CrudController
     /**
      * Filtering by region
      *
-     * @param string $region_id
+     * @param string $vgko_region_id
      */
-    public function filteringByRegion($region_id = '')
+    public function filteringByRegion($vgko_region_id = '')
     {
-        if ($region_id != '') {
-            $this->model = $this->model->where('region_id', $region_id);
+        if ($vgko_region_id != '') {
+            $this->model = $this->model->where('vgko_region_id', $vgko_region_id);
         }
     }
 
     /**
      * Filtering by city
      *
-     * @param string $city_id
+     * @param string $vgko_city_id
      */
-    public function filteringByCity($city_id = '')
+    public function filteringByCity($vgko_city_id = '')
     {
-        if ($city_id != '') {
-            $this->model = $this->model->where('city_id', $city_id);
+        if ($vgko_city_id != '') {
+            $this->model = $this->model->where('vgko_city_id', $vgko_city_id);
         }
     }
 
     /**
      * Filtering by street
      *
-     * @param string $street_id
+     * @param string $vgko_street_id
      */
-    public function filteringByStreet($street_id = '')
+    public function filteringByStreet($vgko_street_id = '')
     {
-        if ($street_id != '') {
-            $this->model = $this->model->where('street_id', $street_id);
+        if ($vgko_street_id != '') {
+            $this->model = $this->model->where('vgko_street_id', $vgko_street_id);
         }
     }
 
     /**
      * Filtering by house
      *
-     * @param string $house_id
+     * @param string $vgko_house_id
      */
-    public function filteringByHouse($house_id = '')
+    public function filteringByHouse($vgko_house_id = '')
     {
-        if ($house_id != '') {
-            $this->model = $this->model->where('house_id', $house_id);
+        if ($vgko_house_id != '') {
+            $this->model = $this->model->where('vgko_house_id', $vgko_house_id);
+        }
+    }
+
+    /**
+     * Filtering by status
+     *
+     * @param string $vgko_status
+     */
+    public function filteringByStatus($vgko_status = '')
+    {
+        if ($vgko_status != '') {
+            $to_vgko = DB::select(
+                'SELECT DISTINCT
+                        id
+                    FROM
+                        to_vgko
+                    WHERE 
+                        vgko_status = :vgko_status',
+                ['vgko_status' => $vgko_status]
+            );
+
+            $finishedTOList = [];
+
+            foreach ($to_vgko as $to) {
+                $finishedTOList[] = $to->id;
+            }
+
+            $this->model = $this->model->whereIn('id', $finishedTOList);
         }
     }
 
@@ -170,7 +201,7 @@ class FlatController extends CrudController
     private function validationFormData()
     {
         $validator = Validator::make($this->formData, [
-            'name'  => 'required|string|min:1'
+            // 'name'  => 'required|string|min:1'
         ]);
 
         return $validator;

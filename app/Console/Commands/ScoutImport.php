@@ -49,7 +49,9 @@ class ScoutImport extends Command
             'Street',
             'House',
             'Flat',
-            'Equipment'
+            'Equipment',
+            'TOVentilation',
+            'TOVDGO'
         ];
 
         $result = [];

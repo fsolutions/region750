@@ -60,6 +60,24 @@
                         <li class="list-group-item menu-name list-group-name pl-0"><span class="menu-item-name">История</span></li>
                     </ul>
                 </router-link>
+                <router-link to="/to-vdgo" class="menu-item-link colored-menu-link yellow-bright-menu-link" v-if="canSeeUsers()">
+                    <ul class="list-group list-group-horizontal menu-item">
+                        <li class="list-group-item menu-icon mr-4 pr-0">
+                            <div class="menu-icon-block"><span class="menu-icon-child-all"><i class="fas fa-building"></i></span></div>
+                        </li>
+                        <li class="list-group-item menu-name list-group-name pl-0"><span class="menu-item-name">ТО-ВДГО</span></li>
+                    </ul>
+                </router-link>
+                <router-link to="/to-ventilation" class="menu-item-link colored-menu-link blue-light-menu-link" v-if="canSeeUsers()">
+                    <ul class="list-group list-group-horizontal menu-item">
+                        <li class="list-group-item menu-icon mr-4 pr-0">
+                            <div class="menu-icon-block"><span class="menu-icon-child-all"><i class="fas fa-fan"></i></span></div>
+                        </li>
+                        <li class="list-group-item menu-name list-group-name pl-0" style="padding: 0!important;line-height: 25px;">
+                            <span class="menu-item-name" style="line-height: 25px;">ТО вентканалов и дымоходов</span>
+                        </li>
+                    </ul>
+                </router-link>
                 <router-link to="/users" class="menu-item-link colored-menu-link gray-menu-link" v-if="canSeeUsers()">
                     <ul class="list-group list-group-horizontal menu-item">
                         <li class="list-group-item menu-icon mr-4 pr-0">
@@ -68,14 +86,14 @@
                         <li class="list-group-item menu-name list-group-name pl-0"><span class="menu-item-name">Пользователи</span></li>
                     </ul>
                 </router-link>
-                <!-- <router-link to="/addresses" class="menu-item-link colored-menu-link gray-menu-link" v-if="canSeeUsers()">
+                <router-link to="/addresses" class="menu-item-link colored-menu-link gray-menu-link" v-if="canSeeUsers()">
                     <ul class="list-group list-group-horizontal menu-item">
                         <li class="list-group-item menu-icon mr-4 pr-0">
                             <div class="menu-icon-block"><span class="menu-icon-child-all"><i class="fas fa-map-marked-alt"></i></span></div>
                         </li>
                         <li class="list-group-item menu-name list-group-name pl-0"><span class="menu-item-name">Адреса</span></li>
                     </ul>
-                </router-link> -->
+                </router-link>
                 <span class="menu-item-link colored-menu-link purple-menu-link" v-if="!canSeeUsers()" @click="fastOrderMaster()" style="cursor: pointer;">
                     <ul class="list-group list-group-horizontal menu-item">
                         <li class="list-group-item menu-icon mr-4 pr-0">
@@ -287,6 +305,27 @@
 .gray-menu-link.router-link-active .menu-item,
 .gray-menu-link:hover .menu-item {
     background: #807f80!important;
+    border-radius: 0!important;
+}
+
+.purple-light-menu-link .menu-icon,
+.purple-light-menu-link.router-link-active .menu-item,
+.purple-light-menu-link:hover .menu-item {
+    background: #b88bb8!important;
+    border-radius: 0!important;
+}
+
+.yellow-bright-menu-link .menu-icon,
+.yellow-bright-menu-link.router-link-active .menu-item,
+.yellow-bright-menu-link:hover .menu-item {
+    background: #ffcc00!important;
+    border-radius: 0!important;
+}
+
+.blue-light-menu-link .menu-icon,
+.blue-light-menu-link.router-link-active .menu-item,
+.blue-light-menu-link:hover .menu-item {
+    background: #91a7ff!important;
     border-radius: 0!important;
 }
 

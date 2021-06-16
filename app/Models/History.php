@@ -78,7 +78,7 @@ class History extends Model
     protected $loads = [
         'index' => [
             'all_roles' => [
-                'contract:id,contract_number,contract_address'
+                'contract'
             ]
         ],
         'other_actions' => [

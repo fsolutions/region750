@@ -23,6 +23,16 @@
                         :api="api"
                         @setFilteringApiParameter="setFilteringApiParameter"
                     ></prescription-table-filter>
+                    <vdgo-table-filter
+                        v-if="typeOfTableFilter == 'vdgo'"
+                        :api="api"
+                        @setFilteringApiParameter="setFilteringApiParameter"
+                    ></vdgo-table-filter>
+                    <ventilation-table-filter
+                        v-if="typeOfTableFilter == 'ventilation'"
+                        :api="api"
+                        @setFilteringApiParameter="setFilteringApiParameter"
+                    ></ventilation-table-filter>
 
                     <template v-if="$mq != 'sm'">
                         <template v-if="isNeedSearch">
@@ -141,6 +151,12 @@
             <template #cell(equip_date_of_release)="data">
                 {{ data.value | formattedDate }}
             </template>
+            <template #cell(ventilation_date_of_work)="data">
+                {{ data.value | formattedDate }}
+            </template>
+            <template #cell(vgko_date_of_work)="data">
+                {{ data.value | formattedDate }}
+            </template>
             <template #cell(user_contracts)="data">
                 <template v-if="data.value.length > 0">
                     <div v-for="(contract, index) in data.value" :key="contract.id">{{contract.contract_number}}</div>
@@ -257,6 +273,9 @@
     import ContractTOTableFilter from '../contracts/ContractTOTableFilter'
     import OrderTableFilter from '../orders/OrderTableFilter'
     import PrescriptionTableFilter from '../prescriptions/PrescriptionTableFilter'
+    import TOVDGOTableFilter from '../addresses/TOVDGOTableFilter'
+    import TOVentilationTableFilter from '../addresses/TOVentilationTableFilter'
+    
     import ActionUser from "./actions/actionUser";
     import ActionContract from "./actions/actionContract";
     import ActionOrder from "./actions/actionOrder";
@@ -284,6 +303,8 @@
             "contract-to-table-filter": ContractTOTableFilter,
             "order-table-filter": OrderTableFilter,
             "prescription-table-filter": PrescriptionTableFilter,
+            "vdgo-table-filter": TOVDGOTableFilter,
+            "ventilation-table-filter": TOVentilationTableFilter,
             "action-contract": ActionContract,
             "action-user": ActionUser,
             "action-order": ActionOrder,

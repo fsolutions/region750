@@ -2,8 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\City;
+use App\Models\Flat;
 use App\Models\User;
+use App\Models\House;
 use App\Models\Order;
+use App\Models\Region;
+use App\Models\Street;
 use App\Models\Equipment;
 use App\Models\ContractTO;
 use App\Models\Prescription;
@@ -61,7 +66,15 @@ class Contract extends Model
                     ]
                 ]
             ],
-            'contract_address' => [
+            // 'contract_address' => [
+            //     "type" =>  "text",
+            //     "fields" => [
+            //         "keyword" => [
+            //             "type" => "keyword"
+            //         ]
+            //     ]
+            // ],
+            'contractRealaddress' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -111,7 +124,22 @@ class Contract extends Model
             ],
             'contract_on_user_id' => [
                 "type" => "long"
-            ]
+            ],
+            'contract_region_id' => [
+                "type" => "long"
+            ],
+            'contract_city_id' => [
+                "type" => "long"
+            ],
+            'contract_street_id' => [
+                "type" => "long"
+            ],
+            'contract_house_id' => [
+                "type" => "long"
+            ],
+            'contract_flat_id' => [
+                "type" => "long"
+            ],
         ]
     ];
 
@@ -131,6 +159,11 @@ class Contract extends Model
         'creator_user_id',
         'contract_on_user_id',
         'contract_address',
+        'contract_region_id',
+        'contract_city_id',
+        'contract_street_id',
+        'contract_house_id',
+        'contract_flat_id',
         'contract_number',
         'status',
         'contract_start_datetime',
@@ -144,6 +177,7 @@ class Contract extends Model
      */
     protected $appends = [
         'preparedEquipment',
+        'contractRealaddress'
     ];
 
     /**
@@ -178,7 +212,7 @@ class Contract extends Model
                 'contract_on_user',
                 'contract_to',
                 'contract_to_last',
-                'equipment'
+                'equipment',
             ]
         ],
         'other_actions' => [
@@ -189,7 +223,12 @@ class Contract extends Model
                 'contract_to_last',
                 'orders',
                 'prescriptions',
-                'equipment'
+                'equipment',
+                'contract_region:id,name',
+                'contract_city:id,name',
+                'contract_street:id,name',
+                'contract_house:id,name',
+                'contract_flat:id,name',
             ]
         ]
     ];
@@ -255,13 +294,21 @@ class Contract extends Model
             'visible' => true
         ],
         [
-            'key' => 'contract_address',
-            'sortBy' => 'contract_address.keyword',
+            'key' => 'contractRealaddress',
+            'sortBy' => 'contractRealaddress.keyword',
             'label' => 'Адрес объекта',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
         ],
+        // [
+        //     'key' => 'contract_address',
+        //     'sortBy' => 'contract_address.keyword',
+        //     'label' => 'Адрес объекта',
+        //     'sortable' => true,
+        //     'sortDirection' => 'desc',
+        //     'visible' => true
+        // ],
         [
             'key' => 'contract_to_last',
             'sortBy' => 'contract_to_last.keyword',
@@ -327,6 +374,21 @@ class Contract extends Model
             'visible' => true
         ]
     ];
+
+    /**
+     * Get append of contractRealaddress
+     * @return array
+     */
+    public function getContractRealaddressAttribute()
+    {
+        $address = '';
+        $address .= isset($this->contract_region) ? $this->contract_region->name . ' обл.' : '';
+        $address .= isset($this->contract_city) ? ', ' . $this->contract_city->name : '';
+        $address .= isset($this->contract_street) ? ', ' . $this->contract_street->name : '';
+        $address .= isset($this->contract_house) ? ', ' . $this->contract_house->name : '';
+        $address .= isset($this->contract_flat) ? ', ' . $this->contract_flat->name : '';
+        return $address;
+    }
 
     /**
      * Users table relationships One To One.
@@ -402,6 +464,61 @@ class Contract extends Model
     }
 
     /**
+     * Region table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function contract_region()
+    {
+        return $this->hasOne(Region::class, 'id', 'contract_region_id')
+            ->select(['id', 'name']);
+    }
+
+    /**
+     * City table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function contract_city()
+    {
+        return $this->hasOne(City::class, 'id', 'contract_city_id')
+            ->select(['id', 'name']);
+    }
+
+    /**
+     * Street table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function contract_street()
+    {
+        return $this->hasOne(Street::class, 'id', 'contract_street_id')
+            ->select(['id', 'name']);
+    }
+
+    /**
+     * House table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function contract_house()
+    {
+        return $this->hasOne(House::class, 'id', 'contract_house_id')
+            ->select(['id', 'name']);
+    }
+
+    /**
+     * Flat table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function contract_flat()
+    {
+        return $this->hasOne(Flat::class, 'id', 'contract_flat_id')
+            ->select(['id', 'name']);
+    }
+
+    /**
      * Get the indexable data array for the model.
      *
      * @return array
@@ -422,7 +539,8 @@ class Contract extends Model
             'creator' => isset($this->creator->name) ? $this->creator->name : '',
             'contract_to_last' => $contract_to_dates,
             'contract_on_user' => isset($this->contract_on_user->name) ? $this->contract_on_user->name : '',
-            'contract_address' => isset($this->contract_address) ? $this->contract_address : '',
+            // 'contract_address' => isset($this->contract_address) ? $this->contract_address : '',
+            'contractRealaddress' => $this->contractRealaddress,
             'contract_number' => isset($this->contract_number) ? $this->contract_number : '',
             'status' => isset($this->status) ? $this->status : '',
             'contract_comment' => isset($this->contract_comment) ? $this->contract_comment : '',
@@ -434,6 +552,11 @@ class Contract extends Model
             'id_search' => $this->id,
             'creator_user_id' => isset($this->creator_user_id) ? $this->creator_user_id : null,
             'contract_on_user_id' => isset($this->contract_on_user_id) ? $this->contract_on_user_id : null,
+            'contract_region_id' => isset($this->contract_region_id) ? $this->contract_region_id : null,
+            'contract_city_id' => isset($this->contract_city_id) ? $this->contract_city_id : null,
+            'contract_street_id' => isset($this->contract_street_id) ? $this->contract_street_id : null,
+            'contract_house_id' => isset($this->contract_house_id) ? $this->contract_house_id : null,
+            'contract_flat_id' => isset($this->contract_flat_id) ? $this->contract_flat_id : null,
         ];
 
         return $tableFields + $otherFields;

@@ -151,7 +151,7 @@ class Street extends Model
      * @var array
      */
     protected $sort = [
-        'sortBy' => 'name',
+        'sortBy' => 'name.keyword',
         'sortDirection' => 'asc'
     ];
 

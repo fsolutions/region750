@@ -105,7 +105,7 @@ class ContractController extends CrudController
         }
 
         History::addNew([
-            'operation_name' => "Добавлен новый договор с номером " . $this->model->contract_number . " (ID: " . $this->model->id . "), по адресу: " . $this->model->contract_address,
+            'operation_name' => "Добавлен новый договор с номером " . $this->model->contract_number . " (ID: " . $this->model->id . "), по адресу: " . $this->model->contractRealaddress,
             'model_name' => get_class(new Contract()),
             'model_id' => $this->model->id,
             'contract_id' => $this->model->id,
@@ -129,7 +129,7 @@ class ContractController extends CrudController
      */
     public function show($id)
     {
-        $this->checkAllowUser($id);
+        // $this->checkAllowUser($id);
 
         return parent::show($id);
     }

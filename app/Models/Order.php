@@ -184,7 +184,7 @@ class Order extends Model
                 'order_user:id,name,phone',
                 'order_service:id,name',
                 'master:id,name,phone',
-                'order_contract:id,contract_number,contract_address',
+                'order_contract',
                 'order_prescription:id,prescription_number'
             ]
         ],
@@ -388,8 +388,8 @@ class Order extends Model
      */
     public function order_contract()
     {
-        return $this->hasOne(Contract::class, 'id', 'order_contract_id')
-            ->select(['id', 'contract_number', 'contract_address']);
+        return $this->hasOne(Contract::class, 'id', 'order_contract_id');
+        // ->select(['id', 'contract_number', 'contract_address']);
     }
 
     /**

@@ -172,14 +172,14 @@ class Equipment extends Model
     protected $loads = [
         'index' => [
             'all_roles' => [
-                'equip_contract:id,contract_number,contract_address',
+                'equip_contract',
                 'equip_type:id,name'
             ]
         ],
         'other_actions' => [
             'all_roles' => [
                 'equip_user:id,name,phone',
-                'equip_contract:id,contract_number,contract_address',
+                'equip_contract',
                 'equip_type:id,name'
             ]
         ]
@@ -194,11 +194,16 @@ class Equipment extends Model
         'administrator' => [
             'create',
             // 'show',
-            // 'edit',
+            'edit',
             'delete'
+        ],
+        'client' => [
+            'create',
+            // 'show'
         ],
         'all_roles' => [
             'create',
+            'edit',
             // 'show'
         ],
     ];
@@ -359,8 +364,8 @@ class Equipment extends Model
      */
     public function equip_contract()
     {
-        return $this->hasOne(Contract::class, 'id', 'equip_contract_id')
-            ->select(['id', 'contract_number', 'contract_address']);
+        return $this->hasOne(Contract::class, 'id', 'equip_contract_id');
+        // ->select(['id', 'contract_number', 'contract_address']);
     }
 
     /**

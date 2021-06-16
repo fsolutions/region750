@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Address;
 
 use App\Models\City;
+use App\Models\Street;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CrudController;
 use Illuminate\Support\Facades\Validator;
@@ -32,9 +33,23 @@ class CityController extends CrudController
      */
     public function index()
     {
-        $result = parent::index();
+        $region_id = empty(request('region_id')) ? '' : (int) request('region_id');
 
-        return $result;
+        $this->filteringByRegion($region_id);
+
+        return parent::index();
+    }
+
+    /**
+     * Filtering by region
+     *
+     * @param string $region_id
+     */
+    public function filteringByRegion($region_id = '')
+    {
+        if ($region_id != '') {
+            $this->model = $this->model->where('region_id', $region_id);
+        }
     }
 
     /**
@@ -67,6 +82,13 @@ class CityController extends CrudController
         }
 
         $this->model = parent::store($request);
+
+        // add one default street
+        $defaultFlat = Street::firstOrCreate([
+            'region_id' => $this->model->region_id,
+            'city_id' => $this->model->id,
+            'name' => '-'
+        ]);
 
         return $this->model;
     }

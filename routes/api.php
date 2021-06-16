@@ -7,17 +7,24 @@ use App\Bundles\Notifications\SMSC;
 use Illuminate\Support\Facades\Route;
 use App\Bundles\Service\DadataService;
 use Illuminate\Support\Facades\Config;
+use App\Bundles\Order\OrderCreateExternal;
 use App\Http\Controllers\API\Log\LogController;
 use App\Http\Controllers\API\User\UserController;
 use App\Http\Controllers\API\Order\OrderController;
+use App\Http\Controllers\API\Address\CityController;
 use App\Http\Controllers\API\Address\FlatController;
 use App\Http\Controllers\API\PassportAuthController;
+use App\Http\Controllers\API\Address\HouseController;
+use App\Http\Controllers\API\Address\RegionController;
+use App\Http\Controllers\API\Address\StreetController;
+use App\Http\Controllers\API\Address\TOVDGOController;
 use App\Http\Controllers\API\History\HistoryController;
 use App\Http\Controllers\API\User\UserCommentController;
 use App\Http\Controllers\API\Contract\ContractController;
 use App\Http\Controllers\API\Contract\EquipmentController;
 use App\Http\Controllers\API\Contract\ContractTOController;
 use App\Http\Controllers\API\Reference\ReferenceController;
+use App\Http\Controllers\API\Address\TOVentilationController;
 use App\Http\Controllers\API\Notification\NotificationController;
 use App\Http\Controllers\API\Prescription\PrescriptionController;
 use App\Http\Controllers\API\Reference\ReferencePropertyController;
@@ -124,10 +131,12 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('prescriptions', PrescriptionController::class);
     Route::apiResource('equipment', EquipmentController::class);
     Route::apiResource('addresses/flats', FlatController::class);
-    Route::apiResource('addresses/houses', FlatController::class);
-    Route::apiResource('addresses/streets', FlatController::class);
-    Route::apiResource('addresses/cities', FlatController::class);
-    Route::apiResource('addresses/regions', FlatController::class);
+    Route::apiResource('addresses/houses', HouseController::class);
+    Route::apiResource('addresses/streets', StreetController::class);
+    Route::apiResource('addresses/cities', CityController::class);
+    Route::apiResource('addresses/regions', RegionController::class);
+    Route::apiResource('to-ventilation', TOVentilationController::class);
+    Route::apiResource('to-vdgo', TOVDGOController::class);
 
     /**
      * Other routes

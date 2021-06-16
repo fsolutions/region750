@@ -50,6 +50,14 @@ class House extends Model
                     ]
                 ]
             ],
+            'zip' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
             'region' => [
                 "type" =>  "text",
                 "fields" => [
@@ -112,6 +120,7 @@ class House extends Model
      */
     protected $fillable = [
         'name', //name (house+block+block_type)
+        'zip',
         'region_id',
         'city_id',
         'street_id'
@@ -166,7 +175,7 @@ class House extends Model
      * @var array
      */
     protected $sort = [
-        'sortBy' => 'name',
+        'sortBy' => 'name.keyword',
         'sortDirection' => 'asc'
     ];
 
@@ -213,6 +222,15 @@ class House extends Model
             'key' => 'name',
             'label' => 'Номер дома',
             'sortBy' => 'name',
+            'stickyColumn' => true,
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'zip',
+            'label' => 'Почтовый код',
+            'sortBy' => 'zip',
             'stickyColumn' => true,
             'sortable' => true,
             'sortDirection' => 'desc',
@@ -283,6 +301,7 @@ class House extends Model
         $tableFields = [
             'id' => $this->id,
             'name' => $this->name,
+            'zip' => $this->zip,
             'region' => isset($this->region->name) ? $this->region->name : '',
             'city' => isset($this->city->name) ? $this->city->name : '',
             'street' => isset($this->street->name) ? $this->street->name : '',

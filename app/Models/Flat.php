@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\City;
+use App\Models\House;
 use App\Models\Region;
 use App\Models\Street;
 use ScoutElastic\Searchable;
@@ -162,13 +163,13 @@ class Flat extends Model
             'create',
             // 'show',
             'edit',
-            'delete'
+            // 'delete'
         ],
         'all_roles' => [
             'create',
             // 'show',
             'edit',
-            'delete'
+            // 'delete'
         ],
     ];
 
@@ -178,7 +179,7 @@ class Flat extends Model
      * @var array
      */
     protected $sort = [
-        'sortBy' => 'name',
+        'sortBy' => 'name.keyword',
         'sortDirection' => 'asc'
     ];
 
@@ -194,6 +195,14 @@ class Flat extends Model
             'sortBy' => 'id',
             'stickyColumn' => true,
             'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'house.zip',
+            'sortBy' => 'house.zip',
+            'label' => 'Индекс',
+            'sortable' => false,
             'sortDirection' => 'desc',
             'visible' => true
         ],
@@ -286,8 +295,8 @@ class Flat extends Model
      */
     public function house()
     {
-        return $this->hasOne(Street::class, 'id', 'house_id')
-            ->select(['id', 'name']);
+        return $this->hasOne(House::class, 'id', 'house_id')
+            ->select(['id', 'name', 'zip']);
     }
 
     /**

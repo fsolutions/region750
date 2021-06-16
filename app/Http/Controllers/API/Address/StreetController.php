@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Address;
 
+use App\Models\House;
 use App\Models\Street;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CrudController;
@@ -32,9 +33,37 @@ class StreetController extends CrudController
      */
     public function index()
     {
-        $result = parent::index();
+        $region_id = empty(request('region_id')) ? '' : (int) request('region_id');
+        $city_id = empty(request('city_id')) ? '' : (int) request('city_id');
 
-        return $result;
+        $this->filteringByRegion($region_id);
+        $this->filteringByCity($city_id);
+
+        return parent::index();
+    }
+
+    /**
+     * Filtering by region
+     *
+     * @param string $region_id
+     */
+    public function filteringByRegion($region_id = '')
+    {
+        if ($region_id != '') {
+            $this->model = $this->model->where('region_id', $region_id);
+        }
+    }
+
+    /**
+     * Filtering by city
+     *
+     * @param string $city_id
+     */
+    public function filteringByCity($city_id = '')
+    {
+        if ($city_id != '') {
+            $this->model = $this->model->where('city_id', $city_id);
+        }
     }
 
     /**
@@ -67,6 +96,14 @@ class StreetController extends CrudController
         }
 
         $this->model = parent::store($request);
+
+        // add one default house
+        $defaultFlat = House::firstOrCreate([
+            'region_id' => $this->model->region_id,
+            'city_id' => $this->model->city_id,
+            'street_id' => $this->model->id,
+            'name' => '-'
+        ]);
 
         return $this->model;
     }

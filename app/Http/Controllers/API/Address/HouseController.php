@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Address;
 
+use App\Models\Flat;
 use App\Models\House;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CrudController;
@@ -32,9 +33,51 @@ class HouseController extends CrudController
      */
     public function index()
     {
-        $result = parent::index();
+        $region_id = empty(request('region_id')) ? '' : (int) request('region_id');
+        $city_id = empty(request('city_id')) ? '' : (int) request('city_id');
+        $street_id = empty(request('street_id')) ? '' : (int) request('street_id');
 
-        return $result;
+        $this->filteringByRegion($region_id);
+        $this->filteringByCity($city_id);
+        $this->filteringByStreet($street_id);
+
+        return parent::index();
+    }
+
+    /**
+     * Filtering by region
+     *
+     * @param string $region_id
+     */
+    public function filteringByRegion($region_id = '')
+    {
+        if ($region_id != '') {
+            $this->model = $this->model->where('region_id', $region_id);
+        }
+    }
+
+    /**
+     * Filtering by city
+     *
+     * @param string $city_id
+     */
+    public function filteringByCity($city_id = '')
+    {
+        if ($city_id != '') {
+            $this->model = $this->model->where('city_id', $city_id);
+        }
+    }
+
+    /**
+     * Filtering by street
+     *
+     * @param string $street_id
+     */
+    public function filteringByStreet($street_id = '')
+    {
+        if ($street_id != '') {
+            $this->model = $this->model->where('street_id', $street_id);
+        }
     }
 
     /**
@@ -67,6 +110,15 @@ class HouseController extends CrudController
         }
 
         $this->model = parent::store($request);
+
+        // add one default flat
+        $defaultFlat = Flat::firstOrCreate([
+            'region_id' => $this->model->region_id,
+            'city_id' => $this->model->city_id,
+            'street_id' => $this->model->street_id,
+            'house_id' => $this->model->id,
+            'name' => '-'
+        ]);
 
         return $this->model;
     }

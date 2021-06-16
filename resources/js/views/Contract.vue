@@ -44,16 +44,15 @@
                             <label for="contract_number">Номер договора</label>
                             <input v-model="editedItem.contract_number" required type="text" class="form-control" id="contract_number">
                         </div>
-                        <div class="form-group col-md-12">
-                            <label for="contract_address">Адрес объекта из договора</label>
+                        <div class="form-group col-md-6">
+                            <label for="contractRealaddress">Адрес улицы из договора</label>
                             <multiselect
-                                v-if="!editedItem.contract_address"
                                 v-model="selectedAddress"
-                                :placeholder="'Начните вводить адрес с города...'"
+                                :placeholder="'Начните вводить улицу...'"
                                 :required="true"
                                 select-label="Выбрать"
-                                label="value"
-                                track-by="value"
+                                label="name"
+                                track-by="id"
                                 :options="addresses"
                                 :hide-selected="false"
                                 :searchable="true"
@@ -64,12 +63,62 @@
                                 @search-change="findAddress"
                                 open-direction="bottom"
                                 @select="onAddressSelect"
+                                :custom-label="customAddressLabel"
                             >
+                                <template
+                                    slot="option"
+                                    slot-scope="{ option }">
+                                    <span class="custom__tag">
+                                        <span>{{ `${option.region.name} обл, ${option.city.name}, ${option.name}` }}</span>
+                                    </span>
+                                </template>
                                 <span slot="noOptions">Пока ничего не найдено...</span>
                                 <span slot="noResult">Ничего не найдено. Попробуйте снова...</span>
                             </multiselect>
-                            <input v-if="editedItem.contract_address" v-model="editedItem.contract_address" required type="text" class="form-control" id="contract_address">
+                            <!-- <input v-if="editedItem.contract_address" v-model="editedItem.contract_address" required type="text" class="form-control" id="contract_address"> -->
                         </div>
+                        <div class="form-group col-md-3" v-if="(editedItem.contract_region_id && editedItem.contract_city_id && editedItem.contract_street_id)">
+                            <label for="address_house">Выберите ваш дом</label>
+                            <select-address-structure
+                                id="address_house"
+                                :structure="`houses`"
+                                :mainInputPlaceholder="'Введите номер дома'"
+                                :needNullElement="true"
+                                :needAddButton="false"
+                                :selected="editedItem.contract_house_id"
+                                :selectedStructure="editedItem.contract_house"
+                                :region_id="editedItem.contract_region_id"
+                                :city_id="editedItem.contract_city_id"
+                                :street_id="editedItem.contract_street_id"
+                                :needZipCode="true"
+                                @set="setHouse"
+                            ></select-address-structure>
+                        </div>
+                        <div class="form-group col-md-3" v-if="(editedItem.contract_region_id && editedItem.contract_city_id && editedItem.contract_street_id && editedItem.contract_house_id)">
+                            <label for="address_flat">Выберите вашу квартиру</label>
+                            <select-address-structure
+                                id="address_flat"
+                                :structure="`flats`"
+                                :mainInputPlaceholder="'Введите номер квартиры'"
+                                :needNullElement="true"
+                                :needAddButton="false"
+                                :selected="editedItem.contract_house_id"
+                                :selectedStructure="editedItem.contract_house"
+                                :region_id="editedItem.contract_region_id"
+                                :city_id="editedItem.contract_city_id"
+                                :street_id="editedItem.contract_street_id"
+                                :house_id="editedItem.contract_house_id"
+                                :needZipCode="true"
+                                @set="setFlat"
+                            ></select-address-structure>
+                        </div>
+
+                        <template v-if="!onlyForBackOffice()">
+                            <div class="form-group col-md-12" style="margin-top: -10px;">
+                                <i><small>Не переживайте, если не нашли ваш адрес, оставьте поле пустым. Наши менеджеры сами внесут данные при проверке.</small></i>
+                            </div>
+                        </template>
+
                         <div class="form-group col-md-12">
                             <label for="contract_start_datetime">Дата заключения договора</label>
                             <!-- <input v-model="editedItem.contract_start_datetime" required type="date" class="form-control" id="contract_start_datetime"> -->
@@ -181,7 +230,7 @@
 </template>
 
 <script>
-    import {API_CONTRACTS, API_DADATA_ADDRESS} from "../constants"
+    import {API_CONTRACTS, API_DADATA_ADDRESS, API_STREETS} from "../constants"
     import debounce from '../services/helpers'
 
     import ContractCards from "../components/contracts/Cards"
@@ -201,6 +250,16 @@
         creator_user_id: '',
         contract_on_user_id: '',
         contract_address: '',
+        contract_region_id: '',
+        contract_city_id: '',
+        contract_street_id: '',
+        contract_house_id: '',
+        contract_flat_id: '',
+        contract_region: {},
+        contract_city: {},
+        contract_street: {},
+        contract_house: {},
+        contract_flat: {},
         contract_number: '',
         status: 'В обработке',
         contract_start_datetime: '',
@@ -295,6 +354,9 @@
         this.editedItem = initialEditedItem()
     },
     methods: {
+        customAddressLabel({ region, city, name }) {
+            return `${region.name} обл., ${city.name}, ${name}`
+        },
         formEquipmentList() {
             // Добавляем
             this.selectedEquipment.forEach((equipid, index) => {
@@ -342,9 +404,14 @@
         },
         findAddress: debounce (function(query) {
             this.loadingDadata = true
-            api.call('post', API_DADATA_ADDRESS, {'address': query})
+            // api.call('post', API_DADATA_ADDRESS, {'address': query})
+            //     .then(({data}) => {
+            //         this.addresses = data
+            //         this.loadingDadata = false
+            //     })
+            api.call('get', API_STREETS + `?q=${query}`)
                 .then(({data}) => {
-                    this.addresses = data
+                    this.addresses = data.data
                     this.loadingDadata = false
                 })
         }, 700),
@@ -382,12 +449,22 @@
             })
 
             this.isFormingEquipmentList = false
+
+            if (this.editedItem.contract_street_id) {
+                this.selectedAddress = {
+                    value: this.editedItem.contract_street_id,
+                    name: this.editedItem.contract_street.name,
+                    city: this.editedItem.contract_city,
+                    region: this.editedItem.contract_region,
+                    street: this.editedItem.contract_street,
+                }
+            }
         },
         // calls from mixin on item save
         onCreateOrUpdateItemCallback() {
-            if (this.selectedAddress.value) {
-                this.editedItem.contract_address = this.selectedAddress.value
-            }
+            // if (this.selectedAddress.value) {
+            //     this.editedItem.contract_address = this.selectedAddress.value
+            // }
 
             this.editedItem.preparedEquipment.forEach((item, index) => {
                 if (item.equip_date_of_release) {
@@ -396,9 +473,24 @@
             }) 
         },
         onAddressSelect(option) {
-            if (option.value) {
-                this.editedItem.contract_address = option.value
+            if (option) {
+                this.editedItem.contract_region_id = option.region_id
+                this.editedItem.contract_city_id = option.city_id
+                this.editedItem.contract_street_id = ''
+                this.editedItem.contract_house_id = ''
+                this.editedItem.contract_flat_id = ''
+                this.editedItem.contract_house = Object.assign({})
+                this.editedItem.contract_flat = Object.assign({})
+                setTimeout(() => {
+                    this.editedItem.contract_street_id = option.id
+                }, 400);
             }
+        },
+        setHouse(value) {
+            this.editedItem.contract_house_id = value
+        },
+        setFlat(value) {
+            this.editedItem.contract_flat_id = value
         },
         // calls from mixin on item save
         onCreatedOrUpdatedCallback() {
@@ -452,7 +544,7 @@
         },
         updateParentData(index) {
             this.refreshItemByIndex(index)
-        }
+        },
     }
   }
 

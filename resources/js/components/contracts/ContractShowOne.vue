@@ -12,6 +12,14 @@
                     </li>
                     <hr>
                     <li class="parent_item pb-0">
+                        <a class="nav-link" data-toggle="tab" role="tab" aria-controls="contract-to-vgdo" aria-selected="true" href="#contract-to-vgdo"><span class="fa-li"><i class="fas fa-chevron-right"></i></span> ТО-ВДГО</a>
+                    </li>
+                    <hr>
+                    <li class="parent_item pb-0">
+                        <a class="nav-link" data-toggle="tab" role="tab" aria-controls="contract-to-ventilation" aria-selected="true" href="#contract-to-ventilation"><span class="fa-li"><i class="fas fa-chevron-right"></i></span> ТО вентканалов и дымоходов</a>
+                    </li>
+                    <hr>
+                    <li class="parent_item pb-0">
                         <a class="nav-link" data-toggle="tab" role="tab" aria-controls="contract-orders" aria-selected="true" href="#contract-orders"><span class="fa-li"><i class="fas fa-chevron-right"></i></span> Обращения</a>
                     </li>
                     <hr>
@@ -49,6 +57,22 @@
                             :typeOfTableFilter="'contractsTO'"
                         ></contract-to-table>
                     </div>
+                    <div class="tab-pane fade" id="contract-to-vgdo">
+                        <h5 class="mb-4">ТО-ВГДО в доме</h5>
+                        <to-vdgo-table
+                            :additionalGetParameter="`&vgko_house_id=${detailedItem.contract_house_id}`"
+                            :isNeedCreate="false"
+                            :typeOfTableFilter="'vdgo'"
+                        ></to-vdgo-table>
+                    </div>
+                    <div class="tab-pane fade" id="contract-to-ventilation">
+                        <h5 class="mb-4">ТО вентканалов и дымоходов в доме</h5>
+                        <to-ventilation-table
+                            :additionalGetParameter="`&ventilation_house_id=${detailedItem.contract_house_id}`"
+                            :isNeedCreate="false"
+                            :typeOfTableFilter="'ventilation'"
+                        ></to-ventilation-table>
+                    </div>
                     <div class="tab-pane fade" id="contract-orders">
                         <h5 class="mb-4">Обращения по договору №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</h5>
                         <orders-table
@@ -76,7 +100,7 @@
                         <equipment-table
                             :contract_id="detailedItem.id"
                             :additionalGetParameter="`&equip_contract_id=${detailedItem.id}`"
-                            :isNeedCreate="false"
+                            :isNeedCreate="true"
                         ></equipment-table>
                     </div>
                     <div class="tab-pane fade" id="contract-history">
@@ -104,6 +128,8 @@
     import OrderTable from '../orders/OrderTable'
     import PrescriptionTable from '../prescriptions/PrescriptionTable'
     import EquipmentTable from '../equipment/EquipmentTable'
+    import TOVDGOTable from '../addresses/TOVDGOTable.vue'
+    import TOVentilationTable from '../addresses/TOVentilationTable.vue'
     
     // import ChangeHistory from '../logs/ChangeHistory'
 
@@ -113,7 +139,9 @@
             "contract-to-table": ContractTOTable,
             "orders-table": OrderTable,
             "prescriptions-table": PrescriptionTable,
-            "equipment-table": EquipmentTable
+            "equipment-table": EquipmentTable,
+            "to-vdgo-table": TOVDGOTable,
+            "to-ventilation-table": TOVentilationTable
             // 'change-history': ChangeHistory,
         },
         props: {

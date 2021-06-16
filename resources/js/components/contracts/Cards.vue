@@ -47,22 +47,83 @@
                                 <b-badge variant="warning" class="always-small-badge" v-if="contract.status == 'Нет бумажного договора'">{{contract.status}}</b-badge>
                                 <b-badge variant="secondary" class="always-small-badge" v-if="contract.status == 'В обработке'">{{contract.status}}</b-badge>
                                 <b-badge variant="danger" class="always-small-badge" v-if="contract.status == 'Передать в ГЖИ' || contract.status == 'Передано в ГЖИ'">{{contract.status}}</b-badge>
-                                <p><em class="text-muted">Адрес: {{ contract.contract_address}}</em></p>
+                                <p><em class="text-muted">Адрес: {{ contract.contractRealaddress}}</em></p>
                                 <p>
-                                    <template v-if="checkDaysForNextTO(index) > -1">
-                                        <!-- <b>До следующего ТО-ВКГО:</b> {{ checkDaysForNextTO(index) }} {{ getNumEnding(checkDaysForNextTO(index)) }} -->
-                                        <b>Следующее ТО назначено на <span class="bigDate" v-html="nextTO(index)"></span></b>
-                                    </template>
-                                    <template v-else>
-                                        <b>Дата следующего ТО <span class="bigDate">не назначена</span></b>
-                                    </template>
+                                    <b>ТО-ВГКО</b> (Техническое обслуживание внутриквартирного газового оборудования)
                                 </p>
-                                <p class="mb-0"><b>Дата последнего ТО <span class="bigDate" style="font-size:16px;" v-html="findLastTO(index)"></span></b></p>
-                                <template v-if="findMasterOfPreviousTO(index) != -1">
-                                    <p>
-                                        <b>Работы выполнял </b> {{ findMasterOfPreviousTO(index) }}
+                                <div style="border-left: 3px solid #CCC; margin-left: 15px; padding-left: 15px; padding-bottom: 10px;">
+                                    <p class="mb-2">
+                                        <template v-if="checkDaysForNextTO(index) > -1">
+                                            <!-- <b>До следующего ТО-ВКГО:</b> {{ checkDaysForNextTO(index) }} {{ getNumEnding(checkDaysForNextTO(index)) }} -->
+                                            <b>Следующее ТО назначено на <span class="bigDate" v-html="nextTO(index)"></span></b>
+                                        </template>
+                                        <template v-else>
+                                            <b>Дата следующего ТО <span class="bigDate">не назначена</span></b>
+                                        </template>
                                     </p>
-                                </template>
+                                    <p class="mb-0"><b>Дата последнего ТО <span class="bigDate" v-html="findLastTO(index)"></span></b></p>
+                                    <template v-if="findMasterOfPreviousTO(index) != -1">
+                                        <p class="mb-0">
+                                            <b>Работы выполнял </b> {{ findMasterOfPreviousTO(index) }}
+                                        </p>
+                                    </template>
+                                </div>
+                                <hr>
+                                <p>
+                                    <b>ТО-ВДГО</b> (Техническое обслуживание внутридомового газового оборудования)
+                                </p>
+                                <div style="border-left: 3px solid #CCC; margin-left: 15px; padding-left: 15px; padding-bottom: 10px;">
+                                    <p class="mb-2">
+                                        <template v-if="toVdgo[index].next.date">
+                                            <!-- <b>До следующего ТО-ВКГО:</b> {{ checkDaysForNextTO(index) }} {{ getNumEnding(checkDaysForNextTO(index)) }} -->
+                                            <b>Следующее ТО назначено на <span class="bigDate">{{toVdgo[index].next.date | formattedDate}}</span></b>
+                                        </template>
+                                        <template v-else>
+                                            <b>Дата следующего ТО <span class="bigDate">не назначена</span></b>
+                                        </template>
+                                    </p>
+                                    <p class="mb-0">
+                                        <template v-if="toVdgo[index].last.date">
+                                            <b>Дата последнего ТО <span class="bigDate">{{toVdgo[index].last.date | formattedDate}}</span></b>
+                                        </template>
+                                        <template v-else>
+                                            <b>Дата последнего ТО <span class="bigDate">не известна</span></b>
+                                        </template>
+                                    </p>
+                                    <template v-if="toVdgo[index].last.master">
+                                        <p class="mb-0">
+                                            <b>Работы выполнял </b> {{ toVdgo[index].last.master.name }}
+                                        </p>
+                                    </template>
+                                </div>
+                                <hr>
+                                <p>
+                                    <b>ТО-Вентканалов и дымоходов</b>
+                                </p>
+                                <div style="border-left: 3px solid #CCC; margin-left: 15px; padding-left: 15px; padding-bottom: 10px;">
+                                    <p class="mb-2">
+                                        <template v-if="toVentilation[index].next.date">
+                                            <!-- <b>До следующего ТО-ВКГО:</b> {{ checkDaysForNextTO(index) }} {{ getNumEnding(checkDaysForNextTO(index)) }} -->
+                                            <b>Следующее ТО назначено на <span class="bigDate">{{toVentilation[index].next.date | formattedDate}}</span></b>
+                                        </template>
+                                        <template v-else>
+                                            <b>Дата следующего ТО <span class="bigDate">не назначена</span></b>
+                                        </template>
+                                    </p>
+                                    <p class="mb-0">
+                                        <template v-if="toVentilation[index].last.date">
+                                            <b>Дата последнего ТО <span class="bigDate">{{toVentilation[index].last.date | formattedDate}}</span></b>
+                                        </template>
+                                        <template v-else>
+                                            <b>Дата последнего ТО <span class="bigDate">не известна</span></b>
+                                        </template>
+                                    </p>
+                                    <template v-if="toVentilation[index].last.master">
+                                        <p class="mb-0">
+                                            <b>Работы выполнял </b> {{ toVentilation[index].last.master.name }}
+                                        </p>
+                                    </template>
+                                </div>
                             </div>
                             <div class="col-sm-5 text-center">
                                 <b-button @click="orderMaster(index)" variant="primary" class="mt-4">Вызвать мастера</b-button>
@@ -87,7 +148,7 @@
     </div>
 </template>
 <script>
-    import { API_ORDERS } from "../../constants"
+    import { API_ORDERS, API_TO_VDGO, API_TO_VENTILATION } from "../../constants"
     import fastOrderForm from "../orders/fastOrderForm"
 
     import {
@@ -113,8 +174,21 @@
                 order_reference_service_id: '',
                 order_description: '',
                 fastOrderFormOpened: false,
-                selectedContractId: ''
+                selectedContractId: '',
+                toVdgo: [],
+                toVentilation: []
             }
+        },
+        watch: {
+            "itemsLocal.data": {
+                // deep: true,
+                handler(items) {
+                    items.forEach((item,index) => {
+                        this.findVDGOData(index)
+                        this.findVetilationData(index)
+                    });
+                }
+            },
         },
         computed: {
             itemsLocal: {
@@ -156,6 +230,7 @@
                 this.selectedContractId = this.itemsLocal.data[index].id
                 this.fastOrderFormOpened = true
             },
+            // ТО-ВГКО
             nextTO(index) {
                 return this.$moment(this.itemsLocal.data[index].contract_to[0].to_start_datetime).format('MMMM YYYY') + ' г.'
             },
@@ -199,6 +274,68 @@
                 }
 
                 return result
+            },
+            // ТО-ВДГО
+            findVDGOData(index) {
+                this.toVdgo.push({next: {}, last: {}})
+                api.call("get", `${API_TO_VDGO}?vgko_house_id=${this.itemsLocal.data[index].contract_house_id}`).then(({data}) => {
+                    let TOs = data.data.filter(item => {
+                        return ["Запланировано", "Проведено"].includes(item.vgko_status)
+                    })
+
+                    if (TOs.length > 0) {
+                        if (TOs[0] && TOs[0].vgko_status == "Запланировано") {
+                            this.toVdgo[index].next = {
+                                master: TOs[0].vgko_master,
+                                date: TOs[0].vgko_date_of_work,
+                            }
+
+                            if (TOs[1] && TOs[1].vgko_status == "Проведено") {
+                                this.toVdgo[index].last = {
+                                    master: TOs[1].vgko_master,
+                                    date: TOs[1].vgko_date_of_work,
+                                }
+                            }
+                        }
+                        else if (TOs[0] && TOs[0].vgko_status == "Проведено") {
+                            this.toVdgo[index].last = {
+                                master: TOs[0].vgko_master,
+                                date: TOs[0].vgko_date_of_work,
+                            }
+                        }
+                    }
+                })
+            },
+            //ТО - вентиляция
+            findVetilationData(index) {
+                this.toVentilation.push({next: {}, last: {}})
+                api.call("get", `${API_TO_VENTILATION}?ventilation_house_id=${this.itemsLocal.data[index].contract_house_id}`).then(({data}) => {
+                    let TOs = data.data.filter(item => {
+                        return ["Запланировано", "Проведено"].includes(item.ventilation_status)
+                    })
+
+                    if (TOs.length > 0) {
+                        if (TOs[0] && TOs[0].ventilation_status == "Запланировано") {
+                            this.toVentilation[index].next = {
+                                master: TOs[0].ventilation_master,
+                                date: TOs[0].ventilation_date_of_work,
+                            }
+
+                            if (TOs[1] && TOs[1].ventilation_status == "Проведено") {
+                                this.toVentilation[index].last = {
+                                    master: TOs[1].ventilation_master,
+                                    date: TOs[1].ventilation_date_of_work,
+                                }
+                            }
+                        }
+                        else if (TOs[0] && TOs[0].ventilation_status == "Проведено") {
+                            this.toVentilation[index].last = {
+                                master: TOs[0].ventilation_master,
+                                date: TOs[0].ventilation_date_of_work,
+                            }
+                        }
+                    }
+                })
             },
             /**
              * Функция возвращает окончание для множественного числа слова на основании числа и массива окончаний

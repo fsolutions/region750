@@ -4,12 +4,16 @@ const state = {
         contractTOTable: localStorage.getItem('filterSettings.contractTOTable') || 0,
         orderTable: localStorage.getItem('filterSettings.orderTable') || 0,
         prescriptionTable: localStorage.getItem('filterSettings.prescriptionTable') || 0,
+        TOVDGOTable: localStorage.getItem('filterSettings.TOVDGOTable') || 0,
+        TOVentilation: localStorage.getItem('filterSettings.TOVentilation') || 0,
     },
     tableHeaderSettings: {
         contractTable: JSON.parse(localStorage.getItem('tableHeaderSettings.contractTable')) || {},
         contractTOTable: JSON.parse(localStorage.getItem('tableHeaderSettings.contractTOTable')) || {},
         orderTable: JSON.parse(localStorage.getItem('tableHeaderSettings.orderTable')) || {},
         prescriptionTable: JSON.parse(localStorage.getItem('tableHeaderSettings.prescriptionTable')) || {},
+        TOVDGOTable: JSON.parse(localStorage.getItem('tableHeaderSettings.TOVDGOTable')) || {},
+        TOVentilation: JSON.parse(localStorage.getItem('tableHeaderSettings.TOVentilation')) || {},
     }
 }
 const mutations = {

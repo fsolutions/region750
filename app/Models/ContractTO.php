@@ -292,8 +292,7 @@ class ContractTO extends Model
      */
     public function to_contract()
     {
-        return $this->hasOne(Contract::class, 'id', 'to_contract_id')
-            ->select(['id', 'contract_number', 'contract_address']);
+        return $this->hasOne(Contract::class, 'id', 'to_contract_id');
     }
 
     /**

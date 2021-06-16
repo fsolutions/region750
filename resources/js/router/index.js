@@ -13,6 +13,8 @@ import Flat from '../views/Flat.vue'
 import History from '../views/History.vue'
 import Calendar from '../views/Calendar.vue'
 import PasswordReset from '../views/PasswordReset.vue'
+import TOVDGO from '../views/TOVDGO.vue'
+import TOVentilation from '../views/TOVentilation.vue'
 
 let routes = [
         {
@@ -81,6 +83,18 @@ let routes = [
             name: 'prescriptions',
             component: Prescription,
             meta: { title: 'Предписания', middlewareAuth: true }
+        },
+        {
+            path: '/to-vdgo',
+            name: 'to-vdgo',
+            component: TOVDGO,
+            meta: { title: 'ТО-ВДГО', middlewareAuth: true }
+        },
+        {
+            path: '/to-ventilation',
+            name: 'to-ventilation',
+            component: TOVentilation,
+            meta: { title: 'ТО вентканалов и дымоходов', middlewareAuth: true }
         },
         {
             path: '/addresses',

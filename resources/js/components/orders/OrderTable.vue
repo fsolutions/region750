@@ -81,7 +81,7 @@
                             ></b-form-datepicker>
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="contract_address">Мастер на выполнение обращения</label>
+                            <label for="contract_on_user_id">Мастер на выполнение обращения</label>
                             <select-user
                                 id="contract_on_user_id"
                                 :roles="`administrator||master||intern`"

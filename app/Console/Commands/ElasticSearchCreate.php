@@ -49,7 +49,9 @@ class ElasticSearchCreate extends Command
             'Street',
             'House',
             'Flat',
-            'Equipment'
+            'Equipment',
+            'TOVentilation',
+            'TOVDGO'
         ];
 
         $bar = $this->output->createProgressBar(count($models));

@@ -44,3 +44,5 @@ export const API_CITIES = '/api/addresses/cities'
 export const API_REGIONS = '/api/addresses/regions'
 
 export const API_EQUIPMENT = '/api/equipment'
+export const API_TO_VENTILATION = '/api/to-ventilation'
+export const API_TO_VDGO = '/api/to-vdgo'

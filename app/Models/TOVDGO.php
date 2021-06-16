@@ -2,26 +2,25 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\Order;
-use App\Models\Contract;
+use App\Models\City;
+use App\Models\House;
+use App\Models\Region;
 use ScoutElastic\Searchable;
 use App\Traits\ModelGettersTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Bundles\Elasticsearch\TOVDGOIndexConfigurator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Bundles\Elasticsearch\PrescriptionIndexConfigurator;
 
-class Prescription extends Model
+class TOVDGO extends Model
 {
-    use HasFactory, SoftDeletes, ModelGettersTrait, Searchable;
+    use HasFactory, ModelGettersTrait, Searchable;
 
     /**
      * Settings to index
      *
      * @var string
      */
-    protected $indexConfigurator = PrescriptionIndexConfigurator::class;
+    protected $indexConfigurator = TOVDGOIndexConfigurator::class;
 
     /**
      * Mapping
@@ -35,7 +34,7 @@ class Prescription extends Model
             'id' => [
                 "type" => "long"
             ],
-            'prescription_number' => [
+            'vgko_region' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -43,7 +42,7 @@ class Prescription extends Model
                     ]
                 ]
             ],
-            'prescription_contract' => [
+            'vgko_city' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -51,7 +50,7 @@ class Prescription extends Model
                     ]
                 ]
             ],
-            'master' => [
+            'vgko_street' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -59,11 +58,27 @@ class Prescription extends Model
                     ]
                 ]
             ],
-            'prescription_start_datetime' => [
+            'vgko_house' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
+            'vgko_master' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
+            'vgko_date_of_work' => [
                 "type" => "date",
                 "format" => "dd.MM.yyyy HH:mm"
             ],
-            'prescription_comment' => [
+            'vgko_comment' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -71,7 +86,7 @@ class Prescription extends Model
                     ]
                 ]
             ],
-            'prescription_status' => [
+            'vgko_status' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -88,12 +103,21 @@ class Prescription extends Model
             'id_search' => [
                 "type" => "keyword"
             ],
-            'prescription_master_user_id' => [
+            'vgko_master_user_id' => [
                 "type" => "long"
             ],
-            'prescription_contract_id' => [
+            'vgko_region_id' => [
                 "type" => "long"
-            ]
+            ],
+            'vgko_city_id' => [
+                "type" => "long"
+            ],
+            'vgko_street_id' => [
+                "type" => "long"
+            ],
+            'vgko_house_id' => [
+                "type" => "long"
+            ],
         ]
     ];
 
@@ -102,7 +126,7 @@ class Prescription extends Model
      *
      * @var string
      */
-    protected $table = 'prescriptions';
+    protected $table = 'to_vgko';
 
     /**
      *  Attributes models.
@@ -110,12 +134,14 @@ class Prescription extends Model
      * @var array
      */
     protected $fillable = [
-        'prescription_number',
-        'prescription_contract_id',
-        'prescription_master_user_id',
-        'prescription_start_datetime',
-        'prescription_comment',
-        'prescription_status'
+        'vgko_region_id',
+        'vgko_city_id',
+        'vgko_street_id',
+        'vgko_house_id',
+        'vgko_master_user_id',
+        'vgko_comment',
+        'vgko_status',
+        'vgko_date_of_work',
     ];
 
     /**
@@ -137,17 +163,20 @@ class Prescription extends Model
     protected $loads = [
         'index' => [
             'all_roles' => [
-                'master',
-                'prescription_contract',
-                'prescription_order'
+                'vgko_master',
+                'vgko_region',
+                'vgko_city',
+                'vgko_street',
+                'vgko_house'
             ]
         ],
         'other_actions' => [
             'all_roles' => [
-                'master',
-                'prescription_contract',
-                'prescription_order',
-                'to_contract_for_user'
+                'vgko_master',
+                'vgko_region',
+                'vgko_city',
+                'vgko_street',
+                'vgko_house'
             ]
         ]
     ];
@@ -160,7 +189,7 @@ class Prescription extends Model
     protected $actionAllows = [
         'administrator' => [
             'create',
-            'show',
+            // 'show',
             'edit',
             'delete'
         ],
@@ -169,7 +198,7 @@ class Prescription extends Model
         ],
         'all_roles' => [
             'create',
-            'show',
+            // 'show',
             'edit'
         ],
     ];
@@ -180,7 +209,7 @@ class Prescription extends Model
      * @var array
      */
     protected $sort = [
-        'sortBy' => 'prescription_start_datetime',
+        'sortBy' => 'vgko_date_of_work',
         'sortDirection' => 'desc'
     ];
 
@@ -200,51 +229,65 @@ class Prescription extends Model
             'visible' => true
         ],
         [
-            'key' => 'prescription_contract.contract_number',
-            'sortBy' => 'prescription_contract.keyword',
-            'label' => 'Номер договора',
+            'key' => 'vgko_region.name',
+            'sortBy' => 'vgko_region.keyword',
+            'label' => 'Область',
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
         ],
         [
-            'key' => 'prescription_number',
-            'sortBy' => 'prescription_number.keyword',
-            'label' => 'Номер предисания',
-            'stickyColumn' => true,
-            'sortable' => false,
+            'key' => 'vgko_city.name',
+            'sortBy' => 'vgko_city.keyword',
+            'label' => 'Город',
+            'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
         ],
         [
-            'key' => 'prescription_comment',
-            'sortBy' => 'prescription_comment',
-            'label' => 'Содержимое предписания',
+            'key' => 'vgko_street.name',
+            'sortBy' => 'vgko_street.keyword',
+            'label' => 'Улица',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'vgko_house.name',
+            'sortBy' => 'vgko_house.keyword',
+            'label' => 'Номер дома',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'vgko_master.name',
+            'sortBy' => 'vgko_master.keyword',
+            'label' => 'Мастер на ТО',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'vgko_date_of_work',
+            'sortBy' => 'vgko_date_of_work',
+            'label' => 'ТО назначено на дату',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'vgko_comment',
+            'sortBy' => 'vgko_comment.keyword',
+            'label' => 'Комментарий',
             'stickyColumn' => false,
             'sortable' => false,
             'sortDirection' => 'desc',
             'visible' => true
         ],
         [
-            'key' => 'master.name',
-            'sortBy' => 'master.keyword',
-            'label' => 'Составитель предписания',
-            'sortable' => true,
-            'sortDirection' => 'desc',
-            'visible' => true
-        ],
-        [
-            'key' => 'prescription_start_datetime',
-            'sortBy' => 'prescription_start_datetime',
-            'label' => 'Дата к исполнению',
-            'sticky' => true,
-            'sortable' => true,
-            'sortDirection' => 'desc',
-            'visible' => true
-        ],
-        [
-            'key' => 'prescription_status',
-            'sortBy' => 'prescription_status',
+            'key' => 'vgko_status',
+            'sortBy' => 'vgko_status.keyword',
             'label' => 'Статус',
             'sortable' => true,
             'sortDirection' => 'desc',
@@ -254,7 +297,7 @@ class Prescription extends Model
             'key' => 'created_at',
             'sortBy' => 'created_at',
             'label' => 'Дата добавления',
-            'stickyColumn' => false,
+            'stickyColumn' => true,
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -272,42 +315,54 @@ class Prescription extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function master()
+    public function vgko_master()
     {
-        return $this->hasOne(User::class, 'id', 'prescription_master_user_id')
+        return $this->hasOne(User::class, 'id', 'vgko_master_user_id')
             ->select(['id', 'name', 'email', 'phone']);
     }
 
     /**
-     * Contract table relationships One To One.
+     * Region table relationships One To One.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function prescription_contract()
+    public function vgko_region()
     {
-        return $this->hasOne(Contract::class, 'id', 'prescription_contract_id');
-        // ->select(['id', 'contract_number', 'contract_address']);
+        return $this->hasOne(Region::class, 'id', 'vgko_region_id')
+            ->select(['id', 'name']);
     }
 
     /**
-     * Order table relationships One To One.
+     * City table relationships One To One.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function prescription_order()
+    public function vgko_city()
     {
-        return $this->hasOne(Order::class, 'order_prescription_id', 'id');
+        return $this->hasOne(City::class, 'id', 'vgko_city_id')
+            ->select(['id', 'name']);
     }
 
     /**
-     * User table relationships hasOneThrough
+     * Street table relationships One To One.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\hasOneThrough
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function to_contract_for_user()
+    public function vgko_street()
     {
-        return $this->hasOneThrough(User::class, Contract::class, 'id', 'id', 'prescription_contract_id', 'contract_on_user_id')
-            ->select(['users.id', 'users.name', 'users.phone']);
+        return $this->hasOne(Street::class, 'id', 'vgko_street_id')
+            ->select(['id', 'name']);
+    }
+
+    /**
+     * House table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function vgko_house()
+    {
+        return $this->hasOne(House::class, 'id', 'vgko_house_id')
+            ->select(['id', 'name']);
     }
 
     /**
@@ -323,19 +378,24 @@ class Prescription extends Model
 
         $tableFields = [
             'id' => $this->id,
-            'prescription_number' => $this->prescription_number,
-            'master' => isset($this->master->name) ? $this->master->name : '',
-            'prescription_contract' => isset($this->prescription_contract->contract_number) ? $this->prescription_contract->contract_number : '',
-            'prescription_status' => isset($this->prescription_status) ? $this->prescription_status : '',
-            'prescription_comment' => isset($this->prescription_comment) ? $this->prescription_comment : '',
-            'prescription_start_datetime' => isset($this->prescription_start_datetime) ? date('d.m.Y H:i', strtotime($this->prescription_start_datetime)) : '01.01.1900 00:00',
+            'vgko_master' => isset($this->vgko_master->name) ? $this->vgko_master->name : '',
+            'vgko_region' => isset($this->vgko_region->name) ? $this->vgko_region->name : '',
+            'vgko_city' => isset($this->vgko_city->name) ? $this->vgko_city->name : '',
+            'vgko_street' => isset($this->vgko_street->name) ? $this->vgko_street->name : '',
+            'vgko_house' => isset($this->vgko_house->name) ? $this->vgko_house->name : '',
+            'vgko_date_of_work' => isset($this->vgko_date_of_work) ? date('d.m.Y H:i', strtotime($this->vgko_date_of_work)) : '01.01.1900 00:00',
+            'vgko_comment' => isset($this->vgko_comment) ? $this->vgko_comment : '',
+            'vgko_status' => isset($this->vgko_status) ? $this->vgko_status : '',
             'created_at' => isset($this->created_at) ? date('d.m.Y H:i', strtotime($this->created_at)) : '01.01.1900 00:00'
         ];
 
         $otherFields = [
             'id_search' => $this->id,
-            'prescription_master_user_id' => isset($this->prescription_master_user_id) ? $this->prescription_master_user_id : null,
-            'prescription_contract_id' => isset($this->prescription_contract_id) ? $this->prescription_contract_id : null,
+            'vgko_master_user_id' => isset($this->vgko_master_user_id) ? $this->vgko_master_user_id : null,
+            'vgko_region_id' => isset($this->vgko_region_id) ? $this->vgko_region_id : null,
+            'vgko_city_id' => isset($this->vgko_city_id) ? $this->vgko_city_id : null,
+            'vgko_street_id' => isset($this->vgko_street_id) ? $this->vgko_street_id : null,
+            'vgko_house_id' => isset($this->vgko_house_id) ? $this->vgko_house_id : null,
         ];
 
         return $tableFields + $otherFields;

@@ -49,7 +49,9 @@ class ScoutFlush extends Command
             'Street',
             'House',
             'Flat',
-            'Equipment'
+            'Equipment',
+            'TOVentilation',
+            'TOVDGO'
         ];
 
         foreach ($models as $model) {

@@ -32,9 +32,9 @@ class RegionController extends CrudController
      */
     public function index()
     {
-        $result = parent::index();
+        $this->model = parent::index();
 
-        return $result;
+        return $this->model;
     }
 
     /**

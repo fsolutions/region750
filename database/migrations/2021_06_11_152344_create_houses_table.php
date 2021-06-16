@@ -18,6 +18,7 @@ class CreateHousesTable extends Migration
             $table->foreignId('region_id')->nullable()->comment('Регион')->constrained('regions');
             $table->foreignId('city_id')->nullable()->comment('Город')->constrained('cities');
             $table->foreignId('street_id')->nullable()->comment('Улица')->constrained('streets');
+            $table->string('zip', 50)->nullable()->comment('Почтовый код');
             $table->string('name', 50)->nullable();
         });
     }

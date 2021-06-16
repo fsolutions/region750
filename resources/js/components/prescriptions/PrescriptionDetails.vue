@@ -72,7 +72,7 @@
                           <b-td
                               stacked-heading="Адрес из договора"
                           >
-                              {{ detailedItem.prescription_contract.contract_address }}
+                              {{ detailedItem.prescription_contract.contractRealaddress }}
                           </b-td>
                           <b-td
                               stacked-heading="Дата заключения договора"
