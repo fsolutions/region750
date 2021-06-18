@@ -150,9 +150,9 @@
                                 <b>{{equip.visName}}</b>
                                 <div class="row mt-2">
                                     <span style="display:none;"><b-form-input v-model="equip.equip_type_reference_id" size="sm" placeholder="Номер паспорта"></b-form-input></span>
-                                    <div class="col-4"><b-form-input v-model="equip.equip_passport" size="sm" placeholder="Номер паспорта"></b-form-input></div>
-                                    <div class="col-4"><b-form-input v-model="equip.equip_mark" size="sm" placeholder="Марка прибора"></b-form-input></div>
-                                    <div class="col-4">
+                                    <div class="col-sm-12 col-md-4 mt-2"><b-form-input v-model="equip.equip_passport" size="sm" placeholder="Номер паспорта"></b-form-input></div>
+                                    <div class="col-sm-12 col-md-4 mt-2"><b-form-input v-model="equip.equip_mark" size="sm" placeholder="Марка прибора"></b-form-input></div>
+                                    <div class="col-sm-12 col-md-4 mt-2">
                                         <b-form-datepicker 
                                             :id="`equip_date_of_release_${index}`" 
                                             size="sm"

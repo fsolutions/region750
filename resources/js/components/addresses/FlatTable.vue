@@ -110,7 +110,7 @@
                     </div>
                     <div class="form-row" v-if="(editedItem.region_id && editedItem.city_id && editedItem.street_id && editedItem.house_id)">
                         <div class="form-group col-md-3">
-                            <label for="name">Номер квартиры (поставьте -, если квартиры нет)</label>
+                            <label for="name">Номер квартиры (поставьте -, если номера квартиры нет)</label>
                             <input v-model="editedItem.name" type="text" class="form-control" id="name">
                         </div>
 
@@ -241,21 +241,37 @@
                 return title
             },
             setRegion(value) {
-                this.editedItem.region_id = value
                 this.editedItem.city_id = ''
                 this.editedItem.street_id = ''
                 this.editedItem.house_id = ''
+                this.editedItem.name = ''
+
+                this.editedItem.city = Object.assign({})
+                this.editedItem.street = Object.assign({})
+                this.editedItem.house = Object.assign({})
+                
+                this.editedItem.region_id = value
             },
             setCity(value) {
-                this.editedItem.city_id = value
                 this.editedItem.street_id = ''
                 this.editedItem.house_id = ''
+                this.editedItem.name = ''
+
+                this.editedItem.street = Object.assign({})
+                this.editedItem.house = Object.assign({})
+
+                this.editedItem.city_id = value
             },
             setStreet(value) {
-                this.editedItem.street_id = value
                 this.editedItem.house_id = ''
+                this.editedItem.name = ''
+
+                this.editedItem.house = Object.assign({})
+
+                this.editedItem.street_id = value
             },
             setHouse(value) {
+                this.editedItem.name = ''
                 this.editedItem.house_id = value
             },
             updateParentData() {

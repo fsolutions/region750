@@ -169,9 +169,17 @@ class FlatController extends CrudController
      */
     private function validationFormData()
     {
+        $messages = array(
+            'required' => ':attribute не задан. Заполните форму до конца. Выберите область, город, улицу, дом, и впишите номер квартиры, либо поставьте прочерк, если номер квартиры отсутствует.'
+        );
+
+        $customAttributes = [
+            'name' => 'Номер квартиры',
+        ];
+
         $validator = Validator::make($this->formData, [
             'name'  => 'required|string|min:1'
-        ]);
+        ], $messages, $customAttributes);
 
         return $validator;
     }

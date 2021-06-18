@@ -49,7 +49,7 @@
                                 <b-badge variant="danger" class="always-small-badge" v-if="contract.status == 'Передать в ГЖИ' || contract.status == 'Передано в ГЖИ'">{{contract.status}}</b-badge>
                                 <p><em class="text-muted">Адрес: {{ contract.contractRealaddress}}</em></p>
                                 <p>
-                                    <b>ТО-ВГКО</b> (Техническое обслуживание внутриквартирного газового оборудования)
+                                    <b>ТО-ВКГО</b> (Техническое обслуживание внутриквартирного газового оборудования)
                                 </p>
                                 <div style="border-left: 3px solid #CCC; margin-left: 15px; padding-left: 15px; padding-bottom: 10px;">
                                     <p class="mb-2">
@@ -58,7 +58,7 @@
                                             <b>Следующее ТО назначено на <span class="bigDate" v-html="nextTO(index)"></span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата следующего ТО <span class="bigDate">не назначена</span></b>
+                                            <b>Дата следующего ТО <span class="bigDate">не указана</span></b>
                                         </template>
                                     </p>
                                     <p class="mb-0"><b>Дата последнего ТО <span class="bigDate" v-html="findLastTO(index)"></span></b></p>
@@ -76,10 +76,10 @@
                                     <p class="mb-2">
                                         <template v-if="toVdgo[index].next.date">
                                             <!-- <b>До следующего ТО-ВКГО:</b> {{ checkDaysForNextTO(index) }} {{ getNumEnding(checkDaysForNextTO(index)) }} -->
-                                            <b>Следующее ТО назначено на <span class="bigDate">{{toVdgo[index].next.date | formattedDate}}</span></b>
+                                            <b>Следующее ТО назначено на <span class="bigDate">{{toVdgo[index].next.date}}</span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата следующего ТО <span class="bigDate">не назначена</span></b>
+                                            <b>Дата следующего ТО <span class="bigDate">не указана</span></b>
                                         </template>
                                     </p>
                                     <p class="mb-0">
@@ -87,7 +87,7 @@
                                             <b>Дата последнего ТО <span class="bigDate">{{toVdgo[index].last.date | formattedDate}}</span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата последнего ТО <span class="bigDate">не известна</span></b>
+                                            <b>Дата последнего ТО <span class="bigDate">не указана</span></b>
                                         </template>
                                     </p>
                                     <template v-if="toVdgo[index].last.master">
@@ -104,10 +104,10 @@
                                     <p class="mb-2">
                                         <template v-if="toVentilation[index].next.date">
                                             <!-- <b>До следующего ТО-ВКГО:</b> {{ checkDaysForNextTO(index) }} {{ getNumEnding(checkDaysForNextTO(index)) }} -->
-                                            <b>Следующее ТО назначено на <span class="bigDate">{{toVentilation[index].next.date | formattedDate}}</span></b>
+                                            <b>Следующее ТО назначено на <span class="bigDate">{{toVentilation[index].next.date}}</span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата следующего ТО <span class="bigDate">не назначена</span></b>
+                                            <b>Дата следующего ТО <span class="bigDate">не указана</span></b>
                                         </template>
                                     </p>
                                     <p class="mb-0">
@@ -115,7 +115,7 @@
                                             <b>Дата последнего ТО <span class="bigDate">{{toVentilation[index].last.date | formattedDate}}</span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата последнего ТО <span class="bigDate">не известна</span></b>
+                                            <b>Дата последнего ТО <span class="bigDate">не указана</span></b>
                                         </template>
                                     </p>
                                     <template v-if="toVentilation[index].last.master">
@@ -235,7 +235,7 @@
                 return this.$moment(this.itemsLocal.data[index].contract_to[0].to_start_datetime).format('MMMM YYYY') + ' г.'
             },
             findLastTO(index) {
-                let result = 'не задано'
+                let result = 'не указана'
                 if (this.itemsLocal.data[index].contract_to.length > 0) {
                     this.itemsLocal.data[index].contract_to.some((to_element, to_index) => {
                         if (to_element.to_status == 'Проведено') {
@@ -287,7 +287,7 @@
                         if (TOs[0] && TOs[0].vgko_status == "Запланировано") {
                             this.toVdgo[index].next = {
                                 master: TOs[0].vgko_master,
-                                date: TOs[0].vgko_date_of_work,
+                                date: this.$moment(TOs[0].vgko_date_of_work).format('MMMM YYYY') + ' г.',
                             }
 
                             if (TOs[1] && TOs[1].vgko_status == "Проведено") {
@@ -300,7 +300,7 @@
                         else if (TOs[0] && TOs[0].vgko_status == "Проведено") {
                             this.toVdgo[index].last = {
                                 master: TOs[0].vgko_master,
-                                date: TOs[0].vgko_date_of_work,
+                                date: this.$moment(TOs[0].vgko_date_of_work).format('MMMM YYYY') + ' г.',
                             }
                         }
                     }
@@ -318,7 +318,7 @@
                         if (TOs[0] && TOs[0].ventilation_status == "Запланировано") {
                             this.toVentilation[index].next = {
                                 master: TOs[0].ventilation_master,
-                                date: TOs[0].ventilation_date_of_work,
+                                date: this.$moment(TOs[0].ventilation_date_of_work).format('MMMM YYYY') + ' г.',
                             }
 
                             if (TOs[1] && TOs[1].ventilation_status == "Проведено") {
@@ -331,7 +331,7 @@
                         else if (TOs[0] && TOs[0].ventilation_status == "Проведено") {
                             this.toVentilation[index].last = {
                                 master: TOs[0].ventilation_master,
-                                date: TOs[0].ventilation_date_of_work,
+                                date: this.$moment(TOs[0].ventilation_date_of_work).format('MMMM YYYY') + ' г.',
                             }
                         }
                     }

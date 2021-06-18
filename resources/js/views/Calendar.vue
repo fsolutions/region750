@@ -30,7 +30,6 @@
                     :options="[
                         {value: 'month', text: 'Месяц'},
                         {value: 'week', text: 'Неделя'},
-                        {value: 'year', text: 'Год'},
                     ]"></b-form-select>
                 </div>
             </div>
@@ -464,7 +463,12 @@
     .theme-default .cv-item.success {
         background-color: #52ae34;
         border-color: #52ae34;
+        color: #FFF;
     }
+    .theme-default .cv-item.success .startTime, .theme-default .cv-item .endTime {
+        color: #F1f1f1;
+    }
+
     .theme-default .cv-item.warning {
         background-color: #ffed4a;
         border-color: #ffed4a;

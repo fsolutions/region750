@@ -9,7 +9,7 @@
             :isNeedCreate="isNeedCreate"
             :typeOfTableFilter="typeOfTableFilter"
             :customAddButtonName="'Создать новое'"
-            :onDataEmptyMessage="'Зарегистрированные предписания отсутствуют. Выберите договор и создайте новое предписание.'"
+            :onDataEmptyMessage="user.role.includes('client') ? 'Зарегистрированные предписания отсутствуют.':'Зарегистрированные предписания отсутствуют. Выберите договор и создайте новое предписание.'"
             @show="showItem"
             @edit="createOrEditItemModal"
             @delete="deleteItem"

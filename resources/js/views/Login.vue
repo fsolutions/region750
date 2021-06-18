@@ -9,7 +9,7 @@
                 <div class="form-row">
                     <div class="form-group col p-0">
                         <label for="phone">Телефон</label>
-                        <input type="text" name="phone" class="form-control" v-model="maskPhone" v-mask="'+# (###) ###-##-##'" placeholder="+7 (000) 000-00-00">
+                        <input type="text" name="phone" class="form-control" v-model="maskPhone" v-mask="'+7 (###) ###-##-##'" placeholder="+7 (000) 000-00-00">
                     </div>
                 </div>
                 <div class="form-row">

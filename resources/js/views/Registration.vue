@@ -23,7 +23,7 @@
                             </div>
                             <div class="form-group col-md-12">
                                 <label for="phone">Телефон</label>
-                                <input v-mask="'+# (###) ###-##-##'" required v-model="maskPhone" type="text" class="form-control" id="phone">
+                                <input v-mask="'+7 (###) ###-##-##'" required v-model="maskPhone" type="text" class="form-control" id="phone" placeholder="+7 (000) 000-00-00">
                             </div>
                             <div class="form-group col-md-12">
                                 <label for="email">Email (Если есть)</label>

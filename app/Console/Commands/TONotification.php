@@ -50,7 +50,7 @@ class TONotification extends Command
 
         foreach ($toOS as $to_key => $to) {
             $result = false;
-            $message = 'Напоминаем вам, что в ближайший месяц, по договору №' . $to->to_contract->contract_number . ', необходимо произвести ТО счетчиков.
+            $message = 'Напоминаем вам, что в ближайший месяц, по договору №' . $to->to_contract->contract_number . ', необходимо произвести ТО-ВКГО.
 ' . $companyName . ', ' . $companyPhone;
             $result = $sms->sendSMSNotify($to->to_contract_for_user->phone, $message);
 

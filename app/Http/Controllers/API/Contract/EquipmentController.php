@@ -33,11 +33,28 @@ class EquipmentController extends CrudController
      */
     public function index()
     {
-        $equip_contract_id = empty(request('equip_contract_id')) ? '' : (int) request('equip_contract_id');
+        $equip_contract_id = empty(request('equip_contract_id')) ? '' : trim(request('equip_contract_id'));
+
+        $isClient = false;
+
+        foreach ($this->user->roles as $role) {
+            switch ($role->slug) {
+                case 'client':
+                    $isClient = true;
+                    $userContracts = Contract::whereIn('contract_on_user_id', [$this->user->id])->get(['id'])->pluck('id')->toArray();
+                    $this->model = $this->model->whereIn('equip_contract_id', $userContracts);
+                    break;
+            }
+        }
 
         $this->filteringByContractId($equip_contract_id);
 
+
         $result = parent::index();
+
+        if ($isClient) {
+            array_pop($result['headers']);
+        }
 
         return $result;
     }
@@ -50,7 +67,7 @@ class EquipmentController extends CrudController
     public function filteringByContractId($equip_contract_id = '')
     {
         if ($equip_contract_id != '') {
-            $this->model = $this->model->where('equip_contract_id', $equip_contract_id);
+            $this->model = $this->model->whereIn('equip_contract_id', explode(",", $equip_contract_id));
         }
     }
 

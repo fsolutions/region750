@@ -9,7 +9,7 @@
             :isNeedCreate="isNeedCreate"
             :typeOfTableFilter="typeOfTableFilter"
             :customAddButtonName="'Добавить новое'"
-            :onDataEmptyMessage="'Зарегистрированные приборы отсутствуют. Выберите договор и добавьте оборудование.'"
+            :onDataEmptyMessage="user.role.includes('client') ? 'У вас не добавлено ни одного прибора.':'Зарегистрированные приборы отсутствуют. Выберите договор и добавьте оборудование.'"
             @show="showItem"
             @edit="createOrEditItemModal"
             @delete="deleteItem"

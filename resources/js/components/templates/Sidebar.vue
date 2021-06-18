@@ -52,6 +52,14 @@
                         <li class="list-group-item menu-name list-group-name pl-0"><span class="menu-item-name">Предписания</span></li>
                     </ul>
                 </router-link>
+                <router-link to="/equipment" class="menu-item-link colored-menu-link blue-light-menu-link" v-if="!canSeeUsers()">
+                    <ul class="list-group list-group-horizontal menu-item">
+                        <li class="list-group-item menu-icon mr-4 pr-0">
+                            <div class="menu-icon-block"><span class="menu-icon-child-all"><i class="fas fa-columns"></i></span></div>
+                        </li>
+                        <li class="list-group-item menu-name list-group-name pl-0"><span class="menu-item-name">Оборудование</span></li>
+                    </ul>
+                </router-link>
                 <router-link to="/history" class="menu-item-link colored-menu-link brown-menu-link" v-if="!canSeeUsers()">
                     <ul class="list-group list-group-horizontal menu-item">
                         <li class="list-group-item menu-icon mr-4 pr-0">

@@ -285,6 +285,15 @@ class Equipment extends Model
             'sortDirection' => 'desc',
             'visible' => true
         ],
+        [
+            'key' => 'equip_contract.contract_number',
+            'label' => 'Номер договора',
+            'sortBy' => 'equip_contract.contract_number',
+            'stickyColumn' => true,
+            'sortable' => false,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
         // [
         //     'key' => 'order_comment',
         //     'sortBy' => 'order_comment',

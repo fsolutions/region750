@@ -9,7 +9,7 @@
             :isNeedCreate="isNeedCreate"
             :typeOfTableFilter="typeOfTableFilter"
             :customAddButtonName="'Создать новое'"
-            :onDataEmptyMessage="'Зарегистрированные обращения отсутствуют. Выберите договор и создайте новое обращение.'"
+            :onDataEmptyMessage="user.role.includes('client') ? 'Зарегистрированные Вами обращения отсутствуют.':'Зарегистрированные обращения отсутствуют. Выберите договор и создайте новое обращение.'"
             @show="showItem"
             @edit="createOrEditItemModal"
             @delete="deleteItem"

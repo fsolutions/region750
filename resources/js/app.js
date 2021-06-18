@@ -85,13 +85,13 @@ Vue.component('v-mask', VueMask)
 Vue.filter('formattedDate', function (date) {
     let formatDate = moment(date).format('DD.MM.YYYY')
 
-    if (formatDate == 'Invalid date') return "Не указана"
+    if (formatDate == 'Invalid date') return "не указана"
     return formatDate
 })
 Vue.filter('formattedDateTime', function (date) {
     let formatDate = moment(date).format('DD.MM.YYYY HH:mm')
 
-    if (formatDate == 'Invalid date') return "Не указана"
+    if (formatDate == 'Invalid date') return "не указана"
     return formatDate
 })
 

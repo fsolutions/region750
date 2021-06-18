@@ -15,6 +15,7 @@ import Calendar from '../views/Calendar.vue'
 import PasswordReset from '../views/PasswordReset.vue'
 import TOVDGO from '../views/TOVDGO.vue'
 import TOVentilation from '../views/TOVentilation.vue'
+import Equipment from '../views/Equipment.vue'
 
 let routes = [
         {
@@ -101,6 +102,12 @@ let routes = [
             name: 'addresses',
             component: Flat,
             meta: { title: 'Адреса', middlewareAuth: true }
+        },
+        {
+            path: '/equipment',
+            name: 'equipment',
+            component: Equipment,
+            meta: { title: 'Оборудование', middlewareAuth: true }
         },
         {
             path: '/history',
