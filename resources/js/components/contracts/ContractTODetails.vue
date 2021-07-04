@@ -48,8 +48,8 @@
                         <b-td
                             stacked-heading="Мастер, назначенный на ТО"
                         >
-                            <template v-if="detailedItem.master">
-                              {{ detailedItem.master.name }}
+                            <template v-if="detailedItem.masters">
+                              {{ detailedItem.masters }}
                             </template>
                             <template v-else>
                               Не известно

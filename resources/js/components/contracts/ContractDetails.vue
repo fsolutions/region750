@@ -6,7 +6,7 @@
                     <span class="mr-2">Карточка договора №{{detailedItem.contract_number}} (ID: {{detailedItem.id}})</span>
                 </h5>
             </b-col>
-            <template v-if="detailedItemIndex != -1">
+            <!-- <template v-if="detailedItemIndex != -1">
                 <b-col class="text-right">
                     <span
                               v-if="detailedItem.reference_order_type_id == 1 && detailedItem.reference_status_id != 362"
@@ -25,7 +25,7 @@
                         Завершить поставку
                     </span>
                 </b-col>
-            </template>
+            </template> -->
         </b-row>
         <div class="position-relative">
             <b-table-simple small caption-top stacked class="service-properties-table">
@@ -63,6 +63,16 @@
                             stacked-heading="Адрес из договора"
                         >
                             {{ detailedItem.contractRealaddress }}
+                        </b-td>
+                        <b-td
+                            stacked-heading="Техническое диагностирование дома"
+                        >
+                            <template v-if="detailedItem.contract_house && detailedItem.contract_house.build_year">
+                                {{ needTechnicalDiagnostics(detailedItem.contract_house.build_year) }}
+                            </template>
+                            <template v-else>
+                                не известно (укажите дату постройки)
+                            </template>
                         </b-td>
                         <b-td
                             stacked-heading="Дата заключения договора"
@@ -117,6 +127,10 @@
             },
             closeOrderFinally(index) {
                 this.$emit('closeOrderFinally', index)
+            },
+            needTechnicalDiagnostics(build_year) {
+                let todayYear = new Date().getFullYear()
+                return ((todayYear - build_year) >= 30) ? 'требуется' : 'не требуется'
             },
         }
     }

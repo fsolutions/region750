@@ -44,7 +44,7 @@
                             <label for="contract_number">Номер договора</label>
                             <input v-model="editedItem.contract_number" required type="text" class="form-control" id="contract_number">
                         </div>
-                        <div class="form-group col-md-6">
+                        <!-- <div class="form-group col-md-6">
                             <label for="contractRealaddress">Адрес улицы из договора</label>
                             <multiselect
                                 v-model="selectedAddress"
@@ -75,7 +75,48 @@
                                 <span slot="noOptions">Пока ничего не найдено...</span>
                                 <span slot="noResult">Ничего не найдено. Попробуйте снова...</span>
                             </multiselect>
-                            <!-- <input v-if="editedItem.contract_address" v-model="editedItem.contract_address" required type="text" class="form-control" id="contract_address"> -->
+                        </div> -->
+                        <div class="form-group col-md-6">
+                            <label for="address_region">Выберите область</label>
+                            <select-address-structure
+                                id="address_region"
+                                :structure="`regions`"
+                                :mainInputPlaceholder="'Название области'"
+                                :needNullElement="false"
+                                :needAddButton="false"
+                                :selected="editedItem.contract_region_id"
+                                :selectedStructure="editedItem.contract_region"
+                                @set="setRegion"
+                            ></select-address-structure>
+                        </div>
+                        <div class="form-group col-md-6" v-if="editedItem.contract_region_id">
+                            <label for="address_city">Выберите город</label>
+                            <select-address-structure
+                                id="address_city"
+                                :structure="`cities`"
+                                :mainInputPlaceholder="'Название города'"
+                                :needNullElement="false"
+                                :needAddButton="false"
+                                :selected="editedItem.contract_city_id"
+                                :selectedStructure="editedItem.contract_city"
+                                :region_id="editedItem.contract_region_id"
+                                @set="setCity"
+                            ></select-address-structure>
+                        </div>
+                        <div class="form-group col-md-6" v-if="(editedItem.contract_region_id && editedItem.contract_city_id)">
+                            <label for="address_street">Выберите улицу</label>
+                            <select-address-structure
+                                id="address_street"
+                                :structure="`streets`"
+                                :mainInputPlaceholder="'Название улицы'"
+                                :needNullElement="false"
+                                :needAddButton="false"
+                                :selected="editedItem.contract_street_id"
+                                :selectedStructure="editedItem.contract_street"
+                                :region_id="editedItem.contract_region_id"
+                                :city_id="editedItem.contract_city_id"
+                                @set="setStreet"
+                            ></select-address-structure>
                         </div>
                         <div class="form-group col-md-3" v-if="(editedItem.contract_region_id && editedItem.contract_city_id && editedItem.contract_street_id)">
                             <label for="address_house">Выберите ваш дом</label>
@@ -485,6 +526,33 @@
                     this.editedItem.contract_street_id = option.id
                 }, 400);
             }
+        },
+        setRegion(value) {
+            this.editedItem.contract_city_id = ''
+            this.editedItem.contract_street_id = ''
+            this.editedItem.contract_house_id = ''
+
+            this.editedItem.contract_city = Object.assign({})
+            this.editedItem.contract_street = Object.assign({})
+            this.editedItem.contract_house = Object.assign({})
+            
+            this.editedItem.contract_region_id = value
+        },
+        setCity(value) {
+            this.editedItem.contract_street_id = ''
+            this.editedItem.contract_house_id = ''
+
+            this.editedItem.contract_street = Object.assign({})
+            this.editedItem.contract_house = Object.assign({})
+
+            this.editedItem.contract_city_id = value
+        },
+        setStreet(value) {
+            this.editedItem.contract_house_id = ''
+
+            this.editedItem.contract_house = Object.assign({})
+
+            this.editedItem.contract_street_id = value
         },
         setHouse(value) {
             this.editedItem.contract_house_id = value

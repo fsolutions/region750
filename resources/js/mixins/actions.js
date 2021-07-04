@@ -230,6 +230,9 @@ export const actionShowItem = {
                 optional_sales_manager: {},
                 finance_substatuses: [],
                 order_user: {},
+                masters: '',
+                vgko_masters: '',
+                ventilation_masters: '',
                 master: {},
                 order_contract: {},
                 order_prescription: {},
@@ -246,7 +249,12 @@ export const actionShowItem = {
                 region: {},
                 city: {},
                 street: {},
-                flat: {}        
+                flat: {},
+                contract_region: {},
+                contract_city: {},
+                contract_street: {},
+                contract_house: {},
+                contract_flat: {},
             },
             isSidebarOpenDetail: false,
             detailedItemIndex: -1

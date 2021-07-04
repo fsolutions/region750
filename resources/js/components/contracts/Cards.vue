@@ -73,6 +73,9 @@
                                     <b>ТО-ВДГО</b> (Техническое обслуживание внутридомового газового оборудования)
                                 </p>
                                 <div style="border-left: 3px solid #CCC; margin-left: 15px; padding-left: 15px; padding-bottom: 10px;">
+                                    <p class="mb-2" v-if="contract.contract_house.build_year">
+                                        <b>Техническое диагностирование дома:</b> {{ needTechnicalDiagnostics(contract.contract_house.build_year) }}
+                                    </p>
                                     <p class="mb-2">
                                         <template v-if="toVdgo[index].next.date">
                                             <!-- <b>До следующего ТО-ВКГО:</b> {{ checkDaysForNextTO(index) }} {{ getNumEnding(checkDaysForNextTO(index)) }} -->
@@ -92,7 +95,7 @@
                                     </p>
                                     <template v-if="toVdgo[index].last.master">
                                         <p class="mb-0">
-                                            <b>Работы выполнял </b> {{ toVdgo[index].last.master.name }}
+                                            <b>Работы выполнял </b> {{ toVdgo[index].last.master }}
                                         </p>
                                     </template>
                                 </div>
@@ -101,6 +104,9 @@
                                     <b>ТО-Вентканалов и дымоходов</b>
                                 </p>
                                 <div style="border-left: 3px solid #CCC; margin-left: 15px; padding-left: 15px; padding-bottom: 10px;">
+                                    <p class="mb-2" v-if="contract.contract_house.build_year">
+                                        <b>Техническое диагностирование дома:</b> {{ needTechnicalDiagnostics(contract.contract_house.build_year) }}
+                                    </p>
                                     <p class="mb-2">
                                         <template v-if="toVentilation[index].next.date">
                                             <!-- <b>До следующего ТО-ВКГО:</b> {{ checkDaysForNextTO(index) }} {{ getNumEnding(checkDaysForNextTO(index)) }} -->
@@ -120,7 +126,7 @@
                                     </p>
                                     <template v-if="toVentilation[index].last.master">
                                         <p class="mb-0">
-                                            <b>Работы выполнял </b> {{ toVentilation[index].last.master.name }}
+                                            <b>Работы выполнял </b> {{ toVentilation[index].last.master }}
                                         </p>
                                     </template>
                                 </div>
@@ -263,8 +269,8 @@
                 if (this.itemsLocal.data[index].contract_to.length > 0) {
                     this.itemsLocal.data[index].contract_to.some((to_element, to_index) => {
                         if (to_element.to_status == 'Проведено') {
-                            if (to_element.master) {
-                                result = to_element.master.name
+                            if (to_element.masters) {
+                                result = to_element.masters
                             } else {
                                 result = -1
                             }
@@ -286,20 +292,20 @@
                     if (TOs.length > 0) {
                         if (TOs[0] && TOs[0].vgko_status == "Запланировано") {
                             this.toVdgo[index].next = {
-                                master: TOs[0].vgko_master,
+                                master: TOs[0].vgko_masters,
                                 date: this.$moment(TOs[0].vgko_date_of_work).format('MMMM YYYY') + ' г.',
                             }
 
                             if (TOs[1] && TOs[1].vgko_status == "Проведено") {
                                 this.toVdgo[index].last = {
-                                    master: TOs[1].vgko_master,
+                                    master: TOs[1].vgko_masters,
                                     date: TOs[1].vgko_date_of_work,
                                 }
                             }
                         }
                         else if (TOs[0] && TOs[0].vgko_status == "Проведено") {
                             this.toVdgo[index].last = {
-                                master: TOs[0].vgko_master,
+                                master: TOs[0].vgko_masters,
                                 date: this.$moment(TOs[0].vgko_date_of_work).format('MMMM YYYY') + ' г.',
                             }
                         }
@@ -317,25 +323,29 @@
                     if (TOs.length > 0) {
                         if (TOs[0] && TOs[0].ventilation_status == "Запланировано") {
                             this.toVentilation[index].next = {
-                                master: TOs[0].ventilation_master,
+                                master: TOs[0].ventilation_masters,
                                 date: this.$moment(TOs[0].ventilation_date_of_work).format('MMMM YYYY') + ' г.',
                             }
 
                             if (TOs[1] && TOs[1].ventilation_status == "Проведено") {
                                 this.toVentilation[index].last = {
-                                    master: TOs[1].ventilation_master,
+                                    master: TOs[1].ventilation_masters,
                                     date: TOs[1].ventilation_date_of_work,
                                 }
                             }
                         }
                         else if (TOs[0] && TOs[0].ventilation_status == "Проведено") {
                             this.toVentilation[index].last = {
-                                master: TOs[0].ventilation_master,
+                                master: TOs[0].ventilation_masters,
                                 date: this.$moment(TOs[0].ventilation_date_of_work).format('MMMM YYYY') + ' г.',
                             }
                         }
                     }
                 })
+            },
+            needTechnicalDiagnostics(build_year) {
+                let todayYear = new Date().getFullYear()
+                return ((todayYear - build_year) >= 30) ? 'требуется' : 'не требуется'
             },
             /**
              * Функция возвращает окончание для множественного числа слова на основании числа и массива окончаний

@@ -1,6 +1,7 @@
 <template>
     <div>
         <app-table
+            :name="'flat'"
             :key="componentRefreshKey"
             :api="tableApiUrl"
             :items.sync="items"
@@ -35,86 +36,103 @@
             </template>
             <div class="d-block">
                 <validation-errors :errors="validationErrors" v-if="validationErrors"></validation-errors>
-                <form class="needs-validation mb-4" novalidate id="FlatForm">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <h5 class="mb-3">Заполните данные по адресу</h5>
+                <form class="needs-validation mb-4" novalidate :id="(editIndex == -1) ? 'FlatForm' : 'HouseEditForm'">
+                    <div v-if="editIndex == -1">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h5 class="mb-3">Заполните данные по адресу</h5>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-8">
-                            <label for="address_region">Выберите область</label>
-                            <select-address-structure
-                                id="address_region"
-                                :structure="`regions`"
-                                :mainInputPlaceholder="'Название области'"
-                                :needNullElement="true"
-                                :needAddButton="true"
-                                :selected="editedItem.region_id"
-                                :selectedStructure="editedItem.region"
-                                @set="setRegion"
-                            ></select-address-structure>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="address_region">Выберите область</label>
+                                <select-address-structure
+                                    id="address_region"
+                                    :structure="`regions`"
+                                    :mainInputPlaceholder="'Название области'"
+                                    :needNullElement="true"
+                                    :needAddButton="true"
+                                    :selected="editedItem.region_id"
+                                    :selectedStructure="editedItem.region"
+                                    @set="setRegion"
+                                ></select-address-structure>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-row" v-if="editedItem.region_id">
-                        <div class="form-group col-md-8">
-                            <label for="address_city">Выберите город</label>
-                            <select-address-structure
-                                id="address_city"
-                                :structure="`cities`"
-                                :mainInputPlaceholder="'Название города'"
-                                :needNullElement="true"
-                                :needAddButton="true"
-                                :selected="editedItem.city_id"
-                                :selectedStructure="editedItem.city"
-                                :region_id="editedItem.region_id"
-                                @set="setCity"
-                            ></select-address-structure>
+                        <div class="form-row" v-if="editedItem.region_id">
+                            <div class="form-group col-md-8">
+                                <label for="address_city">Выберите город</label>
+                                <select-address-structure
+                                    id="address_city"
+                                    :structure="`cities`"
+                                    :mainInputPlaceholder="'Название города'"
+                                    :needNullElement="true"
+                                    :needAddButton="true"
+                                    :selected="editedItem.city_id"
+                                    :selectedStructure="editedItem.city"
+                                    :region_id="editedItem.region_id"
+                                    @set="setCity"
+                                ></select-address-structure>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-row" v-if="(editedItem.region_id && editedItem.city_id)">
-                        <div class="form-group col-md-8">
-                            <label for="address_street">Выберите улицу</label>
-                            <select-address-structure
-                                id="address_street"
-                                :structure="`streets`"
-                                :mainInputPlaceholder="'Название улицы'"
-                                :needNullElement="true"
-                                :needAddButton="true"
-                                :selected="editedItem.street_id"
-                                :selectedStructure="editedItem.street"
-                                :region_id="editedItem.region_id"
-                                :city_id="editedItem.city_id"
-                                @set="setStreet"
-                            ></select-address-structure>
+                        <div class="form-row" v-if="(editedItem.region_id && editedItem.city_id)">
+                            <div class="form-group col-md-8">
+                                <label for="address_street">Выберите улицу</label>
+                                <select-address-structure
+                                    id="address_street"
+                                    :structure="`streets`"
+                                    :mainInputPlaceholder="'Название улицы'"
+                                    :needNullElement="true"
+                                    :needAddButton="true"
+                                    :selected="editedItem.street_id"
+                                    :selectedStructure="editedItem.street"
+                                    :region_id="editedItem.region_id"
+                                    :city_id="editedItem.city_id"
+                                    @set="setStreet"
+                                ></select-address-structure>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-row" v-if="(editedItem.region_id && editedItem.city_id && editedItem.street_id)">
-                        <div class="form-group col-md-8">
-                            <label for="address_house">Выберите дом</label>
-                            <select-address-structure
-                                id="address_house"
-                                :structure="`houses`"
-                                :mainInputPlaceholder="'Номер дома'"
-                                :needNullElement="true"
-                                :needAddButton="true"
-                                :selected="editedItem.house_id"
-                                :selectedStructure="editedItem.house"
-                                :region_id="editedItem.region_id"
-                                :city_id="editedItem.city_id"
-                                :street_id="editedItem.street_id"
-                                :needZipCode="true"
-                                :needBuildYearCode="true"
-                                @set="setHouse"
-                            ></select-address-structure>
+                        <div class="form-row" v-if="(editedItem.region_id && editedItem.city_id && editedItem.street_id)">
+                            <div class="form-group col-md-8">
+                                <label for="address_house">Выберите дом</label>
+                                <select-address-structure
+                                    id="address_house"
+                                    :structure="`houses`"
+                                    :mainInputPlaceholder="'Номер дома'"
+                                    :needNullElement="true"
+                                    :needAddButton="true"
+                                    :selected="editedItem.house_id"
+                                    :selectedStructure="editedItem.house"
+                                    :region_id="editedItem.region_id"
+                                    :city_id="editedItem.city_id"
+                                    :street_id="editedItem.street_id"
+                                    :needZipCode="true"
+                                    :needBuildYearCode="true"
+                                    @set="setHouse"
+                                ></select-address-structure>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-row" v-if="(editedItem.region_id && editedItem.city_id && editedItem.street_id && editedItem.house_id)">
-                        <div class="form-group col-md-3">
-                            <label for="name">Номер квартиры (поставьте -, если номера квартиры нет)</label>
-                            <input v-model="editedItem.name" type="text" class="form-control" id="name">
-                        </div>
+                        <div class="form-row" v-if="(editedItem.region_id && editedItem.city_id && editedItem.street_id && editedItem.house_id)">
+                            <div class="form-group col-md-3">
+                                <label for="name">Номер квартиры (поставьте -, если номера квартиры нет)</label>
+                                <input v-model="editedItem.name" type="text" class="form-control" id="name">
+                            </div>
 
+                        </div>
+                    </div>
+                    <div v-if="editIndex != -1">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h5 class="mb-3">Редактирование информации по дому №{{editedItem.house.name}}</h5>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-3">
+                                <b-form-input id="newZipCode" v-model="editedItem.house.zip" placeholder="Индекс"></b-form-input>
+                            </div>
+                            <div class="col-3">
+                                <b-form-input id="newBuildYear" v-model="editedItem.house.build_year" placeholder="Год постройки"></b-form-input>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -148,7 +166,7 @@
 </template>
 
 <script>
-    import {API_FLATS} from "../../constants"
+    import {API_FLATS, API_HOUSES} from "../../constants"
     import PrescriptionDetails from "./PrescriptionDetails"
 
     import {
@@ -168,7 +186,8 @@
         region: {},
         city: {},
         street: {},
-        flat: {}
+        flat: {},
+        house: {}
     })
 
     export default {
@@ -213,14 +232,47 @@
             },
             submitForm(event) {
                 event.preventDefault()
+                let editHouse = false
                 let form = document.getElementById("FlatForm")
+                if (!form) {
+                    form = document.getElementById("HouseEditForm")
+                    editHouse = true
+                }
                 if (form.checkValidity() === false) {
                     event.preventDefault()
                     event.stopPropagation()
                     form.classList.add('was-validated')
                     return false
                 }
-                this.createOrUpdateItem()
+
+                if (!editHouse) {
+                    this.createOrUpdateItem()
+                } else {
+                    this.updateHouseItem()
+                }
+            },
+            updateHouseItem() {
+                this.savingProcess = true
+                if (typeof this.onCreateOrUpdateItemCallback === 'function') {
+                    this.onCreateOrUpdateItemCallback()
+                }
+                api.call("put", `${API_HOUSES}/${this.editedItem.house_id}`, this.editedItem.house).then(({data}) => {
+                    // this.items.data[this.editIndex] = { ...data }
+                    Object.assign(this.items.data[this.editIndex].house, data)
+                    if (typeof this.onCreatedOrUpdatedCallback === 'function') {
+                        this.onCreatedOrUpdatedCallback(data)
+                    }
+                    this.editIndex = -1,
+                    this.savingProcess = false
+                    this.validationErrors = ''
+                    this.closeSidePanelCallback(),
+                    this.makeToast('success')
+                }).catch((response) => {
+                    if (response.status == 422){
+                        this.validationErrors = response.data.error
+                    }
+                })
+
             },
             onDeletedCallback() {
                 // this.componentRefreshKey++

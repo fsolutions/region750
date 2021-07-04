@@ -124,8 +124,8 @@
                             <label for="role">Статус</label>
                             <b-form-select v-model="editedItem.ventilation_status" required :options="statusList" id="ventilation_status"></b-form-select>
                         </div>
-                        <div class="form-group col-md-8">
-                            <label for="ventilation_master_user_id">Мастер на выполнение ТО</label>
+                        <div class="form-group col-md-6">
+                            <label for="ventilation_master_user_id">Мастера на выполнение ТО</label>
                             <select-user
                                 id="ventilation_master_user_id"
                                 :roles="`administrator||master||intern`"
@@ -133,6 +133,37 @@
                                 :selected="editedItem.ventilation_master_user_id"
                                 :selectedUser="editedItem.ventilation_master"
                                 @set="setMasterOfTO"
+                            ></select-user>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="ventilation_master_user_id_2">&nbsp;</label>
+                            <select-user
+                                id="ventilation_master_user_id_2"
+                                :roles="`administrator||master||intern`"
+                                :needNullElement="true"
+                                :selected="editedItem.ventilation_master_user_id_2"
+                                :selectedUser="editedItem.ventilation_master_2"
+                                @set="setMasterOfTO2"
+                            ></select-user>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <select-user
+                                id="ventilation_master_user_id_3"
+                                :roles="`administrator||master||intern`"
+                                :needNullElement="true"
+                                :selected="editedItem.ventilation_master_user_id_3"
+                                :selectedUser="editedItem.ventilation_master_3"
+                                @set="setMasterOfTO3"
+                            ></select-user>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <select-user
+                                id="ventilation_master_user_id_4"
+                                :roles="`administrator||master||intern`"
+                                :needNullElement="true"
+                                :selected="editedItem.ventilation_master_user_id_4"
+                                :selectedUser="editedItem.ventilation_master_4"
+                                @set="setMasterOfTO4"
                             ></select-user>
                         </div>
                         <div class="form-group col-md-8">
@@ -196,11 +227,18 @@
         ventilation_street_id: '',
         ventilation_house_id: '',
         ventilation_master_user_id: '',
+        ventilation_master_user_id_2: '',
+        ventilation_master_user_id_3: '',
+        ventilation_master_user_id_4: '',
         ventilation_region: {},
         ventilation_city: {},
         ventilation_street: {},
         ventilation_house: {},
+        ventilation_masters: '',
         ventilation_master: {},
+        ventilation_master_2: {},
+        ventilation_master_3: {},
+        ventilation_master_4: {},
         ventilation_comment: '',
         ventilation_status: 'Запланировано',
         ventilation_date_of_work: ''
@@ -301,6 +339,15 @@
             },
             setMasterOfTO(value) {
                 this.editedItem.ventilation_master_user_id = value
+            },
+            setMasterOfTO2(value) {
+                this.editedItem.ventilation_master_user_id_2 = value
+            },
+            setMasterOfTO3(value) {
+                this.editedItem.ventilation_master_user_id_3 = value
+            },
+            setMasterOfTO4(value) {
+                this.editedItem.ventilation_master_user_id_4 = value
             },
             updateParentData() {
                 this.$emit("updateParentData")

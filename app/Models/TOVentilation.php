@@ -66,7 +66,15 @@ class TOVentilation extends Model
                     ]
                 ]
             ],
-            'ventilation_master' => [
+            'house_build_year' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
+            'ventilation_masters' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -139,9 +147,21 @@ class TOVentilation extends Model
         'ventilation_street_id',
         'ventilation_house_id',
         'ventilation_master_user_id',
+        'ventilation_master_user_id_2',
+        'ventilation_master_user_id_3',
+        'ventilation_master_user_id_4',
         'ventilation_comment',
         'ventilation_status',
         'ventilation_date_of_work',
+    ];
+
+    /**
+     * Appends
+     *
+     * @var array
+     */
+    protected $appends = [
+        'ventilation_masters',
     ];
 
     /**
@@ -164,6 +184,9 @@ class TOVentilation extends Model
         'index' => [
             'all_roles' => [
                 'ventilation_master',
+                'ventilation_master_2',
+                'ventilation_master_3',
+                'ventilation_master_4',
                 'ventilation_region',
                 'ventilation_city',
                 'ventilation_street',
@@ -173,6 +196,9 @@ class TOVentilation extends Model
         'other_actions' => [
             'all_roles' => [
                 'ventilation_master',
+                'ventilation_master_2',
+                'ventilation_master_3',
+                'ventilation_master_4',
                 'ventilation_region',
                 'ventilation_city',
                 'ventilation_street',
@@ -261,8 +287,17 @@ class TOVentilation extends Model
             'visible' => true
         ],
         [
-            'key' => 'ventilation_master.name',
-            'sortBy' => 'ventilation_master.keyword',
+            'key' => 'ventilation_house.build_year',
+            'label' => 'Год постройки',
+            'sortBy' => 'house_build_year.keyword',
+            'stickyColumn' => true,
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'ventilation_masters',
+            'sortBy' => 'ventilation_masters.keyword',
             'label' => 'Мастер на ТО',
             'sortable' => true,
             'sortDirection' => 'desc',
@@ -311,6 +346,20 @@ class TOVentilation extends Model
     ];
 
     /**
+     * Get append of ventilation_masters
+     * @return string
+     */
+    public function getVentilationMastersAttribute()
+    {
+        $master = isset($this->ventilation_master->name) ? $this->ventilation_master->name : '';
+        $master .= isset($this->ventilation_master_2->name) ? ', ' . $this->ventilation_master_2->name : '';
+        $master .= isset($this->ventilation_master_3->name) ? ', ' . $this->ventilation_master_3->name : '';
+        $master .= isset($this->ventilation_master_4->name) ? ', ' . $this->ventilation_master_4->name : '';
+
+        return $master;
+    }
+
+    /**
      * Users table relationships One To One.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -318,6 +367,39 @@ class TOVentilation extends Model
     public function ventilation_master()
     {
         return $this->hasOne(User::class, 'id', 'ventilation_master_user_id')
+            ->select(['id', 'name', 'email', 'phone']);
+    }
+
+    /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function ventilation_master_2()
+    {
+        return $this->hasOne(User::class, 'id', 'ventilation_master_user_id_2')
+            ->select(['id', 'name', 'email', 'phone']);
+    }
+
+    /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function ventilation_master_3()
+    {
+        return $this->hasOne(User::class, 'id', 'ventilation_master_user_id_3')
+            ->select(['id', 'name', 'email', 'phone']);
+    }
+
+    /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function ventilation_master_4()
+    {
+        return $this->hasOne(User::class, 'id', 'ventilation_master_user_id_4')
             ->select(['id', 'name', 'email', 'phone']);
     }
 
@@ -362,7 +444,7 @@ class TOVentilation extends Model
     public function ventilation_house()
     {
         return $this->hasOne(House::class, 'id', 'ventilation_house_id')
-            ->select(['id', 'name']);
+            ->select(['id', 'name', 'build_year']);
     }
 
     /**
@@ -376,13 +458,19 @@ class TOVentilation extends Model
 
         $this->load($relationships['all_roles']);
 
+        $master = isset($this->ventilation_master->name) ? $this->ventilation_master->name : '';
+        $master .= isset($this->ventilation_master_2->name) ? ', ' . $this->ventilation_master_2->name : '';
+        $master .= isset($this->ventilation_master_3->name) ? ', ' . $this->ventilation_master_3->name : '';
+        $master .= isset($this->ventilation_master_4->name) ? ', ' . $this->ventilation_master_4->name : '';
+
         $tableFields = [
             'id' => $this->id,
-            'ventilation_master' => isset($this->ventilation_master->name) ? $this->ventilation_master->name : '',
+            'ventilation_masters' => $master,
             'ventilation_region' => isset($this->ventilation_region->name) ? $this->ventilation_region->name : '',
             'ventilation_city' => isset($this->ventilation_city->name) ? $this->ventilation_city->name : '',
             'ventilation_street' => isset($this->ventilation_street->name) ? $this->ventilation_street->name : '',
             'ventilation_house' => isset($this->ventilation_house->name) ? $this->ventilation_house->name : '',
+            'house_build_year' => isset($this->ventilation_house->build_year) ? $this->ventilation_house->build_year : 1900,
             'ventilation_date_of_work' => isset($this->ventilation_date_of_work) ? date('d.m.Y H:i', strtotime($this->ventilation_date_of_work)) : '01.01.1900 00:00',
             'ventilation_comment' => isset($this->ventilation_comment) ? $this->ventilation_comment : '',
             'ventilation_status' => isset($this->ventilation_status) ? $this->ventilation_status : '',
@@ -392,6 +480,9 @@ class TOVentilation extends Model
         $otherFields = [
             'id_search' => $this->id,
             'ventilation_master_user_id' => isset($this->ventilation_master_user_id) ? $this->ventilation_master_user_id : null,
+            'ventilation_master_user_id_2' => isset($this->ventilation_master_user_id_2) ? $this->ventilation_master_user_id_2 : null,
+            'ventilation_master_user_id_3' => isset($this->ventilation_master_user_id_3) ? $this->ventilation_master_user_id_3 : null,
+            'ventilation_master_user_id_4' => isset($this->ventilation_master_user_id_4) ? $this->ventilation_master_user_id_4 : null,
             'ventilation_region_id' => isset($this->ventilation_region_id) ? $this->ventilation_region_id : null,
             'ventilation_city_id' => isset($this->ventilation_city_id) ? $this->ventilation_city_id : null,
             'ventilation_street_id' => isset($this->ventilation_street_id) ? $this->ventilation_street_id : null,

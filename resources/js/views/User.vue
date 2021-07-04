@@ -56,7 +56,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="phone">Пароль</label>
-                            <input v-model="editedItem.password" :required="editedIndex == -1 ? true:false" min="8" type="password" class="form-control" id="password">
+                            <input v-model="editedItem.password" :required="editIndex == -1 ? true:false" min="8" type="password" class="form-control" id="password">
                         </div>
                         <div class="form-group col-md-6 text-center">
                             <label for="phone">Придумать пароль</label>

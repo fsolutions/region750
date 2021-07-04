@@ -66,7 +66,15 @@ class TOVDGO extends Model
                     ]
                 ]
             ],
-            'vgko_master' => [
+            'house_build_year' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
+            'vgko_masters' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -139,9 +147,21 @@ class TOVDGO extends Model
         'vgko_street_id',
         'vgko_house_id',
         'vgko_master_user_id',
+        'vgko_master_user_id_2',
+        'vgko_master_user_id_3',
+        'vgko_master_user_id_4',
         'vgko_comment',
         'vgko_status',
         'vgko_date_of_work',
+    ];
+
+    /**
+     * Appends
+     *
+     * @var array
+     */
+    protected $appends = [
+        'vgko_masters',
     ];
 
     /**
@@ -164,6 +184,9 @@ class TOVDGO extends Model
         'index' => [
             'all_roles' => [
                 'vgko_master',
+                'vgko_master_2',
+                'vgko_master_3',
+                'vgko_master_4',
                 'vgko_region',
                 'vgko_city',
                 'vgko_street',
@@ -173,6 +196,9 @@ class TOVDGO extends Model
         'other_actions' => [
             'all_roles' => [
                 'vgko_master',
+                'vgko_master_2',
+                'vgko_master_3',
+                'vgko_master_4',
                 'vgko_region',
                 'vgko_city',
                 'vgko_street',
@@ -261,8 +287,17 @@ class TOVDGO extends Model
             'visible' => true
         ],
         [
-            'key' => 'vgko_master.name',
-            'sortBy' => 'vgko_master.keyword',
+            'key' => 'vgko_house.build_year',
+            'label' => 'Год постройки',
+            'sortBy' => 'house_build_year.keyword',
+            'stickyColumn' => true,
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'vgko_masters',
+            'sortBy' => 'vgko_masters.keyword',
             'label' => 'Мастер на ТО',
             'sortable' => true,
             'sortDirection' => 'desc',
@@ -311,6 +346,20 @@ class TOVDGO extends Model
     ];
 
     /**
+     * Get append of vgko_masters
+     * @return string
+     */
+    public function getVgkoMastersAttribute()
+    {
+        $master = isset($this->vgko_master->name) ? $this->vgko_master->name : '';
+        $master .= isset($this->vgko_master_2->name) ? ', ' . $this->vgko_master_2->name : '';
+        $master .= isset($this->vgko_master_3->name) ? ', ' . $this->vgko_master_3->name : '';
+        $master .= isset($this->vgko_master_4->name) ? ', ' . $this->vgko_master_4->name : '';
+
+        return $master;
+    }
+
+    /**
      * Users table relationships One To One.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -318,6 +367,39 @@ class TOVDGO extends Model
     public function vgko_master()
     {
         return $this->hasOne(User::class, 'id', 'vgko_master_user_id')
+            ->select(['id', 'name', 'email', 'phone']);
+    }
+
+    /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function vgko_master_2()
+    {
+        return $this->hasOne(User::class, 'id', 'vgko_master_user_id_2')
+            ->select(['id', 'name', 'email', 'phone']);
+    }
+
+    /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function vgko_master_3()
+    {
+        return $this->hasOne(User::class, 'id', 'vgko_master_user_id_3')
+            ->select(['id', 'name', 'email', 'phone']);
+    }
+
+    /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function vgko_master_4()
+    {
+        return $this->hasOne(User::class, 'id', 'vgko_master_user_id_4')
             ->select(['id', 'name', 'email', 'phone']);
     }
 
@@ -362,7 +444,7 @@ class TOVDGO extends Model
     public function vgko_house()
     {
         return $this->hasOne(House::class, 'id', 'vgko_house_id')
-            ->select(['id', 'name']);
+            ->select(['id', 'name', 'build_year']);
     }
 
     /**
@@ -376,13 +458,19 @@ class TOVDGO extends Model
 
         $this->load($relationships['all_roles']);
 
+        $master = isset($this->vgko_master->name) ? $this->vgko_master->name : '';
+        $master .= isset($this->vgko_master_2->name) ? ', ' . $this->vgko_master_2->name : '';
+        $master .= isset($this->vgko_master_3->name) ? ', ' . $this->vgko_master_3->name : '';
+        $master .= isset($this->vgko_master_4->name) ? ', ' . $this->vgko_master_4->name : '';
+
         $tableFields = [
             'id' => $this->id,
-            'vgko_master' => isset($this->vgko_master->name) ? $this->vgko_master->name : '',
+            'vgko_masters' => $master,
             'vgko_region' => isset($this->vgko_region->name) ? $this->vgko_region->name : '',
             'vgko_city' => isset($this->vgko_city->name) ? $this->vgko_city->name : '',
             'vgko_street' => isset($this->vgko_street->name) ? $this->vgko_street->name : '',
             'vgko_house' => isset($this->vgko_house->name) ? $this->vgko_house->name : '',
+            'house_build_year' => isset($this->vgko_house->build_year) ? $this->vgko_house->build_year : 1900,
             'vgko_date_of_work' => isset($this->vgko_date_of_work) ? date('d.m.Y H:i', strtotime($this->vgko_date_of_work)) : '01.01.1900 00:00',
             'vgko_comment' => isset($this->vgko_comment) ? $this->vgko_comment : '',
             'vgko_status' => isset($this->vgko_status) ? $this->vgko_status : '',
@@ -392,6 +480,9 @@ class TOVDGO extends Model
         $otherFields = [
             'id_search' => $this->id,
             'vgko_master_user_id' => isset($this->vgko_master_user_id) ? $this->vgko_master_user_id : null,
+            'vgko_master_user_id_2' => isset($this->vgko_master_user_id_2) ? $this->vgko_master_user_id_2 : null,
+            'vgko_master_user_id_3' => isset($this->vgko_master_user_id_3) ? $this->vgko_master_user_id_3 : null,
+            'vgko_master_user_id_4' => isset($this->vgko_master_user_id_4) ? $this->vgko_master_user_id_4 : null,
             'vgko_region_id' => isset($this->vgko_region_id) ? $this->vgko_region_id : null,
             'vgko_city_id' => isset($this->vgko_city_id) ? $this->vgko_city_id : null,
             'vgko_street_id' => isset($this->vgko_street_id) ? $this->vgko_street_id : null,

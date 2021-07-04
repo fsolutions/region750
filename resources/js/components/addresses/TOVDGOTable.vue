@@ -124,8 +124,8 @@
                             <label for="role">Статус</label>
                             <b-form-select v-model="editedItem.vgko_status" required :options="statusList" id="vgko_status"></b-form-select>
                         </div>
-                        <div class="form-group col-md-8">
-                            <label for="vgko_master_user_id">Мастер на выполнение ТО</label>
+                        <div class="form-group col-md-6">
+                            <label for="vgko_master_user_id">Мастера на выполнение ТО</label>
                             <select-user
                                 id="vgko_master_user_id"
                                 :roles="`administrator||master||intern`"
@@ -135,7 +135,38 @@
                                 @set="setMasterOfTO"
                             ></select-user>
                         </div>
-                        <div class="form-group col-md-8">
+                        <div class="form-group col-md-6">
+                            <label for="vgko_master_user_id_2">&nbsp;</label>
+                            <select-user
+                                id="vgko_master_user_id_2"
+                                :roles="`administrator||master||intern`"
+                                :needNullElement="true"
+                                :selected="editedItem.vgko_master_user_id_2"
+                                :selectedUser="editedItem.vgko_master_2"
+                                @set="setMasterOfTO2"
+                            ></select-user>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <select-user
+                                id="vgko_master_user_id_3"
+                                :roles="`administrator||master||intern`"
+                                :needNullElement="true"
+                                :selected="editedItem.vgko_master_user_id_3"
+                                :selectedUser="editedItem.vgko_master_3"
+                                @set="setMasterOfTO3"
+                            ></select-user>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <select-user
+                                id="vgko_master_user_id_4"
+                                :roles="`administrator||master||intern`"
+                                :needNullElement="true"
+                                :selected="editedItem.vgko_master_user_id_4"
+                                :selectedUser="editedItem.vgko_master_4"
+                                @set="setMasterOfTO4"
+                            ></select-user>
+                        </div>
+                        <div class="form-group col-md-12">
                             <label for="vgko_comment">Комментарий по ТО</label>
                             <label>Комментарий (виден только коллегам)</label>
                             <b-form-textarea
@@ -196,11 +227,18 @@
         vgko_street_id: '',
         vgko_house_id: '',
         vgko_master_user_id: '',
+        vgko_master_user_id_2: '',
+        vgko_master_user_id_3: '',
+        vgko_master_user_id_4: '',
         vgko_region: {},
         vgko_city: {},
         vgko_street: {},
         vgko_house: {},
+        vgko_masters: '',
         vgko_master: {},
+        vgko_master_2: {},
+        vgko_master_3: {},
+        vgko_master_4: {},
         vgko_comment: '',
         vgko_status: 'Запланировано',
         vgko_date_of_work: ''
@@ -301,6 +339,15 @@
             },
             setMasterOfTO(value) {
                 this.editedItem.vgko_master_user_id = value
+            },
+            setMasterOfTO2(value) {
+                this.editedItem.vgko_master_user_id_2 = value
+            },
+            setMasterOfTO3(value) {
+                this.editedItem.vgko_master_user_id_3 = value
+            },
+            setMasterOfTO4(value) {
+                this.editedItem.vgko_master_user_id_4 = value
             },
             updateParentData() {
                 this.$emit("updateParentData")

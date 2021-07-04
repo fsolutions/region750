@@ -40,7 +40,7 @@ class ContractTO extends Model
                     ]
                 ]
             ],
-            'master' => [
+            'masters' => [
                 "type" =>  "text",
                 "fields" => [
                     "keyword" => [
@@ -113,12 +113,24 @@ class ContractTO extends Model
     protected $fillable = [
         'to_contract_id',
         'to_master_user_id',
+        'to_master_user_id_2',
+        'to_master_user_id_3',
+        'to_master_user_id_4',
         'to_start_datetime',
         'to_comment',
         'to_status',
         'to_no_access_times',
         'to_sms_sended',
         'to_email_sended',
+    ];
+
+    /**
+     * Appends
+     *
+     * @var array
+     */
+    protected $appends = [
+        'masters',
     ];
 
     /**
@@ -141,12 +153,18 @@ class ContractTO extends Model
         'index' => [
             'all_roles' => [
                 'master',
+                'master_2',
+                'master_3',
+                'master_4',
                 'to_contract'
             ]
         ],
         'other_actions' => [
             'all_roles' => [
                 'master',
+                'master_2',
+                'master_3',
+                'master_4',
                 'to_contract',
                 'to_contract_for_user'
             ]
@@ -209,8 +227,8 @@ class ContractTO extends Model
             'visible' => true
         ],
         [
-            'key' => 'master.name',
-            'sortBy' => 'master.keyword',
+            'key' => 'masters',
+            'sortBy' => 'masters.keyword',
             'label' => 'Мастер на ТО',
             'sortable' => true,
             'sortDirection' => 'desc',
@@ -275,6 +293,20 @@ class ContractTO extends Model
     ];
 
     /**
+     * Get append of masters
+     * @return string
+     */
+    public function getMastersAttribute()
+    {
+        $master = isset($this->master->name) ? $this->master->name : '';
+        $master .= isset($this->master_2->name) ? ', ' . $this->master_2->name : '';
+        $master .= isset($this->master_3->name) ? ', ' . $this->master_3->name : '';
+        $master .= isset($this->master_4->name) ? ', ' . $this->master_4->name : '';
+
+        return $master;
+    }
+
+    /**
      * Users table relationships One To One.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -282,6 +314,39 @@ class ContractTO extends Model
     public function master()
     {
         return $this->hasOne(User::class, 'id', 'to_master_user_id')
+            ->select(['id', 'name', 'email', 'phone']);
+    }
+
+    /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function master_2()
+    {
+        return $this->hasOne(User::class, 'id', 'to_master_user_id_2')
+            ->select(['id', 'name', 'email', 'phone']);
+    }
+
+    /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function master_3()
+    {
+        return $this->hasOne(User::class, 'id', 'to_master_user_id_3')
+            ->select(['id', 'name', 'email', 'phone']);
+    }
+
+    /**
+     * Users table relationships One To One.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function master_4()
+    {
+        return $this->hasOne(User::class, 'id', 'to_master_user_id_4')
             ->select(['id', 'name', 'email', 'phone']);
     }
 
@@ -317,9 +382,14 @@ class ContractTO extends Model
 
         $this->load($relationships['all_roles']);
 
+        $master = isset($this->master->name) ? $this->master->name : '';
+        $master .= isset($this->master_2->name) ? ', ' . $this->master_2->name : '';
+        $master .= isset($this->master_3->name) ? ', ' . $this->master_3->name : '';
+        $master .= isset($this->master_4->name) ? ', ' . $this->master_4->name : '';
+
         $tableFields = [
             'id' => $this->id,
-            'master' => isset($this->master->name) ? $this->master->name : '',
+            'masters' => $master,
             'to_contract' => isset($this->to_contract->contract_number) ? $this->to_contract->contract_number : '',
             'to_status' => isset($this->to_status) ? $this->to_status : '',
             'to_no_access_times' => isset($this->to_no_access_times) ? $this->to_no_access_times : 0,
@@ -332,6 +402,9 @@ class ContractTO extends Model
         $otherFields = [
             'id_search' => $this->id,
             'to_master_user_id' => isset($this->to_master_user_id) ? $this->to_master_user_id : null,
+            'to_master_user_id_2' => isset($this->to_master_user_id_2) ? $this->to_master_user_id_2 : null,
+            'to_master_user_id_3' => isset($this->to_master_user_id_3) ? $this->to_master_user_id_3 : null,
+            'to_master_user_id_4' => isset($this->to_master_user_id_4) ? $this->to_master_user_id_4 : null,
             'to_contract_id' => isset($this->to_contract_id) ? $this->to_contract_id : null,
         ];
 

@@ -280,6 +280,7 @@
     import TOVentilationTableFilter from '../addresses/TOVentilationTableFilter'
     
     import ActionUser from "./actions/actionUser";
+    import ActionFlat from "./actions/actionFlat";
     import ActionContract from "./actions/actionContract";
     import ActionOrder from "./actions/actionOrder";
     import ActionCustom from "./actions/actionCustom";
@@ -311,6 +312,7 @@
             "action-contract": ActionContract,
             "action-user": ActionUser,
             "action-order": ActionOrder,
+            "action-flat": ActionFlat,
             "action-custom": ActionCustom,
         },
         mixins: [

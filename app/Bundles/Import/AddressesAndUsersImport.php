@@ -84,32 +84,37 @@ class AddressesAndUsersImport extends MainImport
             // 2. add user
             $user = $this->prepareUserData($rowDataFromCSV);
 
-            $validatorOfUser = parent::validationData($user, [
-                'name'  => 'required|string|min:2',
-                'phone' => 'required|string|max:50|unique:users'
-            ]);
+            if ($user != 0) {
+                $validatorOfUser = parent::validationData($user, [
+                    'name'  => 'required|string|min:2',
+                    'phone' => 'required|string|max:50|unique:users'
+                ]);
 
-            if ($validatorOfUser->fails()) {
-                if (!empty($user['phone'])) {
-                    $user = User::where('phone', $user['phone'])->first();
+                if ($validatorOfUser->fails()) {
+                    if (!empty($user['phone'])) {
+                        $user = User::where('phone', $user['phone'])->first();
+                    }
+                } else {
+                    $user = $this->addingUserToDataBase($user);
+                    $client = Role::where('slug', 'client')->first();
+
+                    $user->roles()->sync([$client->id]);
+
+                    $countSuccessAddUsers++;
                 }
-            } else {
-                $user = $this->addingUserToDataBase($user);
-                $client = Role::where('slug', 'client')->first();
 
-                $user->roles()->sync([$client->id]);
-
-                $countSuccessAddUsers++;
+                // 3. add contract
+                if (isset($user->id)) {
+                    $contract = $this->addingContractToDataBase($user->id, $address, $rowDataFromCSV);
+                } else {
+                    $contract = 0;
+                }
             }
-
-            // 3. add contract
-            $contract = $this->addingContractToDataBase($user->id, $address, $rowDataFromCSV);
-
 
             if ($address['isNew'] == true) {
                 $countSuccessAddAddresses++;
             }
-            if ($contract['isNew'] == true) {
+            if ($contract != 0 && $contract['isNew'] == true) {
                 $countSuccessAddContracts++;
             }
 
@@ -189,6 +194,8 @@ class AddressesAndUsersImport extends MainImport
             }
 
             $user['telefon'] = implode("", $tempPhone);
+        } else {
+            return 0;
         }
 
         // prepare user name
@@ -256,7 +263,10 @@ class AddressesAndUsersImport extends MainImport
 
         // Prepare date of contract
         // 01.02.2021
-        if (mb_strlen($importData['data-zakl-dogovora']) == 10) {
+        $importData['data-zakl-dogovora'] = preg_replace('![^0-9\.\,]+!', '', $importData['data-zakl-dogovora']);
+
+        if (mb_strlen($importData['data-zakl-dogovora']) == 10 && preg_match('/\..*\./', $importData['data-zakl-dogovora']) == 1) {
+            $importData['data-zakl-dogovora'] = str_replace(',', '.', $importData['data-zakl-dogovora']);
             $date = Carbon::createFromFormat('d.m.Y', $importData['data-zakl-dogovora']);
 
             $importData['data-zakl-dogovora'] = $date->format('Y-m-d') . ' 00:00:00';

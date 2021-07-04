@@ -71,8 +71,8 @@
                             </div>
                             <!-- <input v-model="editedItem.to_start_datetime" required type="datetime-local" class="form-control" id="to_start_datetime"> -->
                         </div>
-                        <div class="form-group col-md-12">
-                            <label for="contract_on_user_id">Мастер на выполнение ТО</label>
+                        <div class="form-group col-md-6">
+                            <label for="contract_on_user_id">Мастера на выполнение ТО</label>
                             <select-user
                                 id="contract_on_user_id"
                                 :roles="`administrator||master||intern`"
@@ -80,6 +80,37 @@
                                 :selected="editedItem.to_master_user_id"
                                 :selectedUser="editedItem.master"
                                 @set="setUserOfContractTO"
+                            ></select-user>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="contract_on_user_id_2">&nbsp;</label>
+                            <select-user
+                                id="contract_on_user_id_2"
+                                :roles="`administrator||master||intern`"
+                                :needNullElement="true"
+                                :selected="editedItem.to_master_user_id_2"
+                                :selectedUser="editedItem.master_2"
+                                @set="setUserOfContractTO2"
+                            ></select-user>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <select-user
+                                id="contract_on_user_id_3"
+                                :roles="`administrator||master||intern`"
+                                :needNullElement="true"
+                                :selected="editedItem.to_master_user_id_3"
+                                :selectedUser="editedItem.master_3"
+                                @set="setUserOfContractTO3"
+                            ></select-user>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <select-user
+                                id="contract_on_user_id_4"
+                                :roles="`administrator||master||intern`"
+                                :needNullElement="true"
+                                :selected="editedItem.to_master_user_id_4"
+                                :selectedUser="editedItem.master_4"
+                                @set="setUserOfContractTO4"
                             ></select-user>
                         </div>
                         <div class="form-group col-md-12">
@@ -170,11 +201,18 @@
         id: '',
         to_contract_id: '',
         to_master_user_id: '',
+        to_master_user_id_2: '',
+        to_master_user_id_3: '',
+        to_master_user_id_4: '',
         to_start_datetime: '',
         to_comment: '',
         to_status: 'Запланировано',
-        to_no_access_times: 0,     
+        to_no_access_times: 0,   
+        masters: '',  
         master: {},
+        master_2: {},
+        master_3: {},
+        master_4: {},
         to_sms_sended: '',
         to_email_sended: ''
     })
@@ -311,6 +349,15 @@
             },
             setUserOfContractTO(value) {
                 this.editedItem.to_master_user_id = value
+            },
+            setUserOfContractTO2(value) {
+                this.editedItem.to_master_user_id_2 = value
+            },
+            setUserOfContractTO3(value) {
+                this.editedItem.to_master_user_id_3 = value
+            },
+            setUserOfContractTO4(value) {
+                this.editedItem.to_master_user_id_4 = value
             },
             updateParentData() {
                 this.$emit("updateParentData")

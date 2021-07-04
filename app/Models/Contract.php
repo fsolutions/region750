@@ -227,7 +227,7 @@ class Contract extends Model
                 'contract_region:id,name',
                 'contract_city:id,name',
                 'contract_street:id,name',
-                'contract_house:id,name',
+                'contract_house:id,name,build_year',
                 'contract_flat:id,name',
             ]
         ]
@@ -387,6 +387,9 @@ class Contract extends Model
         $address .= isset($this->contract_street) ? ', ' . $this->contract_street->name : '';
         $address .= isset($this->contract_house) ? ', ' . $this->contract_house->name : '';
         $address .= isset($this->contract_flat) ? ', ' . $this->contract_flat->name : '';
+
+        $address .= isset($this->contract_house->build_year) ? ' (Год постройки: ' . $this->contract_house->build_year . ' г.)' : '';
+
         return $address;
     }
 
@@ -504,7 +507,7 @@ class Contract extends Model
     public function contract_house()
     {
         return $this->hasOne(House::class, 'id', 'contract_house_id')
-            ->select(['id', 'name']);
+            ->select(['id', 'name', 'build_year']);
     }
 
     /**
