@@ -16,6 +16,7 @@ import PasswordReset from '../views/PasswordReset.vue'
 import TOVDGO from '../views/TOVDGO.vue'
 import TOVentilation from '../views/TOVentilation.vue'
 import Equipment from '../views/Equipment.vue'
+import Import from '../views/Import.vue'
 
 let routes = [
         {
@@ -120,6 +121,12 @@ let routes = [
             name: 'calendar',
             component: Calendar,
             meta: { title: 'Календарь', middlewareAuth: true }
+        },
+        {
+            path: '/import',
+            name: 'Import',
+            component: Import,
+            meta: { title: 'Импорт адресов и пользователей', middlewareAuth: true }
         },
         // {
         //     path: '/contracts/:order_id',

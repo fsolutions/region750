@@ -15,6 +15,7 @@ use App\Http\Controllers\API\Address\CityController;
 use App\Http\Controllers\API\Address\FlatController;
 use App\Http\Controllers\API\PassportAuthController;
 use App\Http\Controllers\API\Address\HouseController;
+use App\Http\Controllers\API\Import\ImportController;
 use App\Http\Controllers\API\Address\RegionController;
 use App\Http\Controllers\API\Address\StreetController;
 use App\Http\Controllers\API\Address\TOVDGOController;
@@ -144,4 +145,5 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/get-user', [PassportAuthController::class, 'getUser']);
     Route::post('/logout', [PassportAuthController::class, 'logout']);
     Route::post('/send-sms', [SMSC::class, 'sendSMSNotifyAction']);
+    Route::post('/import', [ImportController::class, 'import']);
 });

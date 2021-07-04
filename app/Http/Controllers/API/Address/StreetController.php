@@ -98,7 +98,7 @@ class StreetController extends CrudController
         $this->model = parent::store($request);
 
         // add one default house
-        $defaultFlat = House::firstOrCreate([
+        $defaultHouse = House::firstOrCreate([
             'region_id' => $this->model->region_id,
             'city_id' => $this->model->city_id,
             'street_id' => $this->model->id,

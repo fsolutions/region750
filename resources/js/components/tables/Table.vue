@@ -75,6 +75,9 @@
                             {{customAddButtonName}}
                         </button>
                     </template>
+                    <template v-if="checkActionAllow('import')">
+                        <router-link to="/import" class="btn btn-outline-secondary btn-outline-pill float-right mb-3 mr-3" style="border:1px solid #666; color: #666; line-height: 25px;">Импорт</router-link>
+                    </template>
                 </template>
             </div>
         </div>

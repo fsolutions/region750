@@ -42,11 +42,14 @@
         </div>
         <div class="col-12 mt-2" v-if="addElement">
             <div class="row">
-                <div :class="needZipCode ? 'col-5 pr-2' : 'col-10 pr-0'">
+                <div :class="needZipCode ? 'col-4 pr-0' : 'col-10 pr-0'">
                     <b-form-input id="newElementValue" v-model="newElementValue" :placeholder="mainInputPlaceholder"></b-form-input>
                 </div>
-                <div class="col-5 pr-0" v-if="needZipCode">
-                    <b-form-input id="newZipCode" v-model="newZipCode" placeholder="Почтовый индекс"></b-form-input>
+                <div class="col-3 pr-0" v-if="needZipCode">
+                    <b-form-input id="newZipCode" v-model="newZipCode" placeholder="Индекс"></b-form-input>
+                </div>
+                <div class="col-3 pr-0" v-if="needBuildYearCode">
+                    <b-form-input id="newBuildYear" v-model="newBuildYear" placeholder="Год постройки"></b-form-input>
                 </div>
                 <div class="col-2 pl-0" style="display:flex;">
                     <b-button 
@@ -87,6 +90,7 @@
             disabled: { type: Boolean, required: false, default: false },  // If we want to disable but show
             needAddButton: { type: Boolean, required: false, default: false },  // If we want to add new
             needZipCode: { type: Boolean, required: false, default: false },  // If we want to add zip
+            needBuildYearCode: { type: Boolean, required: false, default: false },  // If we want to add build year
             mainInputPlaceholder: { type: String, required: false, default: 'Введите значение' },  // If we want to change input placeholder
             region_id: { type: String|Number, required: false, default: '' }, 
             city_id: { type: String|Number, required: false, default: '' }, 
@@ -105,7 +109,8 @@
                 addElement: false,
                 newElementValue: '',
                 savingProcess: false,
-                newZipCode: ''
+                newZipCode: '',
+                newBuildYear: ''
             }
         },
         watch: {
@@ -197,6 +202,9 @@
                 }
                 if (this.needZipCode) {
                     editedItem.zip = this.newZipCode
+                }
+                if (this.needBuildYearCode) {
+                    editedItem.build_year = this.newBuildYear
                 }
 
                 api.call("post", this.structures[this.structure], editedItem).then(({data}) => {

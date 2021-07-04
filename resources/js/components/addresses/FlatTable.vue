@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-8">
                             <label for="address_region">Выберите область</label>
                             <select-address-structure
                                 id="address_region"
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     <div class="form-row" v-if="editedItem.region_id">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-8">
                             <label for="address_city">Выберите город</label>
                             <select-address-structure
                                 id="address_city"
@@ -73,7 +73,7 @@
                         </div>
                     </div>
                     <div class="form-row" v-if="(editedItem.region_id && editedItem.city_id)">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-8">
                             <label for="address_street">Выберите улицу</label>
                             <select-address-structure
                                 id="address_street"
@@ -90,7 +90,7 @@
                         </div>
                     </div>
                     <div class="form-row" v-if="(editedItem.region_id && editedItem.city_id && editedItem.street_id)">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-8">
                             <label for="address_house">Выберите дом</label>
                             <select-address-structure
                                 id="address_house"
@@ -104,6 +104,7 @@
                                 :city_id="editedItem.city_id"
                                 :street_id="editedItem.street_id"
                                 :needZipCode="true"
+                                :needBuildYearCode="true"
                                 @set="setHouse"
                             ></select-address-structure>
                         </div>

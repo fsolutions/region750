@@ -82,6 +82,22 @@ class Flat extends Model
                     ]
                 ]
             ],
+            'house_zip' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
+            'house_build_year' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
 
             // other fields
             'id_search' => [
@@ -200,9 +216,9 @@ class Flat extends Model
         ],
         [
             'key' => 'house.zip',
-            'sortBy' => 'house.zip',
+            'sortBy' => 'house_zip.keyword',
             'label' => 'Индекс',
-            'sortable' => false,
+            'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
         ],
@@ -234,6 +250,15 @@ class Flat extends Model
             'key' => 'house.name',
             'sortBy' => 'house.keyword',
             'label' => 'Номер дома',
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
+            'key' => 'house.build_year',
+            'label' => 'Год постройки',
+            'sortBy' => 'house_build_year.keyword',
+            'stickyColumn' => true,
             'sortable' => true,
             'sortDirection' => 'desc',
             'visible' => true
@@ -296,7 +321,7 @@ class Flat extends Model
     public function house()
     {
         return $this->hasOne(House::class, 'id', 'house_id')
-            ->select(['id', 'name', 'zip']);
+            ->select(['id', 'name', 'zip', 'build_year']);
     }
 
     /**
@@ -317,6 +342,8 @@ class Flat extends Model
             'city' => isset($this->city->name) ? $this->city->name : '',
             'street' => isset($this->street->name) ? $this->street->name : '',
             'house' => isset($this->house->name) ? $this->house->name : '',
+            'house_build_year' => isset($this->house->build_year) ? $this->house->build_year : 1900,
+            'house_zip' => isset($this->house->zip) ? $this->house->zip : '',
         ];
 
         $otherFields = [

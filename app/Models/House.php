@@ -58,6 +58,14 @@ class House extends Model
                     ]
                 ]
             ],
+            'build_year' => [
+                "type" =>  "text",
+                "fields" => [
+                    "keyword" => [
+                        "type" => "keyword"
+                    ]
+                ]
+            ],
             'region' => [
                 "type" =>  "text",
                 "fields" => [
@@ -120,6 +128,7 @@ class House extends Model
      */
     protected $fillable = [
         'name', //name (house+block+block_type)
+        'build_year',
         'zip',
         'region_id',
         'city_id',
@@ -237,6 +246,15 @@ class House extends Model
             'visible' => true
         ],
         [
+            'key' => 'build_year',
+            'label' => 'Год постройки',
+            'sortBy' => 'build_year',
+            'stickyColumn' => true,
+            'sortable' => true,
+            'sortDirection' => 'desc',
+            'visible' => true
+        ],
+        [
             'key' => 'actions',
             'label' => 'Действия',
             'stickyColumn' => true,
@@ -301,7 +319,8 @@ class House extends Model
         $tableFields = [
             'id' => $this->id,
             'name' => $this->name,
-            'zip' => $this->zip,
+            'zip' => isset($this->zip) ? $this->zip : null,
+            'build_year' => isset($this->build_year) ? $this->build_year : null,
             'region' => isset($this->region->name) ? $this->region->name : '',
             'city' => isset($this->city->name) ? $this->city->name : '',
             'street' => isset($this->street->name) ? $this->street->name : '',

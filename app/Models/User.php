@@ -176,7 +176,8 @@ class User extends Authenticatable
             // 'show',
             'edit',
             'delete',
-            'send_sms'
+            'send_sms',
+            'import'
         ],
         'client' => [
             // 'create',
