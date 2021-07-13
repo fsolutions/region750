@@ -198,9 +198,13 @@ class PassportAuthController extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        $data['password'] = Str::random(8);
-
         $user = User::where('phone', $data['phone'])->first();
+
+        if (empty($user)) {
+            return response()->json(['error' => ['user' => 'Пользователь с таким телефоном не обнаружен.']], 422);
+        }
+
+        $data['password'] = Str::random(8);
         $user->password = Hash::make($data['password']);
         $user->save();
 

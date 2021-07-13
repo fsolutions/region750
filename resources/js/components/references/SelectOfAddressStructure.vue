@@ -116,7 +116,7 @@
         watch: {
             selectedPrepare(element) {
                 this.selectedLocal = (element == null || element == '') ? '' : element.id
-                this.$emit('set', this.selectedLocal)
+                this.$emit('set', this.selectedLocal, element)
             },
             hotUpdate(value) {
                 if (this.selectedStructure && this.selectedStructure.id) {
@@ -160,7 +160,7 @@
         methods: {
             getDataHandler: async function() {
                 let search = this.search ? this.search : ''
-                let finalGet = `?q=${search}&region_id=${this.region_id}&city_id=${this.city_id}&street_id=${this.street_id}&house_id=${this.house_id}&house_id=${this.flat_id}`
+                let finalGet = `?q=${search}&region_id=${this.region_id}&city_id=${this.city_id}&street_id=${this.street_id}&house_id=${this.house_id}&flat_id=${this.flat_id}`
                 const response = await api.call('get', this.structures[this.structure] + `${finalGet}`)
                 this.options = response.data.data
                 this.prepareSelectedLocal()

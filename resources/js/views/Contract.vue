@@ -86,10 +86,11 @@
                                 :needAddButton="false"
                                 :selected="editedItem.contract_region_id"
                                 :selectedStructure="editedItem.contract_region"
+                                :hotUpdate="false"
                                 @set="setRegion"
                             ></select-address-structure>
                         </div>
-                        <div class="form-group col-md-6" v-if="editedItem.contract_region_id">
+                        <div class="form-group col-md-6" v-if="!cityTick && editedItem.contract_region_id">
                             <label for="address_city">Выберите город</label>
                             <select-address-structure
                                 id="address_city"
@@ -100,10 +101,11 @@
                                 :selected="editedItem.contract_city_id"
                                 :selectedStructure="editedItem.contract_city"
                                 :region_id="editedItem.contract_region_id"
+                                :hotUpdate="false"
                                 @set="setCity"
                             ></select-address-structure>
                         </div>
-                        <div class="form-group col-md-6" v-if="(editedItem.contract_region_id && editedItem.contract_city_id)">
+                        <div class="form-group col-md-6" v-if="(!streetTick && editedItem.contract_region_id && editedItem.contract_city_id)">
                             <label for="address_street">Выберите улицу</label>
                             <select-address-structure
                                 id="address_street"
@@ -115,10 +117,11 @@
                                 :selectedStructure="editedItem.contract_street"
                                 :region_id="editedItem.contract_region_id"
                                 :city_id="editedItem.contract_city_id"
+                                :hotUpdate="false"
                                 @set="setStreet"
                             ></select-address-structure>
                         </div>
-                        <div class="form-group col-md-3" v-if="(editedItem.contract_region_id && editedItem.contract_city_id && editedItem.contract_street_id)">
+                        <div class="form-group col-md-3" v-if="(!houseTick && editedItem.contract_region_id && editedItem.contract_city_id && editedItem.contract_street_id)">
                             <label for="address_house">Выберите ваш дом</label>
                             <select-address-structure
                                 id="address_house"
@@ -132,10 +135,11 @@
                                 :city_id="editedItem.contract_city_id"
                                 :street_id="editedItem.contract_street_id"
                                 :needZipCode="true"
+                                :hotUpdate="false"
                                 @set="setHouse"
                             ></select-address-structure>
                         </div>
-                        <div class="form-group col-md-3" v-if="(editedItem.contract_region_id && editedItem.contract_city_id && editedItem.contract_street_id && editedItem.contract_house_id)">
+                        <div class="form-group col-md-3" v-if="(!flatTick && editedItem.contract_region_id && editedItem.contract_city_id && editedItem.contract_street_id && editedItem.contract_house_id && editedItem.contract_house.name != '-')">
                             <label for="address_flat">Выберите вашу квартиру</label>
                             <select-address-structure
                                 id="address_flat"
@@ -143,13 +147,13 @@
                                 :mainInputPlaceholder="'Введите номер квартиры'"
                                 :needNullElement="true"
                                 :needAddButton="false"
-                                :selected="editedItem.contract_house_id"
-                                :selectedStructure="editedItem.contract_house"
+                                :selected="editedItem.contract_flat_id"
+                                :selectedStructure="editedItem.contract_flat"
                                 :region_id="editedItem.contract_region_id"
                                 :city_id="editedItem.contract_city_id"
                                 :street_id="editedItem.contract_street_id"
                                 :house_id="editedItem.contract_house_id"
-                                :needZipCode="true"
+                                :hotUpdate="false"
                                 @set="setFlat"
                             ></select-address-structure>
                         </div>
@@ -296,11 +300,36 @@
         contract_street_id: '',
         contract_house_id: '',
         contract_flat_id: '',
-        contract_region: {},
-        contract_city: {},
-        contract_street: {},
-        contract_house: {},
-        contract_flat: {},
+        contract_region: {
+            id: '',
+            name: '',
+        },
+        contract_city: {
+            id: '',
+            name: '',
+            region_id: '',
+        },
+        contract_street: {
+            id: '',
+            name: '',
+            region_id: '',
+            city_id: '',
+        },
+        contract_house: {
+            id: '',
+            name: '',
+            region_id: '',
+            city_id: '',
+            street_id: '',
+        },
+        contract_flat: {
+            id: '',
+            name: '',
+            region_id: '',
+            city_id: '',
+            street_id: '',
+            house_id: '',
+        },
         contract_number: '',
         status: 'В обработке',
         contract_start_datetime: '',
@@ -314,6 +343,36 @@
         equipment: [],
         preparedEquipment: []
     })
+
+    const initialCityItem = () => ({
+        id: '',
+        name: '',
+        region_id: '',
+    })
+
+    const initialStreetItem = () => ({
+        id: '',
+        name: '',
+        region_id: '',
+        city_id: '',
+    })
+
+    const initialHouseItem = () => ({
+        id: '',
+        name: '',
+        region_id: '',
+        city_id: '',
+        street_id: '',
+    })
+    
+    const initialFlatItem = () => ({
+        id: '',
+        name: '',
+        region_id: '',
+        city_id: '',
+        street_id: '',
+        house_id: '',
+    })   
 
     export default {
     components: {
@@ -358,7 +417,11 @@
                 { text: 'Проточный водонагреватель ПВ', value: 15 },
                 { text: 'Газовый котел', value: 16 }
             ],
-            isFormingEquipmentList: false
+            isFormingEquipmentList: false,
+            cityTick: false,
+            streetTick: false,
+            houseTick: false,
+            flatTick: false,
         }
     },
     watch: {
@@ -527,38 +590,73 @@
                 }, 400);
             }
         },
-        setRegion(value) {
+        setRegion(value, obj) {
             this.editedItem.contract_city_id = ''
             this.editedItem.contract_street_id = ''
             this.editedItem.contract_house_id = ''
+            this.editedItem.contract_flat_id = ''
 
-            this.editedItem.contract_city = Object.assign({})
-            this.editedItem.contract_street = Object.assign({})
-            this.editedItem.contract_house = Object.assign({})
+            this.editedItem.contract_city = initialCityItem()
+            this.editedItem.contract_street = initialStreetItem()
+            this.editedItem.contract_house = initialHouseItem()
+            this.editedItem.contract_flat = initialFlatItem()
             
             this.editedItem.contract_region_id = value
+            this.editedItem.contract_region = Object.assign(obj)
+
+            this.cityTick = true
+            setTimeout(() => {
+                this.cityTick = false
+            }, 100);
         },
-        setCity(value) {
+        setCity(value, obj) {
             this.editedItem.contract_street_id = ''
             this.editedItem.contract_house_id = ''
+            this.editedItem.contract_flat_id = ''
 
-            this.editedItem.contract_street = Object.assign({})
-            this.editedItem.contract_house = Object.assign({})
+            this.editedItem.contract_street = initialStreetItem()
+            this.editedItem.contract_house = initialHouseItem()
+            this.editedItem.contract_flat = initialFlatItem()
 
             this.editedItem.contract_city_id = value
-        },
-        setStreet(value) {
-            this.editedItem.contract_house_id = ''
+            this.editedItem.contract_city = Object.assign(obj)
 
-            this.editedItem.contract_house = Object.assign({})
+            this.streetTick = true
+            setTimeout(() => {
+                this.streetTick = false
+            }, 100);
+        },
+        setStreet(value, obj) {
+            this.editedItem.contract_house_id = ''
+            this.editedItem.contract_flat_id = ''
+
+            this.editedItem.contract_house = initialHouseItem()
+            this.editedItem.contract_flat = initialFlatItem()
 
             this.editedItem.contract_street_id = value
+            this.editedItem.contract_street = Object.assign(obj)
+
+            this.houseTick = true
+            setTimeout(() => {
+                this.houseTick = false
+            }, 100);
         },
-        setHouse(value) {
+        setHouse(value, obj) {
+            this.editedItem.contract_flat_id = ''
+
+            this.editedItem.contract_flat = initialFlatItem()
+
             this.editedItem.contract_house_id = value
+            this.editedItem.contract_house = Object.assign(obj)
+
+            this.flatTick = true
+            setTimeout(() => {
+                this.flatTick = false
+            }, 100);
         },
-        setFlat(value) {
+        setFlat(value, obj) {
             this.editedItem.contract_flat_id = value
+            this.editedItem.contract_flat = Object.assign(obj)
         },
         // calls from mixin on item save
         onCreatedOrUpdatedCallback() {

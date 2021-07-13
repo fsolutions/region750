@@ -124,7 +124,7 @@ class CrudController extends Controller
      */
     public function index()
     {
-        $per_page = empty(request('per_page')) ? 25 : (int) request('per_page');
+        $per_page = empty(request('per_page')) ? 100 : (int) request('per_page');
 
         $this->model = $this->sorting();
 

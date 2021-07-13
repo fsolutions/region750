@@ -47,7 +47,7 @@
                                 <b-badge variant="warning" class="always-small-badge" v-if="contract.status == 'Нет бумажного договора'">{{contract.status}}</b-badge>
                                 <b-badge variant="secondary" class="always-small-badge" v-if="contract.status == 'В обработке'">{{contract.status}}</b-badge>
                                 <b-badge variant="danger" class="always-small-badge" v-if="contract.status == 'Передать в ГЖИ' || contract.status == 'Передано в ГЖИ'">{{contract.status}}</b-badge>
-                                <p><em class="text-muted">Адрес: {{ contract.contractRealaddress}}</em></p>
+                                <p v-if="contract.contractRealaddress"><em class="text-muted">Адрес: {{ contract.contractRealaddress}}</em></p>
                                 <p>
                                     <b>ТО-ВКГО</b> (Техническое обслуживание внутриквартирного газового оборудования)
                                 </p>
@@ -58,7 +58,7 @@
                                             <b>Следующее ТО назначено на <span class="bigDate" v-html="nextTO(index)"></span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата следующего ТО <span class="bigDate">не указана</span></b>
+                                            <b>Дата следующего ТО <span class="bigDate">в обработке</span></b>
                                         </template>
                                     </p>
                                     <p class="mb-0"><b>Дата последнего ТО <span class="bigDate" v-html="findLastTO(index)"></span></b></p>
@@ -73,7 +73,7 @@
                                     <b>ТО-ВДГО</b> (Техническое обслуживание внутридомового газового оборудования)
                                 </p>
                                 <div style="border-left: 3px solid #CCC; margin-left: 15px; padding-left: 15px; padding-bottom: 10px;">
-                                    <p class="mb-2" v-if="contract.contract_house.build_year">
+                                    <p class="mb-2" v-if="contract.contract_house && contract.contract_house.build_year">
                                         <b>Техническое диагностирование дома:</b> {{ needTechnicalDiagnostics(contract.contract_house.build_year) }}
                                     </p>
                                     <p class="mb-2">
@@ -82,7 +82,7 @@
                                             <b>Следующее ТО назначено на <span class="bigDate">{{toVdgo[index].next.date}}</span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата следующего ТО <span class="bigDate">не указана</span></b>
+                                            <b>Дата следующего ТО <span class="bigDate">в обработке</span></b>
                                         </template>
                                     </p>
                                     <p class="mb-0">
@@ -90,7 +90,7 @@
                                             <b>Дата последнего ТО <span class="bigDate">{{toVdgo[index].last.date | formattedDate}}</span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата последнего ТО <span class="bigDate">не указана</span></b>
+                                            <b>Дата последнего ТО <span class="bigDate">в обработке</span></b>
                                         </template>
                                     </p>
                                     <template v-if="toVdgo[index].last.master">
@@ -104,7 +104,7 @@
                                     <b>ТО-Вентканалов и дымоходов</b>
                                 </p>
                                 <div style="border-left: 3px solid #CCC; margin-left: 15px; padding-left: 15px; padding-bottom: 10px;">
-                                    <p class="mb-2" v-if="contract.contract_house.build_year">
+                                    <p class="mb-2" v-if="contract.contract_house && contract.contract_house.build_year">
                                         <b>Техническое диагностирование дома:</b> {{ needTechnicalDiagnostics(contract.contract_house.build_year) }}
                                     </p>
                                     <p class="mb-2">
@@ -113,7 +113,7 @@
                                             <b>Следующее ТО назначено на <span class="bigDate">{{toVentilation[index].next.date}}</span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата следующего ТО <span class="bigDate">не указана</span></b>
+                                            <b>Дата следующего ТО <span class="bigDate">в обработке</span></b>
                                         </template>
                                     </p>
                                     <p class="mb-0">
@@ -121,7 +121,7 @@
                                             <b>Дата последнего ТО <span class="bigDate">{{toVentilation[index].last.date | formattedDate}}</span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата последнего ТО <span class="bigDate">не указана</span></b>
+                                            <b>Дата последнего ТО <span class="bigDate">в обработке</span></b>
                                         </template>
                                     </p>
                                     <template v-if="toVentilation[index].last.master">
@@ -241,7 +241,7 @@
                 return this.$moment(this.itemsLocal.data[index].contract_to[0].to_start_datetime).format('MMMM YYYY') + ' г.'
             },
             findLastTO(index) {
-                let result = 'не указана'
+                let result = 'в обработке'
                 if (this.itemsLocal.data[index].contract_to.length > 0) {
                     this.itemsLocal.data[index].contract_to.some((to_element, to_index) => {
                         if (to_element.to_status == 'Проведено') {
