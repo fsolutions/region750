@@ -157,6 +157,10 @@ class UserController extends CrudController
      */
     public function destroy($id)
     {
+        $this->model = $this->model::findOrFail($id);
+        $this->model->phone = $this->model->phone . "_" . time();
+        $this->model->save();
+
         return parent::destroy($id);
     }
 
