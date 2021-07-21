@@ -140,3 +140,7 @@ http://127.0.0.1:9200/contract/_settings
 http://127.0.0.1:9200/contract/_search
 http://127.0.0.1:9200/_cluster/health
 ```
+FULLFILL `houses` DB BY TEST `build_year` DATA
+
+UPDATE `houses` SET `build_year`=2003 WHERE build_year IS NULL;
+UPDATE `houses` SET `build_year`=2003 WHERE build_year=0;

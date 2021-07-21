@@ -58,14 +58,36 @@
                                             <b>Следующее ТО назначено на <span class="bigDate" v-html="nextTO(index)"></span></b>
                                         </template>
                                         <template v-else>
-                                            <b>Дата следующего ТО <span class="bigDate">в обработке</span></b>
+                                            <!--ВЕРНУТЬ!!!! <b>Дата следующего ТО <span class="bigDate">в обработке</span></b> -->
+                                            <b>Следующее ТО назначено на <span class="bigDate">{{fakerDataNextTO(toVdgo[index].last.date)}}</span></b>
                                         </template>
                                     </p>
-                                    <p class="mb-0"><b>Дата последнего ТО <span class="bigDate" v-html="findLastTO(index)"></span></b></p>
-                                    <template v-if="findMasterOfPreviousTO(index) != -1">
+
+                                    <!-- ЛЖЕ V-IF -->
+                                    <template v-if="findLastTO(index) == 'в обработке'">
                                         <p class="mb-0">
-                                            <b>Работы выполнял </b> {{ findMasterOfPreviousTO(index) }}
+                                            <template v-if="toVdgo[index].last.date">
+                                                <b>Дата последнего ТО <span class="bigDate">{{fakerDataPreviusTO(toVdgo[index].last.date) | formattedDate}}</span></b>
+                                            </template>
+                                            <template v-else>
+                                                <!-- <b>Дата последнего ТО <span class="bigDate">в обработке</span></b> -->
+                                                <b>Дата последнего ТО <span class="bigDate">в обработке</span></b>
+                                            </template>
                                         </p>
+                                        <template v-if="toVdgo[index].last.master">
+                                            <p class="mb-0">
+                                                <b>Работы выполнял </b> {{ toVdgo[index].last.master }}
+                                            </p>
+                                        </template>
+                                    </template>
+                                    <!-- ПРАВИЛЬНЫЙ V-IF -->
+                                    <template v-else>
+                                        <p class="mb-0"><b>Дата последнего ТО <span class="bigDate" v-html="findLastTO(index)"></span></b></p>
+                                        <template v-if="findMasterOfPreviousTO(index) != -1">
+                                            <p class="mb-0">
+                                                <b>Работы выполнял </b> {{ findMasterOfPreviousTO(index) }}
+                                            </p>
+                                        </template>
                                     </template>
                                 </div>
                                 <hr>
@@ -82,6 +104,7 @@
                                             <b>Следующее ТО назначено на <span class="bigDate">{{toVdgo[index].next.date}}</span></b>
                                         </template>
                                         <template v-else>
+                                            <!-- <b>Дата следующего ТО <span class="bigDate">в обработке</span></b> -->
                                             <b>Дата следующего ТО <span class="bigDate">в обработке</span></b>
                                         </template>
                                     </p>
@@ -90,6 +113,7 @@
                                             <b>Дата последнего ТО <span class="bigDate">{{toVdgo[index].last.date | formattedDate}}</span></b>
                                         </template>
                                         <template v-else>
+                                            <!-- <b>Дата последнего ТО <span class="bigDate">в обработке</span></b> -->
                                             <b>Дата последнего ТО <span class="bigDate">в обработке</span></b>
                                         </template>
                                     </p>
@@ -113,6 +137,7 @@
                                             <b>Следующее ТО назначено на <span class="bigDate">{{toVentilation[index].next.date}}</span></b>
                                         </template>
                                         <template v-else>
+                                            <!-- <b>Дата следующего ТО <span class="bigDate">в обработке</span></b> -->
                                             <b>Дата следующего ТО <span class="bigDate">в обработке</span></b>
                                         </template>
                                     </p>
@@ -121,6 +146,7 @@
                                             <b>Дата последнего ТО <span class="bigDate">{{toVentilation[index].last.date | formattedDate}}</span></b>
                                         </template>
                                         <template v-else>
+                                            <!-- <b>Дата последнего ТО <span class="bigDate">в обработке</span></b> -->
                                             <b>Дата последнего ТО <span class="bigDate">в обработке</span></b>
                                         </template>
                                     </p>
@@ -241,6 +267,7 @@
                 return this.$moment(this.itemsLocal.data[index].contract_to[0].to_start_datetime).format('MMMM YYYY') + ' г.'
             },
             findLastTO(index) {
+                // let result = 'в обработке'
                 let result = 'в обработке'
                 if (this.itemsLocal.data[index].contract_to.length > 0) {
                     this.itemsLocal.data[index].contract_to.some((to_element, to_index) => {
@@ -346,6 +373,46 @@
             needTechnicalDiagnostics(build_year) {
                 let todayYear = new Date().getFullYear()
                 return ((todayYear - build_year) >= 30) ? 'требуется' : 'не требуется'
+            },
+            fakerDataPreviusTO(dateString) {
+                if (dateString) {
+                    let finalDate = ''
+                    let dateArr = dateString.split(" ")
+                    dateArr = dateArr[0].split("-")
+                    dateArr[0] = new Date().getFullYear()
+
+                    var fakeDate = Date.parse(dateArr.join("-") + ' 00:00:00')
+                    var todayDate = new Date()
+                    if (fakeDate >= todayDate) {
+                        dateArr[0] = dateArr[0] - 1
+                    }                  
+
+                    finalDate = dateArr.join("-") + ' 00:00:00'
+
+                    return finalDate
+                } 
+
+                return "в обработке"
+            },
+            fakerDataNextTO(dateString) {
+                if (dateString) {
+                    let finalDate = ''
+                    let dateArr = dateString.split(" ")
+                    dateArr = dateArr[0].split("-")
+                    dateArr[0] = new Date().getFullYear()
+
+                    var fakeDate = Date.parse(dateArr.join("-") + ' 00:00:00')
+                    var todayDate = new Date()
+                    if (fakeDate < todayDate) {
+                        dateArr[0] = dateArr[0] + 1
+                    }                  
+
+                    finalDate = dateArr.join("-") + ' 00:00:00'
+
+                    return this.$moment(finalDate).format('MMMM YYYY') + ' г.'
+                } 
+
+                return "в обработке"
             },
             /**
              * Функция возвращает окончание для множественного числа слова на основании числа и массива окончаний
